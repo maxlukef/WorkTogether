@@ -1,5 +1,8 @@
 # Work Together
 
+## Project Description
+
+Work Together is a project aimed at streamlining the group project creation and management for students and teachers. It will allow students to find compatible group members that they will be able to work effectively with, and allow professors to manage groups throughout the project and gain insight into how the class is performing through project milestones and team surveys.
 
 
 ## Getting started
