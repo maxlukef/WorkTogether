@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:work_together_flutter/pages/login/components/login_form.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:work_together_flutter/pages/signup/components/signup_form.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({
+class SignupPage extends StatelessWidget {
+  const SignupPage({
     Key? key,
   }) : super(key: key);
 
@@ -13,20 +13,17 @@ class LoginPage extends StatelessWidget {
         body: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            height: 200,
-            width: 200,
-            child: SvgPicture.asset("assets/images/logo.svg"),
-          ),
+        SizedBox(
+          height: 200,
+          width: 200,
+          child: SvgPicture.asset("assets/images/logo.svg"),
         ),
         Row(
           children: const [
             Spacer(),
             Expanded(
               flex: 8,
-              child: LoginForm(),
+              child: SignupForm(),
             ),
             Spacer(),
           ],
