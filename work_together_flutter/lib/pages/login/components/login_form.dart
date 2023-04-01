@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_together_flutter/pages/profile/profile_page.dart';
 import 'package:work_together_flutter/pages/signup/signup_page.dart';
 
 class LoginForm extends StatelessWidget {
@@ -41,7 +42,13 @@ class LoginForm extends StatelessWidget {
           ),
         ),
         TextButton(
-            onPressed: () => {},
+            onPressed: () => {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return ProfilePage();
+                    },
+                  ))
+                },
             child: const Text(
               "Login",
             )),
