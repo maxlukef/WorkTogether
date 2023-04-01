@@ -30,40 +30,40 @@ class ProfilePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 16.0, 16.0, 4.0),
+              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
               child: Text(
                 "Bio:",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
             ),
             const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 0, 16.0, 0),
+              padding: EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
               child: Text(
                 "As an avid outdoor enthusiast and a software developer, I have found a perfect balance between my two passions. During my free time, I love to explore new trails and go camping.",
               ),
             ),
             const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 16.0, 16.0, 4.0),
+              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
               child: Text(
                 "Major:",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
             ),
             const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 0, 16.0, 0),
+              padding: EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
               child: Text(
                 "B.S. Computer Science",
               ),
             ),
             const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 16.0, 16.0, 4.0),
+              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
               child: Text(
                 "Student Status:",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(32.0, 0, 16.0, 0),
+              padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
               child: Row(
                 children: const [
                   Tag(
@@ -73,14 +73,14 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 16.0, 16.0, 4.0),
+              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
               child: Text(
                 "Employment Status:",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(32.0, 0, 16.0, 0),
+              padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
               child: Row(
                 children: const [
                   Tag(
@@ -90,14 +90,14 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 16.0, 16.0, 4.0),
+              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
               child: Text(
                 "Interests:",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
             ),
             Padding(
-                padding: const EdgeInsets.fromLTRB(32.0, 0, 16.0, 0),
+                padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                 child: Row(
                   children: const [
                     Padding(
