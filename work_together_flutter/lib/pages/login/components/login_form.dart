@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:work_together_flutter/pages/profile/profile_page.dart';
 import 'package:work_together_flutter/pages/signup/signup_page.dart';
+
+import '../../../main_container.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({
@@ -45,7 +46,7 @@ class LoginForm extends StatelessWidget {
             onPressed: () => {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
-                      return ProfilePage();
+                      return MainContainer();
                     },
                   ))
                 },
