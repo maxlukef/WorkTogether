@@ -1,4 +1,6 @@
-namespace WorkTogether
+
+
+namespace WorkTogether.Models
 {
     public class WeatherForecast
     {

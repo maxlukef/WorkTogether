@@ -4,3 +4,5 @@
 
 /.vs
 /WorkTogether/obj
+/WorkTogether/.vs
+/WorkTogether/bin/Debug/net6.0
