@@ -17,15 +17,9 @@ namespace WorkTogether.Models
         protected readonly IConfiguration Configuration;
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            if (!options.IsConfigured)
-            {
-                //options.UseMySQL("server=localhost;port=3306;user=root;password=;database=database");
-            }
-            // connect to mysql with connection string from app settings
-            var connectionString = Configuration.GetConnectionString("WebApiDatabase");
-            //options.UseMySQL("Server = localhost; Port = 3306; Database = worktogether; User ID = test; Password = test;");
         }
 
         public DbSet<TodoItem> TodoItems { get; set; } = null!;
+        public DbSet<TodoList> TodoLists { get; set; } = null!;
     }
 }
