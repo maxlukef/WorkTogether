@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -6,3 +6,10 @@
 /WorkTogether/obj
 /WorkTogether/.vs
 /WorkTogether/bin/Debug/net6.0
+work_together_flutter/linux/flutter/generated_plugin_registrant.cc
+work_together_flutter/linux/flutter/generated_plugin_registrant.h
+work_together_flutter/linux/flutter/generated_plugins.cmake
+work_together_flutter/macos/Flutter/GeneratedPluginRegistrant.swift
+work_together_flutter/windows/flutter/generated_plugin_registrant.cc
+work_together_flutter/windows/flutter/generated_plugin_registrant.h
+work_together_flutter/windows/flutter/generated_plugins.cmake
