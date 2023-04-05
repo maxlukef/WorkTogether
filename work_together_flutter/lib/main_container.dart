@@ -52,7 +52,7 @@ class _MainContainerState extends State<MainContainer> {
             text: 'Notifications',
           ),
           GButton(
-            icon: Icons.verified_user,
+            icon: Icons.person_2,
             text: 'Profile',
           )
         ],
