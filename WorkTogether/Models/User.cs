@@ -25,6 +25,8 @@ namespace WorkTogether.Models
 
         public ICollection<Team> Teams { get; set; }
 
+        public ICollection<Task> Tasks { get; set; }
+
 
     }
 }
