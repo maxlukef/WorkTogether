@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkTogether.Models;
 
@@ -10,9 +11,11 @@ using WorkTogether.Models;
 namespace WorkTogether.Migrations
 {
     [DbContext(typeof(WT_DBContext))]
-    partial class WT_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230406161126_AddClass")]
+    partial class AddClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProfessorID");
 
-                    b.ToTable("Classes", (string)null);
+                    b.ToTable("Classes");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.StudentClass", b =>
@@ -61,7 +64,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentClasses", (string)null);
+                    b.ToTable("StudentClasses");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TAClass", b =>
@@ -82,7 +85,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TAClasses", (string)null);
+                    b.ToTable("TAClasses");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TodoItem", b =>
@@ -104,7 +107,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ParentListID");
 
-                    b.ToTable("TodoItems", (string)null);
+                    b.ToTable("TodoItems");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TodoList", b =>
@@ -123,7 +126,7 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TodoLists", (string)null);
+                    b.ToTable("TodoLists");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.User", b =>
@@ -146,7 +149,7 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Class", b =>

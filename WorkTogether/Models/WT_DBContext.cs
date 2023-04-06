@@ -21,5 +21,12 @@ namespace WorkTogether.Models
 
         public DbSet<TodoItem> TodoItems { get; set; } = null!;
         public DbSet<TodoList> TodoLists { get; set; } = null!;
+
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Class> Classes { get; set; } = null!;
+
+        //These exist to make the many to many relationships between Users and Classes work.
+        public DbSet<TAClass> TAClasses { get; set; } = null!;
+        public DbSet<StudentClass> StudentClasses { get; set; } = null!;
     }
 }
