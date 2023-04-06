@@ -5,6 +5,7 @@
     /// </summary>
     public class Milestone
     {
+        public int Id { get; set; }
         public Project Project { get; set; }
         public string Title { get; set; }
         
