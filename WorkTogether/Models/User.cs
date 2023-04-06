@@ -23,6 +23,8 @@ namespace WorkTogether.Models
 
         public ICollection<TAClass> TAClasses { get; set; }
 
+        public ICollection<Team> Teams { get; set; }
+
 
     }
 }
