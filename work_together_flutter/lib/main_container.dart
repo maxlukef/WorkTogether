@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:work_together_flutter/pages/chat/chat_page.dart';
-import 'package:work_together_flutter/pages/home/home_page.dart';
-import 'package:work_together_flutter/pages/notifications/notifications_page.dart';
-import 'package:work_together_flutter/pages/profile/profile_page.dart';
+import 'package:work_together_flutter/tab_navigations/components/pages.dart';
+import 'package:work_together_flutter/tab_navigations/tab_navigator.dart';
 
 class MainContainer extends StatefulWidget {
   const MainContainer({
@@ -15,27 +13,34 @@ class MainContainer extends StatefulWidget {
 }
 
 class _MainContainerState extends State<MainContainer> {
-  int currentIndex = 0;
-  final pages = [
-    HomePage(),
-    ChatPage(),
-    NotificationsPage(),
-    ProfilePage(),
-  ];
+  PageEnum currentIndex = PageEnum.home;
+
+  // Used to create multiple navigation stacks for each tab in the nav bar.
+  final navigatorKeys = {
+    PageEnum.home: GlobalKey<NavigatorState>(),
+    PageEnum.chat: GlobalKey<NavigatorState>(),
+    PageEnum.notifications: GlobalKey<NavigatorState>(),
+    PageEnum.profile: GlobalKey<NavigatorState>()
+  };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TODO: Complete Top App Bar'),
+        title: const Text('TODO: Complete Top App Bar'),
         centerTitle: true,
       ),
-      body: pages[currentIndex],
+      body: Stack(children: <Widget>[
+        buildOffStageNavigator(PageEnum.home),
+        buildOffStageNavigator(PageEnum.chat),
+        buildOffStageNavigator(PageEnum.notifications),
+        buildOffStageNavigator(PageEnum.profile),
+      ]),
       bottomNavigationBar: GNav(
-        backgroundColor: Color(0xFF1192DC),
-        selectedIndex: currentIndex,
+        backgroundColor: const Color(0xFF1192DC),
+        selectedIndex: currentIndex.index,
         onTabChange: (index) => setState(() {
-          currentIndex = index;
+          currentIndex = PageEnum.values[index];
         }),
         gap: 10,
         tabs: const [
@@ -56,6 +61,16 @@ class _MainContainerState extends State<MainContainer> {
             text: 'Profile',
           )
         ],
+      ),
+    );
+  }
+
+  Widget buildOffStageNavigator(PageEnum currentTab) {
+    return Offstage(
+      offstage: currentIndex != currentTab,
+      child: TabNavigator(
+        navigatorKey: navigatorKeys[currentTab]!,
+        currentTab: currentTab,
       ),
     );
   }
