@@ -17,8 +17,8 @@ class LoginPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                height: 200,
-                width: 200,
+                height: 250,
+                width: 250,
                 child: SvgPicture.asset("assets/images/logo.svg"),
               ),
             ),

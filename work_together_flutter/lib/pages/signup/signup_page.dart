@@ -15,8 +15,8 @@ class SignupPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 200,
-              width: 200,
+              height: 250,
+              width: 250,
               child: SvgPicture.asset("assets/images/logo.svg"),
             ),
             Row(
