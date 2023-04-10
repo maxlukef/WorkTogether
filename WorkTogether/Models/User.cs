@@ -12,7 +12,6 @@ namespace WorkTogether.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -25,7 +24,7 @@ namespace WorkTogether.Models
 
         public ICollection<Team> Teams { get; set; }
 
-        public ICollection<Task> Tasks { get; set; }
+        public ICollection<TaskItem> Tasks { get; set; }
 
 
     }

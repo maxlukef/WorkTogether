@@ -31,7 +31,7 @@ namespace WorkTogether.Models
 
         public DbSet<Team> Teams { get; set; } = null!;
 
-        public DbSet<Task> Tasks { get; set; } = null!;
+        public DbSet<TaskItem> Tasks { get; set; } = null!;
 
         public DbSet<Questionnaire> Questionnaires { get; set; } = null!;
 
