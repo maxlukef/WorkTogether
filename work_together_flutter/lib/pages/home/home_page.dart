@@ -13,7 +13,92 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("THIS IS THE HOME PAGE"),
+      body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+              child: Text(
+                "Teams",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              ),
+            ),
+            Center(
+              child: Card(
+                clipBehavior: Clip.hardEdge,
+                child: InkWell(
+                  splashColor: Colors.blue.withAlpha(30),
+                  onTap: () {},
+                  child: SizedBox(
+                    width: 350,
+                    height: 80,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: Text("CS-5530"),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: Text("Task Force 141",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+              child: Text(
+                "Group Search",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              ),
+            ),
+            Center(
+              child: Card(
+                clipBehavior: Clip.hardEdge,
+                child: InkWell(
+                  splashColor: Colors.blue.withAlpha(30),
+                  onTap: () {},
+                  child: SizedBox(
+                    width: 350,
+                    height: 80,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: Text("CS-4400"),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: Text("Computer Systems",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ]),
     );
   }
 }
