@@ -39,12 +39,14 @@ class LoginForm extends StatelessWidget {
             textInputAction: TextInputAction.next,
             onSaved: (password) {},
             obscureText: true,
-            decoration: const InputDecoration(hintText: "password"),
+            decoration: const InputDecoration(
+              hintText: "password",
+            ),
           ),
         ),
         TextButton(
             onPressed: () => {
-                  Navigator.push(context, MaterialPageRoute(
+                  Navigator.pushReplacement(context, MaterialPageRoute(
                     builder: (context) {
                       return MainContainer();
                     },
