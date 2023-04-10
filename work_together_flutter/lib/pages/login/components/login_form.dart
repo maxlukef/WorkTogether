@@ -54,7 +54,7 @@ class LoginForm extends StatelessWidget {
         ),
         ElevatedButton(
             onPressed: () => {
-                  Navigator.push(context, MaterialPageRoute(
+                  Navigator.pushReplacement(context, MaterialPageRoute(
                     builder: (context) {
                       return const MainContainer();
                     },

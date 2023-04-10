@@ -13,6 +13,7 @@ namespace WorkTogether.Models
         public int Id { get; set; }
 
 
+
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -26,6 +27,15 @@ namespace WorkTogether.Models
         public ICollection<Team> Teams { get; set; }
 
         public ICollection<Task> Tasks { get; set; }
+
+        public string EmploymentStatus { get; set; }
+
+        public string StudentStatus { get; set; }
+
+        //Comma separated string detailing the user's interests
+        public string Interests { get; set; }
+
+
 
 
     }
