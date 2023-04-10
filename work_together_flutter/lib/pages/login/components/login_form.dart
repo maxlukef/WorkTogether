@@ -18,8 +18,8 @@ class LoginForm extends StatelessWidget {
           child: Text(
             "Welcome Back!",
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -29,7 +29,12 @@ class LoginForm extends StatelessWidget {
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             onSaved: (email) {},
-            decoration: const InputDecoration(hintText: "email"),
+            decoration: InputDecoration(
+                hintText: "email",
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                        color: Color(0xFF1192DC), width: 5.0))),
           ),
         ),
         Padding(
@@ -39,30 +44,37 @@ class LoginForm extends StatelessWidget {
             textInputAction: TextInputAction.next,
             onSaved: (password) {},
             obscureText: true,
-            decoration: const InputDecoration(hintText: "password"),
+            decoration: InputDecoration(
+                hintText: "password",
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                        color: Color(0xFF1192DC), width: 5.0))),
           ),
         ),
-        TextButton(
+        ElevatedButton(
             onPressed: () => {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
-                      return MainContainer();
+                      return const MainContainer();
                     },
                   ))
                 },
             child: const Text(
               "Login",
+              style: TextStyle(fontSize: 24),
             )),
         TextButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return SignupPage();
+                  return const SignupPage();
                 },
               ));
             },
             child: const Text(
               "Create an Account",
+              style: TextStyle(fontSize: 24),
             ))
       ],
     ));
