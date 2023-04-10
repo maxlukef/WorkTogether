@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkTogether.Models;
 
@@ -10,9 +11,11 @@ using WorkTogether.Models;
 namespace WorkTogether.Migrations
 {
     [DbContext(typeof(WT_DBContext))]
-    partial class WT_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230410012510_AddQuestionnaire")]
+    partial class AddQuestionnaire
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +34,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TasksId");
 
-                    b.ToTable("TaskUser", (string)null);
+                    b.ToTable("TaskUser");
                 });
 
             modelBuilder.Entity("TeamUser", b =>
@@ -46,7 +49,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TeamsId");
 
-                    b.ToTable("TeamUser", (string)null);
+                    b.ToTable("TeamUser");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Answer", b =>
@@ -71,7 +74,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers", (string)null);
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Class", b =>
@@ -95,7 +98,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProfessorID");
 
-                    b.ToTable("Classes", (string)null);
+                    b.ToTable("Classes");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
@@ -122,7 +125,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Milestones", (string)null);
+                    b.ToTable("Milestones");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Project", b =>
@@ -155,7 +158,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Question", b =>
@@ -179,7 +182,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("QuestionnaireId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Questionnaire", b =>
@@ -196,7 +199,7 @@ namespace WorkTogether.Migrations
                     b.HasIndex("ProjectID")
                         .IsUnique();
 
-                    b.ToTable("Questionnaires", (string)null);
+                    b.ToTable("Questionnaires");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.StudentClass", b =>
@@ -217,7 +220,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentClasses", (string)null);
+                    b.ToTable("StudentClasses");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TAClass", b =>
@@ -238,7 +241,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TAClasses", (string)null);
+                    b.ToTable("TAClasses");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Task", b =>
@@ -272,7 +275,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Tasks", (string)null);
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Team", b =>
@@ -287,7 +290,7 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teams", (string)null);
+                    b.ToTable("Teams");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TodoItem", b =>
@@ -309,7 +312,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ParentListID");
 
-                    b.ToTable("TodoItems", (string)null);
+                    b.ToTable("TodoItems");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TodoList", b =>
@@ -328,7 +331,7 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TodoLists", (string)null);
+                    b.ToTable("TodoLists");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.User", b =>
@@ -351,7 +354,7 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("TaskUser", b =>

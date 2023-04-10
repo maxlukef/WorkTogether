@@ -33,6 +33,13 @@ namespace WorkTogether.Models
 
         public DbSet<Task> Tasks { get; set; } = null!;
 
+        public DbSet<Questionnaire> Questionnaires { get; set; } = null!;
+
+        public DbSet<Question> Questions { get; set; } = null!;
+
+        public DbSet<Answer> Answers { get; set; } = null!;
+
+
         //These exist to make the multiple many to many relationships between Users and Classes work.
         public DbSet<TAClass> TAClasses { get; set; } = null!;
         public DbSet<StudentClass> StudentClasses { get; set; } = null!;

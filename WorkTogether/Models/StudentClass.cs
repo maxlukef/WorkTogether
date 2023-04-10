@@ -7,7 +7,6 @@
     {
         public int ID { get; set; }
         public Class Class { get; set; }
-
         public User Student {get; set;} 
     }
 }
