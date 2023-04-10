@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/tab_navigations/components/pages.dart';
 
-class TabNavigatorRoutes {
-  static const String root = '/';
-  static const String detail = '/detail';
-}
-
 class TabNavigator extends StatelessWidget {
   const TabNavigator({
     super.key,
@@ -15,84 +10,35 @@ class TabNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   final PageEnum currentTab;
 
-  Map<String, WidgetBuilder> buildRoute(BuildContext context) {
-    switch (currentTab) {
-      case PageEnum.home:
-        {
-          return {
-            TabNavigatorRoutes.root: (context) =>
-                Pages.allPages[currentTab.index],
-            TabNavigatorRoutes.detail: (context) =>
-                Pages.allPages[currentTab.index],
-          };
-        }
-
-      case PageEnum.chat:
-        {
-          return {
-            TabNavigatorRoutes.root: (context) =>
-                Pages.allPages[currentTab.index],
-            TabNavigatorRoutes.detail: (context) =>
-                Pages.allPages[currentTab.index],
-          };
-        }
-
-      case PageEnum.profile:
-        {
-          return {
-            TabNavigatorRoutes.root: (context) =>
-                Pages.allPages[currentTab.index],
-            TabNavigatorRoutes.detail: (context) =>
-                Pages.allPages[currentTab.index],
-          };
-        }
-
-      case PageEnum.notifications:
-        {
-          return {
-            TabNavigatorRoutes.root: (context) =>
-                Pages.allPages[currentTab.index],
-            TabNavigatorRoutes.detail: (context) =>
-                Pages.allPages[currentTab.index],
-          };
-        }
-
-      // I couldn't come up with a good default so it just shows profile.
-      default:
-        {
-          return {
-            TabNavigatorRoutes.root: (context) =>
-                Pages.allPages[PageEnum.profile.index],
-            TabNavigatorRoutes.detail: (context) =>
-                Pages.allPages[PageEnum.profile.index],
-          };
-        }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final routeBuilders = buildRoute(context);
+    Widget child;
+
+    switch (currentTab) {
+      case PageEnum.home:
+        child = Pages.allPages[PageEnum.home.index];
+        break;
+      case PageEnum.chat:
+        child = Pages.allPages[PageEnum.chat.index];
+        break;
+      case PageEnum.notifications:
+        child = Pages.allPages[PageEnum.notifications.index];
+        break;
+      case PageEnum.profile:
+        child = Pages.allPages[PageEnum.profile.index];
+        break;
+      default:
+        // Defaults to home.
+        child = Pages.allPages[PageEnum.home.index];
+    }
+
     return Navigator(
       key: navigatorKey,
-      initialRoute: TabNavigatorRoutes.root,
       onGenerateRoute: (routeSettings) {
         return MaterialPageRoute(
-          builder: (context) => routeBuilders[routeSettings.name]!(context),
+          builder: (context) => child,
         );
       },
-    );
-  }
-
-  void pushRoute(BuildContext context) {
-    var routeBuilders = buildRoute(context);
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            routeBuilders[TabNavigatorRoutes.detail]!(context),
-      ),
     );
   }
 }

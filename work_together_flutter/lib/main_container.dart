@@ -20,47 +20,62 @@ class _MainContainerState extends State<MainContainer> {
     PageEnum.home: GlobalKey<NavigatorState>(),
     PageEnum.chat: GlobalKey<NavigatorState>(),
     PageEnum.notifications: GlobalKey<NavigatorState>(),
-    PageEnum.profile: GlobalKey<NavigatorState>()
+    PageEnum.profile: GlobalKey<NavigatorState>(),
   };
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('TODO: Complete Top App Bar'),
-        centerTitle: true,
-      ),
-      body: Stack(children: <Widget>[
-        buildOffStageNavigator(PageEnum.home),
-        buildOffStageNavigator(PageEnum.chat),
-        buildOffStageNavigator(PageEnum.notifications),
-        buildOffStageNavigator(PageEnum.profile),
-      ]),
-      bottomNavigationBar: GNav(
-        backgroundColor: const Color(0xFF1192DC),
-        selectedIndex: currentIndex.index,
-        onTabChange: (index) => setState(() {
-          currentIndex = PageEnum.values[index];
-        }),
-        gap: 10,
-        tabs: const [
-          GButton(
-            icon: Icons.home,
-            text: 'Home',
-          ),
-          GButton(
-            icon: Icons.chat_bubble,
-            text: 'Chat',
-          ),
-          GButton(
-            icon: Icons.notifications,
-            text: 'Notifications',
-          ),
-          GButton(
-            icon: Icons.person_2,
-            text: 'Profile',
-          )
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        return !await navigatorKeys[currentIndex]!.currentState!.maybePop();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('TODO: Complete Top App Bar'),
+          centerTitle: true,
+        ),
+        body: Stack(children: <Widget>[
+          buildOffStageNavigator(PageEnum.home),
+          buildOffStageNavigator(PageEnum.chat),
+          buildOffStageNavigator(PageEnum.notifications),
+          buildOffStageNavigator(PageEnum.profile),
+        ]),
+        bottomNavigationBar: GNav(
+          backgroundColor: const Color(0xFF1192DC),
+          selectedIndex: currentIndex.index,
+          onTabChange: (index) => setState(() {
+            // If a user attempts to navigate to the same tab they are currently on.
+            // pop the additional screens on this navigation until root.
+            if (index == currentIndex.index) {
+              navigatorKeys[PageEnum.values[index]]!
+                  .currentState!
+                  .popUntil((route) => route.isFirst);
+            }
+            // Swap to a different tab.
+            else {
+              currentIndex = PageEnum.values[index];
+            }
+          }),
+          gap: 10,
+          tabs: const [
+            GButton(
+              icon: Icons.home,
+              text: 'Home',
+            ),
+            GButton(
+              icon: Icons.chat_bubble,
+              text: 'Chat',
+            ),
+            GButton(
+              icon: Icons.notifications,
+              text: 'Notifications',
+            ),
+            GButton(
+              icon: Icons.person_2,
+              text: 'Profile',
+            )
+          ],
+        ),
       ),
     );
   }
