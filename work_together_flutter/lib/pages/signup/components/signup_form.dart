@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../main_container.dart';
+
 class SignupForm extends StatelessWidget {
   const SignupForm({
     Key? key,
@@ -13,8 +15,8 @@ class SignupForm extends StatelessWidget {
         const Text(
           "Welcome!",
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w400,
+            fontSize: 40,
+            fontWeight: FontWeight.bold,
           ),
         ),
         Padding(
@@ -23,7 +25,12 @@ class SignupForm extends StatelessWidget {
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             onSaved: (email) {},
-            decoration: const InputDecoration(hintText: "email"),
+            decoration: InputDecoration(
+                hintText: "email",
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                        color: Color(0xFF1192DC), width: 5.0))),
           ),
         ),
         Padding(
@@ -33,7 +40,12 @@ class SignupForm extends StatelessWidget {
             textInputAction: TextInputAction.next,
             onSaved: (password) {},
             obscureText: true,
-            decoration: const InputDecoration(hintText: "password"),
+            decoration: InputDecoration(
+                hintText: "password",
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                        color: Color(0xFF1192DC), width: 5.0))),
           ),
         ),
         Padding(
@@ -43,18 +55,31 @@ class SignupForm extends StatelessWidget {
             textInputAction: TextInputAction.next,
             onSaved: (confirmedPassword) {},
             obscureText: true,
-            decoration: const InputDecoration(hintText: "confirm password"),
+            decoration: InputDecoration(
+                hintText: "confirm password",
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                        color: Color(0xFF1192DC), width: 5.0))),
           ),
         ),
-        TextButton(
-            onPressed: () => {},
+        ElevatedButton(
+            onPressed: () => {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const MainContainer();
+                    },
+                  ))
+                },
             child: const Text(
               "Create an Account",
+              style: TextStyle(fontSize: 24),
             )),
         TextButton(
             onPressed: () => {Navigator.pop(context)},
             child: const Text(
               "Already Have an Account?",
+              style: TextStyle(fontSize: 24),
             )),
       ],
     ));
