@@ -24,10 +24,10 @@ namespace WorkTogether.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Class>>> GetClasses()
         {
-          if (_context.Classes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Classes == null)
+            {
+                return NotFound();
+            }
             return await _context.Classes.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace WorkTogether.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Class>> GetClass(int id)
         {
-          if (_context.Classes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Classes == null)
+            {
+                return NotFound();
+            }
             var @class = await _context.Classes.FindAsync(id);
 
             if (@class == null)
@@ -47,6 +47,25 @@ namespace WorkTogether.Controllers
             }
 
             return @class;
+        }
+
+        //GET: api/Classes/getbystudentid/10
+        [HttpGet("getbystudentID/{id}")]
+        public async Task<ActionResult<IEnumerable<Class>>> GetClassesByStudentID(int id)
+        {
+            if (_context.StudentClasses == null)
+            {
+                return NotFound();
+            }
+            var @classes = await _context.StudentClasses.Where<StudentClass>(row => row.Student.Id == id).ToListAsync();
+
+            var classList = new List<Class>();
+            for (int x = 0; x < classes.Count; x++)
+            {
+                classList.Add(await _context.Classes.FindAsync(classes[x]));
+            }
+
+            return classList;
         }
 
         // PUT: api/Classes/5
