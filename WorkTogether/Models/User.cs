@@ -11,30 +11,31 @@ namespace WorkTogether.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
         public string Name { get; set; }
-
         public string Email { get; set; }
-
         public string Bio { get; set; }
-
-        public ICollection<StudentClass> StudentClasses { get; set; }
-
-        public ICollection<TAClass> TAClasses { get; set; }
-
-        public ICollection<Team> Teams { get; set; }
-
-        public ICollection<TaskItem> Tasks { get; set; }
-
+        public ICollection<StudentClass>? StudentClasses { get; set; }
+        public ICollection<TAClass>? TAClasses { get; set; }
+        public ICollection<Team>? Teams { get; set; }
+        public ICollection<TaskItem>? Tasks { get; set; }
         public string EmploymentStatus { get; set; }
-
         public string StudentStatus { get; set; }
-
         //Comma separated string detailing the user's interests
         public string Interests { get; set; }
-
-
-
-
     }
+
+    public class UserProfileDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Bio { get; set; }
+        public string EmploymentStatus { get; set; }
+        public string StudentStatus { get; set; }
+        public string Interests { get; set; }
+
+        
+    }
+
+    
 }
