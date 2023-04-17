@@ -19,7 +19,7 @@ namespace WorkTogether.Migrations
                 .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("TaskUser", b =>
+            modelBuilder.Entity("TaskItemUser", b =>
                 {
                     b.Property<int>("AssigneesId")
                         .HasColumnType("int");
@@ -31,7 +31,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TasksId");
 
-                    b.ToTable("TaskUser");
+                    b.ToTable("TaskItemUser", (string)null);
                 });
 
             modelBuilder.Entity("TeamUser", b =>
@@ -46,7 +46,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TeamsId");
 
-                    b.ToTable("TeamUser");
+                    b.ToTable("TeamUser", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Answer", b =>
@@ -71,7 +71,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Class", b =>
@@ -95,7 +95,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProfessorID");
 
-                    b.ToTable("Classes");
+                    b.ToTable("Classes", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
@@ -122,7 +122,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Milestones");
+                    b.ToTable("Milestones", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Project", b =>
@@ -155,7 +155,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Question", b =>
@@ -179,7 +179,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("QuestionnaireId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Questionnaire", b =>
@@ -196,7 +196,7 @@ namespace WorkTogether.Migrations
                     b.HasIndex("ProjectID")
                         .IsUnique();
 
-                    b.ToTable("Questionnaires");
+                    b.ToTable("Questionnaires", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.StudentClass", b =>
@@ -217,7 +217,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentClasses");
+                    b.ToTable("StudentClasses", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TAClass", b =>
@@ -238,10 +238,10 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TAClasses");
+                    b.ToTable("TAClasses", (string)null);
                 });
 
-            modelBuilder.Entity("WorkTogether.Models.Task", b =>
+            modelBuilder.Entity("WorkTogether.Models.TaskItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -272,7 +272,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Team", b =>
@@ -290,48 +290,7 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teams");
-                });
-
-            modelBuilder.Entity("WorkTogether.Models.TodoItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsComplete")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("ParentListID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentListID");
-
-                    b.ToTable("TodoItems");
-                });
-
-            modelBuilder.Entity("WorkTogether.Models.TodoList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("ListName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Owner")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TodoLists");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.User", b =>
@@ -366,10 +325,10 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("TaskUser", b =>
+            modelBuilder.Entity("TaskItemUser", b =>
                 {
                     b.HasOne("WorkTogether.Models.User", null)
                         .WithMany()
@@ -377,7 +336,7 @@ namespace WorkTogether.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WorkTogether.Models.Task", null)
+                    b.HasOne("WorkTogether.Models.TaskItem", null)
                         .WithMany()
                         .HasForeignKey("TasksId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -503,7 +462,7 @@ namespace WorkTogether.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("WorkTogether.Models.Task", b =>
+            modelBuilder.Entity("WorkTogether.Models.TaskItem", b =>
                 {
                     b.HasOne("WorkTogether.Models.Milestone", "ParentMilestone")
                         .WithMany()
@@ -511,7 +470,7 @@ namespace WorkTogether.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WorkTogether.Models.Task", "ParentTask")
+                    b.HasOne("WorkTogether.Models.TaskItem", "ParentTask")
                         .WithMany()
                         .HasForeignKey("ParentTaskId");
 
@@ -526,17 +485,6 @@ namespace WorkTogether.Migrations
                     b.Navigation("ParentTask");
 
                     b.Navigation("Team");
-                });
-
-            modelBuilder.Entity("WorkTogether.Models.TodoItem", b =>
-                {
-                    b.HasOne("WorkTogether.Models.TodoList", "ParentList")
-                        .WithMany("Items")
-                        .HasForeignKey("ParentListID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParentList");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Class", b =>
@@ -555,11 +503,6 @@ namespace WorkTogether.Migrations
             modelBuilder.Entity("WorkTogether.Models.Questionnaire", b =>
                 {
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("WorkTogether.Models.TodoList", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.User", b =>
