@@ -60,10 +60,10 @@ class _MainContainerState extends State<MainContainer> {
                   appBarTitle = "Home";
                   break;
                 case 1:
-                  appBarTitle = "Notifications";
+                  appBarTitle = "Chat";
                   break;
                 case 2:
-                  appBarTitle = "Chat";
+                  appBarTitle = "Notifications";
                   break;
                 case 3:
                   appBarTitle = "Profile";
