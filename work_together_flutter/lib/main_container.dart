@@ -33,6 +33,9 @@ class _MainContainerState extends State<MainContainer> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(appBarTitle),
+          backgroundColor: const Color(0xFFFFFFFF),
+          foregroundColor: const Color(0xFF000000),
+          elevation: 0,
           centerTitle: true,
         ),
         body: Stack(children: <Widget>[
