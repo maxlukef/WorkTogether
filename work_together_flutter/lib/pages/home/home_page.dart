@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -86,7 +87,13 @@ class _HomePageState extends State<HomePage> {
                 clipBehavior: Clip.hardEdge,
                 child: InkWell(
                   splashColor: Colors.blue.withAlpha(30),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (context) {
+                        return const QuestionnairePage();
+                      },
+                    ));
+                  },
                   child: SizedBox(
                     width: 330,
                     height: 65,
