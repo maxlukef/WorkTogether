@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 
 enum ExpectedQuality { top1, A, B, C }
 
@@ -17,6 +18,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CustomAppBar(title: "Questionnaire"),
       backgroundColor: const Color(0xFFFFFFFF),
       body: SingleChildScrollView(
         child: Column(
@@ -186,7 +188,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                       height: 50,
                       child: TextFormField(
                         style: const TextStyle(
-                            color: Color(0xFFD9D9D9),
+                            color: Color(0xFF000000),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             fontFamily: 'SourceSansPro'),
@@ -223,7 +225,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                       height: 50,
                       child: TextFormField(
                         style: const TextStyle(
-                            color: Color(0xFFD9D9D9),
+                            color: Color(0xFF000000),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             fontFamily: 'SourceSansPro'),
@@ -260,7 +262,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                       height: 50,
                       child: TextFormField(
                         style: const TextStyle(
-                            color: Color(0xFFD9D9D9),
+                            color: Color(0xFF000000),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             fontFamily: 'SourceSansPro'),

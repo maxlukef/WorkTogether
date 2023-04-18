@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
+import '../../global_components/custom_app_bar.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
@@ -14,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CustomAppBar(title: "Home"),
       backgroundColor: const Color(0xFFFFFFFF),
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         Column(
@@ -89,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                 child: InkWell(
                   splashColor: Colors.blue.withAlpha(30),
                   onTap: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(
+                    Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
                         return const QuestionnairePage();
                       },

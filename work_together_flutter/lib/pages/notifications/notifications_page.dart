@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../global_components/custom_app_bar.dart';
+
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({
     Key? key,
@@ -12,7 +14,8 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
+      appBar: CustomAppBar(title: "Notifications"),
       body: Text("THIS IS THE NOTIFICATIONS PAGE"),
     );
   }
