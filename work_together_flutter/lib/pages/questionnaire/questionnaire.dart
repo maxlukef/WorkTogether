@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:work_together_flutter/tab_navigations/components/pages.dart';
-import 'package:work_together_flutter/tab_navigations/tab_navigator.dart';
+
+enum ExpectedQuality { top1, A, B, C }
 
 class QuestionnairePage extends StatefulWidget {
   const QuestionnairePage({
@@ -13,6 +12,8 @@ class QuestionnairePage extends StatefulWidget {
 }
 
 class _QuestionnairePageState extends State<QuestionnairePage> {
+  ExpectedQuality? _quality = ExpectedQuality.top1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +63,108 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                             fontFamily: 'SourceSansPro'),
                       ),
                     ),
+                  ),
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Row(
+                              children: [
+                                Radio(
+                                  value: ExpectedQuality.top1,
+                                  groupValue: _quality,
+                                  onChanged: (ExpectedQuality? value) {
+                                    setState(() {
+                                      _quality = value;
+                                    });
+                                  },
+                                ),
+                                const Expanded(
+                                  child: Text(
+                                    'Top 1%',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'SourceSansPro'),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Row(
+                              children: [
+                                Radio(
+                                  value: ExpectedQuality.A,
+                                  groupValue: _quality,
+                                  onChanged: (ExpectedQuality? value) {
+                                    setState(() {
+                                      _quality = value;
+                                    });
+                                  },
+                                ),
+                                const Expanded(
+                                    child: Text(
+                                  'A',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'SourceSansPro'),
+                                ))
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Row(
+                              children: [
+                                Radio(
+                                  value: ExpectedQuality.B,
+                                  groupValue: _quality,
+                                  onChanged: (ExpectedQuality? value) {
+                                    setState(() {
+                                      _quality = value;
+                                    });
+                                  },
+                                ),
+                                const Expanded(
+                                    child: Text(
+                                  'B',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'SourceSansPro'),
+                                ))
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Row(
+                              children: [
+                                Radio(
+                                  value: ExpectedQuality.C,
+                                  groupValue: _quality,
+                                  onChanged: (ExpectedQuality? value) {
+                                    setState(() {
+                                      _quality = value;
+                                    });
+                                  },
+                                ),
+                                const Expanded(
+                                    child: Text(
+                                  'C',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'SourceSansPro'),
+                                ))
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   const Align(
                     alignment: Alignment.centerLeft,
