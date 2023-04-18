@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
+import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({
@@ -8,9 +9,9 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Scaffold(
-          body: Column(
+    return Scaffold(
+      body: SingleChildScrollView(
+          child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -120,7 +121,6 @@ class ProfilePage extends StatelessWidget {
                   )),
             ],
           ),
-          const Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -130,7 +130,13 @@ class ProfilePage extends StatelessWidget {
                   height: 45,
                   width: 45,
                   child: FloatingActionButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const EditProfilePage();
+                        },
+                      ));
+                    },
                     child: const Icon(
                       Icons.edit,
                     ),
