@@ -14,7 +14,6 @@ class MainContainer extends StatefulWidget {
 
 class _MainContainerState extends State<MainContainer> {
   PageEnum currentIndex = PageEnum.home;
-  String appBarTitle = "Home";
 
   // Used to create multiple navigation stacks for each tab in the nav bar.
   final navigatorKeys = {
@@ -31,13 +30,6 @@ class _MainContainerState extends State<MainContainer> {
         return !await navigatorKeys[currentIndex]!.currentState!.maybePop();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(appBarTitle),
-          backgroundColor: const Color(0xFFFFFFFF),
-          foregroundColor: const Color(0xFF000000),
-          elevation: 0,
-          centerTitle: true,
-        ),
         body: Stack(children: <Widget>[
           buildOffStageNavigator(PageEnum.home),
           buildOffStageNavigator(PageEnum.chat),
@@ -58,24 +50,6 @@ class _MainContainerState extends State<MainContainer> {
             // Swap to a different tab.
             else {
               currentIndex = PageEnum.values[index];
-              switch (index) {
-                case 0:
-                  appBarTitle = "Home";
-                  break;
-                case 1:
-                  appBarTitle = "Chat";
-                  break;
-                case 2:
-                  appBarTitle = "Notifications";
-                  break;
-                case 3:
-                  appBarTitle = "Profile";
-                  break;
-                default:
-                  appBarTitle = "Home";
-              }
-              // Commits the title change to the app bar.
-              setState(() {});
             }
           }),
           gap: 10,
