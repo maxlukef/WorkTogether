@@ -51,6 +51,7 @@ namespace WorkTogether.Models
                 johnClass.Student = newUser;
                 johnClass.Class = newClass;
 
+<<<<<<< WorkTogether/Models/WT_DBContext.cs
                 Users.Add(newUser);
                 Users.Add(newUser2);
                 StudentClasses.Add(johnClass);
@@ -62,6 +63,9 @@ namespace WorkTogether.Models
         }
         public DbSet<TodoItem> TodoItems { get; set; } = null!;
         public DbSet<TodoList> TodoLists { get; set; } = null!;
+=======
+
+>>>>>>> WorkTogether/Models/WT_DBContext.cs
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Class> Classes { get; set; } = null!;
