@@ -31,6 +31,25 @@ namespace WorkTogether.Controllers
             return await _context.Users.ToListAsync();
         }
 
+        //GET: api/Users/getbyclassid/10
+        [HttpGet("getbyclassID/{id}")]
+        public async Task<ActionResult<IEnumerable<User>>> GetStudentsByClassID(int id)
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var @students = await _context.StudentClasses.Include(row => row.Class).Include(row => row.Student).Where<StudentClass>(row => row.Class.Id == id).ToListAsync();
+
+            var studentList = new List<User>();
+            for (int x = 0; x < students.Count; x++)
+            {
+                studentList.Add(students[x].Student);
+            }
+
+            return studentList;
+        }
+
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
