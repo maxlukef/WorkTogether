@@ -19,8 +19,7 @@ namespace WorkTogether.Models
         {
         }
 
-        public DbSet<TodoItem> TodoItems { get; set; } = null!;
-        public DbSet<TodoList> TodoLists { get; set; } = null!;
+
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Class> Classes { get; set; } = null!;
