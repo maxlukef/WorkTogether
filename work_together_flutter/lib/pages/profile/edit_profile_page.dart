@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
-import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
-
 import '../../global_components/custom_app_bar.dart';
 
 class EditProfilePage extends StatelessWidget {
@@ -45,11 +43,24 @@ class EditProfilePage extends StatelessWidget {
                   style: TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                child: Text(
-                  "As an avid outdoor enthusiast and a software developer, I have found a perfect balance between my two passions. During my free time, I love to explore new trails and go camping.",
-                  style: TextStyle(fontSize: 14, fontFamily: 'SourceSansPro'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                child: TextFormField(
+                  style: const TextStyle(
+                      color: Color(0xFF000000),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.next,
+                  onSaved: (bio) {},
+                  decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xFFFAFAFA),
+                      hintText: "Type to Add a Bio",
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color(0xFFD9D9D9), width: 2.0))),
                 ),
               ),
               const Padding(
@@ -59,11 +70,24 @@ class EditProfilePage extends StatelessWidget {
                   style: TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                child: Text(
-                  "B.S. Computer Science",
-                  style: TextStyle(fontSize: 14, fontFamily: 'SourceSansPro'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                child: TextFormField(
+                  style: const TextStyle(
+                      color: Color(0xFF000000),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.next,
+                  onSaved: (bio) {},
+                  decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xFFFAFAFA),
+                      hintText: "Type to Add a Major",
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color(0xFFD9D9D9), width: 2.0))),
                 ),
               ),
               const Padding(
