@@ -11,14 +11,18 @@ namespace WorkTogether.Models
         public int Id { get; set; }
 
         public int ProfessorID { get; set; }
-        public User Professor { get; set; }
-
+        public User? Professor { get; set; }
         public string Name { get; set; }
+        public string? Description { get; set; }
+        public ICollection<StudentClass>? StudentClasses { get; set; }
+        public ICollection<TAClass>? TAClasses { get; set; }
+    }
 
-        public string Description { get; set; }
-
-        public ICollection<StudentClass> StudentClasses { get; set; }
-
-        public ICollection<TAClass> TAClasses { get; set; }
+    public class ClassDTO
+    {
+        public int Id { get; set; }
+        public int ProfessorID { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
     }
 }
