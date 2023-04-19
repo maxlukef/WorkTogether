@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
 
+import '../../global_components/custom_app_bar.dart';
+
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({
     Key? key,
@@ -10,6 +12,8 @@ class EditProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CustomAppBar(title: "Edit Profile"),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SingleChildScrollView(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
