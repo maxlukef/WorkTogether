@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/tab_navigations/components/pages.dart';
 import 'package:work_together_flutter/tab_navigations/tab_navigator.dart';
 
@@ -30,10 +31,6 @@ class _MainContainerState extends State<MainContainer> {
         return !await navigatorKeys[currentIndex]!.currentState!.maybePop();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('TODO: Complete Top App Bar'),
-          centerTitle: true,
-        ),
         body: Stack(children: <Widget>[
           buildOffStageNavigator(PageEnum.home),
           buildOffStageNavigator(PageEnum.chat),
