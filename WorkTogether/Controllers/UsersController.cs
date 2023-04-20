@@ -31,6 +31,38 @@ namespace WorkTogether.Controllers
             return await _context.Users.ToListAsync();
         }
 
+        //GET: api/Users/studentsbyclassid/10
+        /// <summary>
+        /// Gets a JSON array of all students in a class.
+        /// </summary>
+        /// <param name="id">The class ID</param>
+        /// <returns>A json array of UserProfileDTOs representing all students in the class</returns>
+        [HttpGet("studentsbyclassID/{id}")]
+        public async Task<ActionResult<IEnumerable<UserProfileDTO>>> GetStudentsByClassID(int id)
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var @students = await _context.StudentClasses.Include(row => row.Student).Where<StudentClass>(row => row.Class.Id == id).Select(p => p.Student).ToListAsync();
+            
+            var studentList = new List<UserProfileDTO>();
+            for (int x = 0; x < students.Count; x++)
+            {
+                UserProfileDTO user = new UserProfileDTO();
+                user.StudentStatus = students[x].StudentStatus;
+                user.Interests = students[x].Interests;
+                user.Email = students[x].Email;
+                user.EmploymentStatus = students[x].EmploymentStatus;
+                user.Bio = students[x].Bio;
+                user.Id = students[x].Id;
+                user.Name = students[x].Name; 
+                studentList.Add(user);
+            }
+
+            return studentList;
+        }
+
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
