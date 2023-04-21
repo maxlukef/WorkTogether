@@ -71,6 +71,7 @@ namespace WorkTogether.Models
                 newClass2.Professor = newUser2;
                 Classes.Add(newClass2);
 
+<<<<<<< WorkTogether/Models/WT_DBContext.cs
                 User newUser = new User();
                 newUser.Name = "John Coder";
                 newUser.Interests = "Hiking,Biking,Coding";
@@ -78,8 +79,11 @@ namespace WorkTogether.Models
                 newUser.Bio = "As an avid outdoor enthusiast and software developer, I have found a perfect balance between my two passions. In my free time, I love to explore new trails and go camping.";
                 newUser.Email = "u0000000@utah.edu";
                 newUser.EmploymentStatus = "Unemployed";
+=======
+>>>>>>> WorkTogether/Models/WT_DBContext.cs
                 Users.Add(newUser);
 
+<<<<<<< WorkTogether/Models/WT_DBContext.cs
                 StudentClass studentClass1 = new StudentClass();
                 studentClass1.Class = newClass;
                 studentClass1.Student = newUser;
@@ -93,6 +97,12 @@ namespace WorkTogether.Models
                 newUser3.Email = "u0000002@utah.edu";
                 newUser3.EmploymentStatus = "Unemployed";
                 Users.Add(newUser3);
+=======
+                this.SaveChanges();
+                
+            }
+        }
+>>>>>>> WorkTogether/Models/WT_DBContext.cs
 
                 StudentClass studentClass2 = new StudentClass();
                 studentClass2.Class = newClass;
