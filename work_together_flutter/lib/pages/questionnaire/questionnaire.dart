@@ -15,7 +15,7 @@ class QuestionnairePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ExpectedQuality? _quality = ExpectedQuality.top1;
-    var _controller = TextEditingController();
+    var formController = TextEditingController();
     List<String> tagList = ref.watch(tagListNotifierProvider);
 
     return Scaffold(
@@ -41,7 +41,11 @@ class QuestionnairePage extends ConsumerWidget {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => {},
+                    onPressed: () => {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) => const QuestionnairePopup())
+                    },
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(330, 50),
                         backgroundColor: const Color(0xFF7AC8F5)),
@@ -188,7 +192,7 @@ class QuestionnairePage extends ConsumerWidget {
                       width: 330,
                       height: 50,
                       child: TextFormField(
-                        controller: _controller,
+                        controller: formController,
                         style: const TextStyle(
                             color: Color(0xFF000000),
                             fontSize: 14,
@@ -198,7 +202,7 @@ class QuestionnairePage extends ConsumerWidget {
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (e) {
                           ref.read(tagListNotifierProvider.notifier).addTag(e);
-                          _controller.clear();
+                          formController.clear();
                         },
                         decoration: const InputDecoration(
                             filled: true,
@@ -302,19 +306,22 @@ class QuestionnairePage extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () => {},
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(330, 50),
-                          backgroundColor: const Color(0xFF7AC8F5)),
-                      child: const Text(
-                        "Submit",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'SourceSansPro',
-                          fontWeight: FontWeight.w400,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                      child: ElevatedButton(
+                        onPressed: () => {},
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(150, 50),
+                            backgroundColor: const Color(0xFF7AC8F5)),
+                        child: const Text(
+                          "Submit",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontFamily: 'SourceSansPro',
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
@@ -325,6 +332,134 @@ class QuestionnairePage extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class QuestionnairePopup extends StatelessWidget {
+  const QuestionnairePopup({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0.0, 0.0),
+              child: GestureDetector(
+                child: const Icon(Icons.arrow_back),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(130.0, 16.0, 32.0, 4.0),
+              child: Text(
+                "Add Time",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'SourceSansPro'),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: const [
+            Padding(
+              padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+              child: Text(
+                "Time of Day",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'SourceSansPro'),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: const [
+            Padding(
+              padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+              child: Text(
+                "Days of the Week",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'SourceSansPro'),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: const [
+            Padding(
+              padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+              child: Text(
+                "Additional Notes",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'SourceSansPro'),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(40.0, 2.0, 32.0, 4.0),
+              child: SizedBox(
+                width: 330,
+                height: 50,
+                child: TextFormField(
+                  style: const TextStyle(
+                      color: Color(0xFF000000),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  onSaved: (email) {},
+                  decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xFFFAFAFA),
+                      hintText: "Type to Add Number of Hours",
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color(0xFFD9D9D9), width: 2.0))),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+              child: ElevatedButton(
+                onPressed: () => {},
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(150, 50),
+                    backgroundColor: const Color(0xFF7AC8F5)),
+                child: const Text(
+                  "Confirm",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontFamily: 'SourceSansPro',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 }
