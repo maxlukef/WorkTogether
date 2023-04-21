@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
+
+import '../../global_components/tag.dart';
+import '../../models/tag_list.dart';
 
 enum ExpectedQuality { top1, A, B, C }
 
-class QuestionnairePage extends StatefulWidget {
+class QuestionnairePage extends ConsumerWidget {
   const QuestionnairePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<QuestionnairePage> createState() => _QuestionnairePageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    ExpectedQuality? _quality = ExpectedQuality.top1;
+    var _controller = TextEditingController();
+    List<String> tagList = ref.watch(tagListNotifierProvider);
 
-class _QuestionnairePageState extends State<QuestionnairePage> {
-  ExpectedQuality? _quality = ExpectedQuality.top1;
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(title: "Questionnaire"),
       backgroundColor: const Color(0xFFFFFFFF),
@@ -79,9 +80,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                                   value: ExpectedQuality.top1,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
+                                    // setState(() {
+                                    //   _quality = value;
+                                    // });
                                   },
                                 ),
                                 const Expanded(
@@ -103,9 +104,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                                   value: ExpectedQuality.A,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
+                                    // setState(() {
+                                    //   _quality = value;
+                                    // });
                                   },
                                 ),
                                 const Expanded(
@@ -126,9 +127,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                                   value: ExpectedQuality.B,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
+                                    // setState(() {
+                                    //   _quality = value;
+                                    // });
                                   },
                                 ),
                                 const Expanded(
@@ -149,9 +150,9 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                                   value: ExpectedQuality.C,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
+                                    // setState(() {
+                                    //   _quality = value;
+                                    // });
                                   },
                                 ),
                                 const Expanded(
@@ -187,6 +188,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                       width: 330,
                       height: 50,
                       child: TextFormField(
+                        controller: _controller,
                         style: const TextStyle(
                             color: Color(0xFF000000),
                             fontSize: 14,
@@ -194,7 +196,10 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                             fontFamily: 'SourceSansPro'),
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        onSaved: (email) {},
+                        onFieldSubmitted: (e) {
+                          ref.read(tagListNotifierProvider.notifier).addTag(e);
+                          _controller.clear();
+                        },
                         decoration: const InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFFAFAFA),
@@ -203,6 +208,23 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
                                 borderSide: BorderSide(
                                     color: Color(0xFFD9D9D9), width: 2.0))),
                       ),
+                    ),
+                  ),
+                  ...tagList.map(
+                    (e) => Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Tag(text: e.toString()),
+                        GestureDetector(
+                          child: const Icon(Icons.remove_circle),
+                          onTap: () {
+                            int index = tagList.indexOf(e);
+                            ref
+                                .read(tagListNotifierProvider.notifier)
+                                .removeTag(index);
+                          },
+                        )
+                      ],
                     ),
                   ),
                   const Align(
