@@ -7,14 +7,20 @@ import '../../models/tag_list.dart';
 
 enum ExpectedQuality { top1, A, B, C }
 
-class QuestionnairePage extends ConsumerWidget {
+class QuestionnairePage extends ConsumerStatefulWidget {
   const QuestionnairePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ExpectedQuality? _quality = ExpectedQuality.top1;
+  ConsumerState<QuestionnairePage> createState() => _QuestionnairePageState();
+}
+
+class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
+  ExpectedQuality? _quality = ExpectedQuality.top1;
+
+  @override
+  Widget build(BuildContext context) {
     var formController = TextEditingController();
     List<String> tagList = ref.watch(tagListNotifierProvider);
 
@@ -84,9 +90,9 @@ class QuestionnairePage extends ConsumerWidget {
                                   value: ExpectedQuality.top1,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
-                                    // setState(() {
-                                    //   _quality = value;
-                                    // });
+                                    setState(() {
+                                      _quality = value;
+                                    });
                                   },
                                 ),
                                 const Expanded(
@@ -108,9 +114,9 @@ class QuestionnairePage extends ConsumerWidget {
                                   value: ExpectedQuality.A,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
-                                    // setState(() {
-                                    //   _quality = value;
-                                    // });
+                                    setState(() {
+                                      _quality = value;
+                                    });
                                   },
                                 ),
                                 const Expanded(
@@ -131,9 +137,9 @@ class QuestionnairePage extends ConsumerWidget {
                                   value: ExpectedQuality.B,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
-                                    // setState(() {
-                                    //   _quality = value;
-                                    // });
+                                    setState(() {
+                                      _quality = value;
+                                    });
                                   },
                                 ),
                                 const Expanded(
@@ -154,9 +160,9 @@ class QuestionnairePage extends ConsumerWidget {
                                   value: ExpectedQuality.C,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
-                                    // setState(() {
-                                    //   _quality = value;
-                                    // });
+                                    setState(() {
+                                      _quality = value;
+                                    });
                                   },
                                 ),
                                 const Expanded(
