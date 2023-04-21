@@ -22,24 +22,31 @@ namespace WorkTogether.Controllers
 
         // GET: api/Classes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Class>>> GetClasses()
+        public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClasses()
         {
             if (_context.Classes == null)
             {
                 return NotFound();
             }
-            return await _context.Classes.ToListAsync();
+            var classList = await _context.Classes.ToListAsync();
+            var classDTOList = new List<ClassDTO>();
+            foreach (Class c in classList) 
+            {
+                classDTOList.Add(ClassToDTO(c));
+            }
+
+            return Ok(classDTOList);
         }
 
         // GET: api/Classes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Class>> GetClass(int id)
+        public async Task<ActionResult<ClassDTO>> GetClass(int id)
         {
             if (_context.Classes == null)
             {
                 return NotFound();
             }
-            var @class = await _context.Classes.FindAsync(id);
+            var @class = ClassToDTO(await _context.Classes.FindAsync(id));
 
             if (@class == null)
             {
@@ -51,7 +58,7 @@ namespace WorkTogether.Controllers
 
         //GET: api/Classes/getbystudentid/10
         [HttpGet("getbystudentID/{id}")]
-        public async Task<ActionResult<IEnumerable<Class>>> GetClassesByStudentID(int id)
+        public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClassesByStudentID(int id)
         {
             if (_context.StudentClasses == null)
             {
@@ -59,10 +66,10 @@ namespace WorkTogether.Controllers
             }
             var @classes = await _context.StudentClasses.Where<StudentClass>(row => row.Student.Id == id).ToListAsync();
 
-            var classList = new List<Class>();
+            var classList = new List<ClassDTO>();
             for (int x = 0; x < classes.Count; x++)
             {
-                classList.Add(await _context.Classes.FindAsync(classes[x]));
+                classList.Add(ClassToDTO(await _context.Classes.FindAsync(classes[x])));
             }
 
             return classList;
@@ -102,12 +109,21 @@ namespace WorkTogether.Controllers
         // POST: api/Classes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Class>> PostClass(Class @class)
+        public async Task<ActionResult<Class>> PostClass(ClassDTO classDTO)
         {
-          if (_context.Classes == null)
-          {
-              return Problem("Entity set 'WT_DBContext.Classes'  is null.");
-          }
+            if (_context.Classes == null)
+            {
+                return Problem("Entity set 'WT_DBContext.Classes'  is null.");
+            }
+            
+            Class @class = new Class
+            {
+                Id = classDTO.Id,
+                Name = classDTO.Name,
+                ProfessorID = classDTO.ProfessorID,
+                Description = classDTO.Description
+            };
+
             _context.Classes.Add(@class);
             await _context.SaveChangesAsync();
 
@@ -138,5 +154,17 @@ namespace WorkTogether.Controllers
         {
             return (_context.Classes?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+
+        private static ClassDTO ClassToDTO(Class curClass) =>
+            new ClassDTO
+            { 
+                Id = curClass.Id,
+                Name = curClass.Name,
+                ProfessorID = curClass.ProfessorID,
+                Description = curClass.Description
+            };
+
+
     }
 }
