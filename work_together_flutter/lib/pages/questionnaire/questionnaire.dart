@@ -343,123 +343,202 @@ class QuestionnairePopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0.0, 0.0),
-              child: GestureDetector(
-                child: const Icon(Icons.arrow_back),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(130.0, 16.0, 32.0, 4.0),
-              child: Text(
-                "Add Time",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'SourceSansPro'),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: const [
-            Padding(
-              padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-              child: Text(
-                "Time of Day",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'SourceSansPro'),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: const [
-            Padding(
-              padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-              child: Text(
-                "Days of the Week",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'SourceSansPro'),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: const [
-            Padding(
-              padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-              child: Text(
-                "Additional Notes",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'SourceSansPro'),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(40.0, 2.0, 32.0, 4.0),
-              child: SizedBox(
-                width: 330,
-                height: 50,
-                child: TextFormField(
-                  style: const TextStyle(
-                      color: Color(0xFF000000),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'SourceSansPro'),
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  onSaved: (email) {},
-                  decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xFFFAFAFA),
-                      hintText: "Type to Add Number of Hours",
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color(0xFFD9D9D9), width: 2.0))),
+    ExpectedQuality? timeOfDay = ExpectedQuality.top1;
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0.0, 0.0),
+                child: GestureDetector(
+                  child: const Icon(Icons.arrow_back),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-              child: ElevatedButton(
-                onPressed: () => {},
-                style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(150, 50),
-                    backgroundColor: const Color(0xFF7AC8F5)),
-                child: const Text(
-                  "Confirm",
+              const Padding(
+                padding: EdgeInsets.fromLTRB(130.0, 16.0, 32.0, 4.0),
+                child: Text(
+                  "Add Time",
                   style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'SourceSansPro',
-                    fontWeight: FontWeight.w400,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: const [
+              Padding(
+                padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                child: Text(
+                  "Time of Day",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Radio(
+                      value: ExpectedQuality.top1,
+                      groupValue: timeOfDay,
+                      onChanged: (ExpectedQuality? value) {
+                        // setState(() {
+                        //   _quality = value;
+                        // });
+                      },
+                    ),
+                    const Expanded(
+                      child: Text(
+                        'Morning',
+                        style: TextStyle(
+                            fontSize: 14, fontFamily: 'SourceSansPro'),
+                      ),
+                    ),
+                    const Icon(Icons.alarm),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Radio(
+                      value: ExpectedQuality.A,
+                      groupValue: timeOfDay,
+                      onChanged: (ExpectedQuality? value) {
+                        // setState(() {
+                        //   _quality = value;
+                        // });
+                      },
+                    ),
+                    const Expanded(
+                        child: Text(
+                      'Afternoon',
+                      style:
+                          TextStyle(fontSize: 14, fontFamily: 'SourceSansPro'),
+                    )),
+                    const Icon(Icons.sunny),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Radio(
+                      value: ExpectedQuality.B,
+                      groupValue: timeOfDay,
+                      onChanged: (ExpectedQuality? value) {
+                        // setState(() {
+                        //   _quality = value;
+                        // });
+                      },
+                    ),
+                    const Expanded(
+                        child: Text(
+                      'Evening',
+                      style:
+                          TextStyle(fontSize: 14, fontFamily: 'SourceSansPro'),
+                    )),
+                    const Icon(Icons.mode_night),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: const [
+              Padding(
+                padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                child: Text(
+                  "Days of the Week",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: const [
+              Padding(
+                padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                child: Text(
+                  "Additional Notes",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(40.0, 2.0, 32.0, 4.0),
+                child: SizedBox(
+                  width: 330,
+                  height: 50,
+                  child: TextFormField(
+                    style: const TextStyle(
+                        color: Color(0xFF000000),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'SourceSansPro'),
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    onSaved: (email) {},
+                    decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Color(0xFFFAFAFA),
+                        hintText: "Type to Add Number of Hours",
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color(0xFFD9D9D9), width: 2.0))),
                   ),
                 ),
               ),
-            ),
-          ],
-        )
-      ],
+            ],
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                child: ElevatedButton(
+                  onPressed: () => {},
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(150, 50),
+                      backgroundColor: const Color(0xFF7AC8F5)),
+                  child: const Text(
+                    "Confirm",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
