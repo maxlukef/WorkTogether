@@ -34,27 +34,28 @@ class StudentCard extends StatelessWidget {
     return Card(
         elevation: 10,
         color: const Color(0xFFf2f2f2),
-        margin: const EdgeInsets.all(0),
         //margin: const EdgeInsets.all(10),
-        child: Align(
-            child: GridView.count(crossAxisCount: 1, padding: EdgeInsets.only(left: 20), children: [
-              Row(
-                  children: [
-                    Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: profilePic!.image
-                            )
-                        )
-                    ),
-                    Text(fullName)
+         child: Padding(
+           padding: EdgeInsets.all(10),
+           child:Column(children: [
+             Row(
+                 children: [
+                   Container(
+                       height: 40,
+                       width: 40,
+                       decoration: BoxDecoration(
+                           shape: BoxShape.circle,
+                           image: DecorationImage(
+                               image: profilePic!.image
+                           )
+                       )
+                   ),
+                   Text(fullName)
 
-                  ])
-            ]
-            ))
+                 ])
+           ]
+           )
+         ),
         );
   }
 }
