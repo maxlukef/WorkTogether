@@ -2,14 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
+import 'package:requests/requests.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  late Future<String> _data;
+
+  @override
+  void initState() {
+    _data = getData();
+    super.initState();
+  }
+
+  Future<String> getData() async {
+    var request = await Requests.get("/api/Users");
+    return request.content();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return FutureBuilder(builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return const Text("An error has occurred while loading page.");
+      } else if (snapshot.hasData) {}
+      return buildPage(context);
+    });
+  }
+
+  Widget buildPage(BuildContext context) {
     return Scaffold(
         appBar: const CustomAppBar(title: "Profile"),
         backgroundColor: const Color(0xFFFFFFFF),
