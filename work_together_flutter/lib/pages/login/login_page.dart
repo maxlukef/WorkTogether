@@ -10,28 +10,29 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            height: 200,
-            width: 200,
-            child: SvgPicture.asset("assets/images/logo.svg"),
-          ),
-        ),
-        Row(
-          children: const [
-            Spacer(),
-            Expanded(
-              flex: 8,
-              child: LoginForm(),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 250,
+                width: 250,
+                child: SvgPicture.asset("assets/images/logo.svg"),
+              ),
             ),
-            Spacer(),
+            Row(
+              children: const [
+                Spacer(),
+                Expanded(
+                  flex: 8,
+                  child: LoginForm(),
+                ),
+                Spacer(),
+              ],
+            ),
           ],
-        ),
-      ],
-    ));
+        ));
   }
 }
