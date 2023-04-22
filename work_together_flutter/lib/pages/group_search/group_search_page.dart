@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:work_together_flutter/pages/group_search/components/student_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/widgets.dart';
+import 'package:requests/requests.dart';
 
 class GroupSearchPage extends StatelessWidget {
   const GroupSearchPage({
