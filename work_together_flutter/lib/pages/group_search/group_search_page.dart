@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/pages/group_search/components/student_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/widgets.dart';
-import 'package:requests/requests.dart';
+import 'package:http/http.dart';
 
 class GroupSearchPage extends StatelessWidget {
   const GroupSearchPage({
@@ -11,6 +13,8 @@ class GroupSearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HttpService httpService = HttpService();
+
     Image profilePic = Image.asset('images/sample_profile.jpg');
     String studentName = "Alex Childs";
     String major = "Computer Science";
@@ -22,32 +26,42 @@ class GroupSearchPage extends StatelessWidget {
     int weeklyHours = 10;
     List<String> interests = ['Climbing', 'Reading', 'Racquetball'];
 
-    return SingleChildScrollView(
-      child: MasonryGridView.count(
-        crossAxisCount: 2,
-        mainAxisSpacing: 15,
-        crossAxisSpacing: 10,
-        itemCount: 10,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          // return Tile(
-          //   index: index,
-          //   extent: (index % 5 + 1) * 100
-          // );
-          return StudentCard(
-            profilePic: profilePic,
-            fullName: studentName,
-            major: major,
-            availableMornings: availableMornings,
-            availableAfternoons: availableAfternoons,
-            availableEvenings: availableEvenings,
-            skills: skills,
-            expectedGrade: expectedGrade,
-            weeklyHours: weeklyHours,
-            interests: interests,
-          );
-        }),
-      );
+    return FutureBuilder(
+      future: httpService.getUsers(),
+      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+        if (snapshot.hasData) {
+          List<User>? users = snapshot.data;
+          print(users);
+        }
+
+        return SingleChildScrollView(
+          child: MasonryGridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 15,
+              crossAxisSpacing: 10,
+              itemCount: 10,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                // return Tile(
+                //   index: index,
+                //   extent: (index % 5 + 1) * 100
+                // );
+                return StudentCard(
+                  profilePic: profilePic,
+                  fullName: studentName,
+                  major: major,
+                  availableMornings: availableMornings,
+                  availableAfternoons: availableAfternoons,
+                  availableEvenings: availableEvenings,
+                  skills: skills,
+                  expectedGrade: expectedGrade,
+                  weeklyHours: weeklyHours,
+                  interests: interests,
+                );
+              }),
+        );
+      }
+    );
   }
 }
 
@@ -93,6 +107,73 @@ class Tile extends StatelessWidget {
           color: Colors.green,
         )
       ],
+    );
+  }
+}
+
+class HttpService {
+  Future<List<User>> getUsers() async {
+    print("getting users");
+    Uri uri = Uri.https('localhost:7277', 'api/Users/studentsbyclassID/1');
+    print(uri);
+
+    try {
+      Response res = await get(uri);
+    } catch (e) {
+      print(e.toString());
+    }
+
+    print(await get(uri));
+    var res = await get(uri);
+
+
+    print("status code");
+    print(res.statusCode);
+
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+
+      List<User> users = body
+      .map(
+          (dynamic item) => User.fromJson(item),
+      )
+      .toList();
+
+      return users;
+    } else {
+      throw "Unable to retrieve posts.";
+    }
+  }
+}
+
+class User {
+  final int id;
+  final String name;
+  final String email;
+  final String bio;
+  final String employmentStatus;
+  final String studentStatus;
+  final String interests;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.bio,
+    required this.employmentStatus,
+    required this.studentStatus,
+    required this.interests,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json["id"] as int,
+      name: json["name"] as String,
+      email: json["email"] as String,
+      bio: json["bio"] as String,
+      employmentStatus: json["employmentStatus"] as String,
+      studentStatus: json["studentStatus"],
+      interests: json["interests"] as String,
     );
   }
 }
