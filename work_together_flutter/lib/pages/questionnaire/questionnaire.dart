@@ -220,23 +220,25 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       ),
                     ),
                   ),
-                  ...tagList.map(
-                    (e) => Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Tag(text: e.toString()),
-                        GestureDetector(
-                          child: const Icon(Icons.remove_circle),
-                          onTap: () {
-                            int index = tagList.indexOf(e);
-                            ref
-                                .read(tagListNotifierProvider.notifier)
-                                .removeTag(index);
-                          },
-                        )
-                      ],
+                  Wrap(runSpacing: 12, children: [
+                    ...tagList.map(
+                      (e) => Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Tag(text: e.toString()),
+                          GestureDetector(
+                            child: const Icon(Icons.remove_circle_outline),
+                            onTap: () {
+                              int index = tagList.indexOf(e);
+                              ref
+                                  .read(tagListNotifierProvider.notifier)
+                                  .removeTag(index);
+                            },
+                          )
+                        ],
+                      ),
                     ),
-                  ),
+                  ]),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
@@ -478,6 +480,110 @@ class QuestionnairePopup extends StatelessWidget {
                       fontFamily: 'SourceSansPro'),
                 ),
               ),
+            ],
+          ),
+          Wrap(
+            spacing: 0,
+            runSpacing: 20,
+            children: [
+              RawMaterialButton(
+                onPressed: () {},
+                elevation: 2.0,
+                fillColor: const Color(0xFFFAFAFA),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8.0),
+                child: const Text(
+                  "M",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              RawMaterialButton(
+                onPressed: () {},
+                elevation: 2.0,
+                fillColor: const Color(0xFFFAFAFA),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8.0),
+                child: const Text(
+                  "Tu",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              RawMaterialButton(
+                onPressed: () {},
+                elevation: 2.0,
+                fillColor: const Color(0xFFFAFAFA),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8.0),
+                child: const Text(
+                  "W",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              RawMaterialButton(
+                onPressed: () {},
+                elevation: 2.0,
+                fillColor: const Color(0xFFFAFAFA),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8.0),
+                child: const Text(
+                  "Th",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              RawMaterialButton(
+                onPressed: () {},
+                elevation: 2.0,
+                fillColor: const Color(0xFFFAFAFA),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8.0),
+                child: const Text(
+                  "F",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              RawMaterialButton(
+                onPressed: () {},
+                elevation: 2.0,
+                fillColor: const Color(0xFFFAFAFA),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8.0),
+                child: const Text(
+                  "Sa",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              RawMaterialButton(
+                onPressed: () {},
+                elevation: 2.0,
+                fillColor: const Color(0xFFFAFAFA),
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(8.0),
+                child: const Text(
+                  "Su",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w600),
+                ),
+              )
             ],
           ),
           Row(
