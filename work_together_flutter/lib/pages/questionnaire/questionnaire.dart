@@ -7,6 +7,8 @@ import '../../models/tag_list.dart';
 
 enum ExpectedQuality { top1, A, B, C }
 
+enum TimeOfDay { morning, afternoon, evening }
+
 class QuestionnairePage extends ConsumerStatefulWidget {
   const QuestionnairePage({
     Key? key,
@@ -344,10 +346,17 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
   }
 }
 
-class QuestionnairePopup extends StatelessWidget {
+class QuestionnairePopup extends ConsumerStatefulWidget {
   const QuestionnairePopup({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  ConsumerState<QuestionnairePopup> createState() => _QuestionnairePopupState();
+}
+
+class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
+  TimeOfDay? _timeOfDay = TimeOfDay.morning;
 
   @override
   Widget build(BuildContext context) {
@@ -401,12 +410,12 @@ class QuestionnairePopup extends StatelessWidget {
                 child: Row(
                   children: [
                     Radio(
-                      value: ExpectedQuality.top1,
-                      groupValue: timeOfDay,
-                      onChanged: (ExpectedQuality? value) {
-                        // setState(() {
-                        //   _quality = value;
-                        // });
+                      value: TimeOfDay.morning,
+                      groupValue: _timeOfDay,
+                      onChanged: (TimeOfDay? value) {
+                        setState(() {
+                          _timeOfDay = value;
+                        });
                       },
                     ),
                     const Expanded(
@@ -425,12 +434,12 @@ class QuestionnairePopup extends StatelessWidget {
                 child: Row(
                   children: [
                     Radio(
-                      value: ExpectedQuality.A,
-                      groupValue: timeOfDay,
-                      onChanged: (ExpectedQuality? value) {
-                        // setState(() {
-                        //   _quality = value;
-                        // });
+                      value: TimeOfDay.afternoon,
+                      groupValue: _timeOfDay,
+                      onChanged: (TimeOfDay? value) {
+                        setState(() {
+                          _timeOfDay = value;
+                        });
                       },
                     ),
                     const Expanded(
@@ -448,12 +457,12 @@ class QuestionnairePopup extends StatelessWidget {
                 child: Row(
                   children: [
                     Radio(
-                      value: ExpectedQuality.B,
-                      groupValue: timeOfDay,
-                      onChanged: (ExpectedQuality? value) {
-                        // setState(() {
-                        //   _quality = value;
-                        // });
+                      value: TimeOfDay.evening,
+                      groupValue: _timeOfDay,
+                      onChanged: (TimeOfDay? value) {
+                        setState(() {
+                          _timeOfDay = value;
+                        });
                       },
                     ),
                     const Expanded(
