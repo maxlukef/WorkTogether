@@ -1,43 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
-import 'package:requests/requests.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatelessWidget {
   const ProfilePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  late Future<String> _data;
-
-  @override
-  void initState() {
-    _data = getData();
-    super.initState();
-  }
-
-  Future<String> getData() async {
-    var request = await Requests.get("/api/Users");
-    return request.content();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(builder: (context, snapshot) {
-      if (snapshot.hasError) {
-        return const Text("An error has occurred while loading page.");
-      } else if (snapshot.hasData) {
-        String snapData = snapshot.data!;
-        return Text(snapData);
-      }
-      return const CircularProgressIndicator();
-    });
+    final HttpService httpService = HttpService();
+
+    return FutureBuilder(
+        future: httpService.getUsers(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text("An error has occurred while loading page.");
+          } else if (snapshot.hasData) {
+            return buildPage(context);
+          }
+          return const CircularProgressIndicator();
+        });
   }
 
   Widget buildPage(BuildContext context) {
@@ -185,5 +172,71 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ));
+  }
+}
+
+class HttpService {
+  Future<List<User>> getUsers() async {
+    print("getting users");
+    Uri uri = Uri.https('localhost:3306', 'api/Users/studentsbyclassID/1');
+    print(uri);
+
+    try {
+      Response res = await get(uri);
+    } catch (e) {
+      print(e.toString());
+    }
+
+    print(await get(uri));
+    var res = await get(uri);
+
+    print("status code");
+    print(res.statusCode);
+
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+
+      List<User> users = body
+          .map(
+            (dynamic item) => User.fromJson(item),
+          )
+          .toList();
+
+      return users;
+    } else {
+      throw "Unable to retrieve posts.";
+    }
+  }
+}
+
+class User {
+  final int id;
+  final String name;
+  final String email;
+  final String bio;
+  final String employmentStatus;
+  final String studentStatus;
+  final String interests;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.bio,
+    required this.employmentStatus,
+    required this.studentStatus,
+    required this.interests,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json["id"] as int,
+      name: json["name"] as String,
+      email: json["email"] as String,
+      bio: json["bio"] as String,
+      employmentStatus: json["employmentStatus"] as String,
+      studentStatus: json["studentStatus"],
+      interests: json["interests"] as String,
+    );
   }
 }
