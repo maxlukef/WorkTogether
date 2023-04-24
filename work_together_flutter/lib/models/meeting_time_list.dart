@@ -3,7 +3,7 @@ import 'package:riverpod/riverpod.dart';
 class MeetingTime {
   String timeOfDay;
   List<String> daysOfWeek;
-  String note;
+  String? note;
 
   MeetingTime(this.timeOfDay, this.daysOfWeek, this.note);
 

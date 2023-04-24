@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
+import 'package:work_together_flutter/models/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
 import '../../models/tag_list.dart';
 
 enum ExpectedQuality { top1, A, B, C }
-
-enum TimeOfDay { morning, afternoon, evening }
 
 class QuestionnairePage extends ConsumerStatefulWidget {
   const QuestionnairePage({
@@ -24,7 +23,10 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
   @override
   Widget build(BuildContext context) {
     var formController = TextEditingController();
+
     List<String> tagList = ref.watch(tagListNotifierProvider);
+    List<MeetingTime> meetingTimeList =
+        ref.watch(meetingTimeListNotifierProvider);
 
     return Scaffold(
       appBar: const CustomAppBar(title: "Questionnaire"),
@@ -47,6 +49,80 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                             fontFamily: 'SourceSansPro'),
                       ),
                     ),
+                  ),
+                  ...meetingTimeList.map(
+                    (meetingTime) {
+                      IconData? selectedTime;
+
+                      switch (meetingTime.timeOfDay) {
+                        case "Morning":
+                          selectedTime = Icons.alarm;
+                          break;
+                        case "Afternoon":
+                          selectedTime = Icons.sunny;
+                          break;
+                        case "Evening":
+                          selectedTime = Icons.mode_night;
+                          break;
+                      }
+
+                      return Container(
+                        margin: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: const Color(0xFF7AC8F5))),
+                        child: SizedBox(
+                          width: 330,
+                          height: 50,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Icon(selectedTime),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(meetingTime.timeOfDay),
+                              ),
+                              const Spacer(),
+                              Row(
+                                children: meetingTime.daysOfWeek
+                                    .map((day) => Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 5,
+                                                      horizontal: 5),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(18),
+                                                  border: Border.all(
+                                                      color: Colors.green,
+                                                      width: 2)),
+                                              child: Text(
+                                                day,
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  fontFamily: 'SourceSansPro',
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              )),
+                                        ))
+                                    .toList(),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  child: const Icon(Icons.edit),
+                                  onTap: () {},
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   ElevatedButton(
                     onPressed: () => {
@@ -356,11 +432,16 @@ class QuestionnairePopup extends ConsumerStatefulWidget {
 }
 
 class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
-  TimeOfDay? _timeOfDay = TimeOfDay.morning;
+  final List<String> daysOfWeek = ['M', 'TU', 'W', 'TH', 'F', 'SA', 'SU'];
+
+  String? _timeOfDay = "Morning";
+  List<String>? _selectedDaysOfWeek = [];
+  String? note;
 
   @override
   Widget build(BuildContext context) {
-    ExpectedQuality? timeOfDay = ExpectedQuality.top1;
+    List<MeetingTime> meetingTimeList =
+        ref.watch(meetingTimeListNotifierProvider);
 
     return SingleChildScrollView(
       child: Column(
@@ -410,9 +491,9 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                 child: Row(
                   children: [
                     Radio(
-                      value: TimeOfDay.morning,
+                      value: "Morning",
                       groupValue: _timeOfDay,
-                      onChanged: (TimeOfDay? value) {
+                      onChanged: (String? value) {
                         setState(() {
                           _timeOfDay = value;
                         });
@@ -434,9 +515,9 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                 child: Row(
                   children: [
                     Radio(
-                      value: TimeOfDay.afternoon,
+                      value: "Afternoon",
                       groupValue: _timeOfDay,
-                      onChanged: (TimeOfDay? value) {
+                      onChanged: (String? value) {
                         setState(() {
                           _timeOfDay = value;
                         });
@@ -457,9 +538,9 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                 child: Row(
                   children: [
                     Radio(
-                      value: TimeOfDay.evening,
+                      value: "Evening",
                       groupValue: _timeOfDay,
-                      onChanged: (TimeOfDay? value) {
+                      onChanged: (String? value) {
                         setState(() {
                           _timeOfDay = value;
                         });
@@ -492,108 +573,50 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
             ],
           ),
           Wrap(
-            spacing: 0,
-            runSpacing: 20,
-            children: [
-              RawMaterialButton(
-                onPressed: () {},
-                elevation: 2.0,
-                fillColor: const Color(0xFFFAFAFA),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  "M",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              RawMaterialButton(
-                onPressed: () {},
-                elevation: 2.0,
-                fillColor: const Color(0xFFFAFAFA),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  "Tu",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              RawMaterialButton(
-                onPressed: () {},
-                elevation: 2.0,
-                fillColor: const Color(0xFFFAFAFA),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  "W",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              RawMaterialButton(
-                onPressed: () {},
-                elevation: 2.0,
-                fillColor: const Color(0xFFFAFAFA),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  "Th",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              RawMaterialButton(
-                onPressed: () {},
-                elevation: 2.0,
-                fillColor: const Color(0xFFFAFAFA),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  "F",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              RawMaterialButton(
-                onPressed: () {},
-                elevation: 2.0,
-                fillColor: const Color(0xFFFAFAFA),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  "Sa",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              RawMaterialButton(
-                onPressed: () {},
-                elevation: 2.0,
-                fillColor: const Color(0xFFFAFAFA),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  "Su",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w600),
-                ),
-              )
-            ],
+            children: daysOfWeek.map(
+              (day) {
+                bool isSelected = false;
+                if (_selectedDaysOfWeek!.contains(day)) {
+                  isSelected = true;
+                }
+                return GestureDetector(
+                  onTap: () {
+                    if (!_selectedDaysOfWeek!.contains(day)) {
+                      _selectedDaysOfWeek!.add(day);
+                      setState(() {});
+                    } else {
+                      _selectedDaysOfWeek!
+                          .removeWhere((element) => element == day);
+                      setState(() {});
+                    }
+                  },
+                  child: Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 2, vertical: 2),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 12),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                                color: isSelected
+                                    ? const Color(0xFF7AC8F5)
+                                    : Colors.grey,
+                                width: 2)),
+                        child: Text(
+                          day,
+                          style: TextStyle(
+                              color: isSelected
+                                  ? const Color(0xFF7AC8F5)
+                                  : Colors.grey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              fontFamily: 'SourceSansPro'),
+                        ),
+                      )),
+                );
+              },
+            ).toList(),
           ),
           Row(
             children: const [
@@ -624,11 +647,13 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                         fontFamily: 'SourceSansPro'),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    onSaved: (email) {},
+                    onSaved: (e) {
+                      note = e;
+                    },
                     decoration: const InputDecoration(
                         filled: true,
                         fillColor: Color(0xFFFAFAFA),
-                        hintText: "Type to Add Number of Hours",
+                        hintText: "Type to Add a note",
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Color(0xFFD9D9D9), width: 2.0))),
@@ -642,7 +667,13 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                 child: ElevatedButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                    ref
+                        .read(meetingTimeListNotifierProvider.notifier)
+                        .addMeetingTime(MeetingTime(
+                            _timeOfDay!, _selectedDaysOfWeek!, note)),
+                    Navigator.pop(context)
+                  },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 50),
                       backgroundColor: const Color(0xFF7AC8F5)),
