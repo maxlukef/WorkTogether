@@ -25,21 +25,25 @@ class GroupSearchPage extends StatelessWidget {
     String expectedGrade = "A";
     int weeklyHours = 10;
     List<String> interests = ['Climbing', 'Reading', 'Racquetball'];
+    List<User>? users = [];
 
     return FutureBuilder(
       future: httpService.getUsers(),
       builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
         if (snapshot.hasData) {
-          List<User>? users = snapshot.data;
+          users = snapshot.data;
           print(users);
         }
 
         return SingleChildScrollView(
-          child: MasonryGridView.count(
+          child: Column(
+            children: [
+              Padding(padding: EdgeInsets.only(left: 10), child: Align(alignment: Alignment.centerLeft, child: Text("CS4480", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)))),
+              MasonryGridView.count(
               crossAxisCount: 2,
               mainAxisSpacing: 15,
               crossAxisSpacing: 10,
-              itemCount: 10,
+              itemCount: users?.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 // return Tile(
@@ -48,7 +52,7 @@ class GroupSearchPage extends StatelessWidget {
                 // );
                 return StudentCard(
                   profilePic: profilePic,
-                  fullName: studentName,
+                  fullName: users![index].name,
                   major: major,
                   availableMornings: availableMornings,
                   availableAfternoons: availableAfternoons,
@@ -56,10 +60,15 @@ class GroupSearchPage extends StatelessWidget {
                   skills: skills,
                   expectedGrade: expectedGrade,
                   weeklyHours: weeklyHours,
-                  interests: interests,
+                  interests: users![index].interests,
                 );
               }),
+              SizedBox(height: 10)
+            ]
+          )
         );
+
+
       }
     );
   }
@@ -153,7 +162,7 @@ class User {
   final String bio;
   final String employmentStatus;
   final String studentStatus;
-  final String interests;
+  final List<String> interests;
 
   User({
     required this.id,
@@ -173,7 +182,7 @@ class User {
       bio: json["bio"] as String,
       employmentStatus: json["employmentStatus"] as String,
       studentStatus: json["studentStatus"],
-      interests: json["interests"] as String,
+      interests: json["interests"].split(','),
     );
   }
 }

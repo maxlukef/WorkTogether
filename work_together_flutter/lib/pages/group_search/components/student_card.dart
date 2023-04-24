@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_together_flutter/global_components/tag_small.dart';
 
 class StudentCard extends StatelessWidget {
 
@@ -50,13 +51,22 @@ class StudentCard extends StatelessWidget {
                            )
                        )
                    ),
-                   Text(fullName)
-
+                   Padding(
+                     padding: EdgeInsets.only(left: 10),
+                     child: Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Align(alignment: Alignment.centerLeft, child: Text(fullName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700))),
+                               Align(alignment: Alignment.centerLeft, child: Text(major, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700))),
+                             ]
+                         )
+                     )
                  ]),
              Divider(
                color: Colors.black
              ),
-             Align(alignment: Alignment.centerLeft, child: Text("Availability")),
+        Padding(padding: EdgeInsets.only(bottom: 5),
+            child: Align(alignment: Alignment.centerLeft, child: Text("Availability", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700)))),
              Card(
                elevation: 5,
                color: const Color(0xFFf2f2f2),
@@ -71,9 +81,11 @@ class StudentCard extends StatelessWidget {
                              height: 13,
                              width: 13,
                              decoration: BoxDecoration(
+                               border: Border.all(color: Colors.black),
                                shape: BoxShape.circle,
                                color: Color(0xFF11dc5c),
-                             )
+                             ),
+                           child: Align(alignment: Alignment.center, child: Text("M", style: TextStyle(fontSize: 8, fontWeight: FontWeight.w800),),)
                          ),
                        ),
                        Expanded(
@@ -214,37 +226,95 @@ class StudentCard extends StatelessWidget {
              Divider(
                  color: Colors.black
              ),
-             Align(alignment: Alignment.centerLeft, child: Text("Skills")),
+        Padding(padding: EdgeInsets.only(bottom: 5),
+            child: Align(alignment: Alignment.centerLeft, child: Text("Skills", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700)))),
+             Align(
+               alignment: Alignment.centerLeft,
+               child: Wrap(
+                   children: const [
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "Python"),
+                     ),
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "Databases"),
+                     ),
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "Backend Development"),
+                     ),
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "Django"),
+                     ),
+                   ]
+               ),
+             ),
              Divider(
                  color: Colors.black
              ),
-             Align(alignment: Alignment.centerLeft, child: Text("Project Expectations")),
+             Padding(padding: EdgeInsets.only(bottom: 5),
+                 child: Align(alignment: Alignment.centerLeft,
+                     child: Text("Project Expectations", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700)))),
              IntrinsicHeight( child: Row(
-               mainAxisAlignment: MainAxisAlignment.center,
                children: [
-                 Column(
-                   crossAxisAlignment: CrossAxisAlignment.center,
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
-                      Text("Grade"),
-                       Text("B"),
-                     ]
+                 Expanded(
+                   flex: 10,
+                   child: Column(
+                       children: [
+                         Text("Grade", style: TextStyle(fontSize: 8)),
+                         Text("B", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+                       ]
+                   ),
                  ),
-                 VerticalDivider( thickness: 1, color: Colors.black),
-                 Column(
-                   crossAxisAlignment: CrossAxisAlignment.center,
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
-                       Text("Weekly Hours"),
-                       Text("5"),
-                     ]
+                 Expanded(
+                   flex: 1,
+                   child: VerticalDivider( thickness: 1, color: Colors.black),
                  ),
+                 Expanded(
+                   flex: 10,
+                   child: Column(
+                       children: [
+                         Text("Weekly Hours", style: TextStyle(fontSize: 8)),
+                         Text("5", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+                       ]
+                   ),
+                 )
                ]
              )),
              Divider(
                  color: Colors.black
              ),
-             Align(alignment: Alignment.centerLeft, child: Text("Interests")),
+        Padding(padding: EdgeInsets.only(bottom: 5),
+            child: Align(alignment: Alignment.centerLeft, child: Text("Interests", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700)))),
+             Align(
+               alignment: Alignment.centerLeft,
+               child: Wrap(
+                   children: const [
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "Rock Climbing"),
+                     ),
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "Reading"),
+                     ),
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "Food"),
+                     ),
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "Building Houses"),
+                     ),
+                     Padding(
+                       padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+                       child: Tag(text: "All Things Awesome"),
+                     ),
+                   ]
+               ),
+             ),
              Divider(
                  color: Colors.black
              ),
