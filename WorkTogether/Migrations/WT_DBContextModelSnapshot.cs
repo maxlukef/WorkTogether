@@ -292,11 +292,10 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< WorkTogether/Migrations/WT_DBContextModelSnapshot.cs
+
                     b.HasIndex("ProjectId");
 
-=======
->>>>>>> WorkTogether/Migrations/WT_DBContextModelSnapshot.cs
+
                     b.ToTable("Teams");
                 });
 
