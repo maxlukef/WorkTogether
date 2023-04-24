@@ -76,12 +76,9 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Icon(selectedTime),
                               Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Icon(selectedTime),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
+                                padding: const EdgeInsets.all(2.0),
                                 child: Text(meetingTime.timeOfDay),
                               ),
                               const Spacer(),
@@ -92,13 +89,14 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                                           child: Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      vertical: 5,
-                                                      horizontal: 5),
+                                                      vertical: 4,
+                                                      horizontal: 4),
                                               decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(18),
                                                   border: Border.all(
-                                                      color: Colors.green,
+                                                      color: const Color(
+                                                          0xFF11DC5C),
                                                       width: 2)),
                                               child: Text(
                                                 day,
@@ -114,8 +112,14 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
-                                  child: const Icon(Icons.edit),
-                                  onTap: () {},
+                                  child: const Icon(Icons.delete_outline),
+                                  onTap: () {
+                                    ref
+                                        .read(meetingTimeListNotifierProvider
+                                            .notifier)
+                                        .removeMeetingTime(meetingTimeList
+                                            .indexOf(meetingTime));
+                                  },
                                 ),
                               ),
                             ],
@@ -432,7 +436,7 @@ class QuestionnairePopup extends ConsumerStatefulWidget {
 }
 
 class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
-  final List<String> daysOfWeek = ['M', 'TU', 'W', 'TH', 'F', 'SA', 'SU'];
+  final List<String> daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
   String? _timeOfDay = "Morning";
   List<String>? _selectedDaysOfWeek = [];
@@ -595,19 +599,19 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                           horizontal: 2, vertical: 2),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 12),
+                            vertical: 5, horizontal: 5),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
                                 color: isSelected
-                                    ? const Color(0xFF7AC8F5)
+                                    ? const Color(0xFF11DC5C)
                                     : Colors.grey,
                                 width: 2)),
                         child: Text(
                           day,
                           style: TextStyle(
                               color: isSelected
-                                  ? const Color(0xFF7AC8F5)
+                                  ? const Color(0xFF11DC5C)
                                   : Colors.grey,
                               fontSize: 14,
                               fontWeight: FontWeight.w800,
