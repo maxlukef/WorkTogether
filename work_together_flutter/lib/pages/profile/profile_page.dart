@@ -29,11 +29,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(builder: (context, snapshot) {
+    return FutureBuilder<String?>(builder: (context, snapshot) {
       if (snapshot.hasError) {
         return const Text("An error has occurred while loading page.");
-      } else if (snapshot.hasData) {}
-      return buildPage(context);
+      } else if (snapshot.hasData) {
+        String snapData = snapshot.data!;
+        return Text(snapData);
+      }
+      return const CircularProgressIndicator();
     });
   }
 
