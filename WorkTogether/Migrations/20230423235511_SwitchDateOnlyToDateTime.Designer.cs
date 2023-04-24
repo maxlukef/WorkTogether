@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkTogether.Models;
 
@@ -10,9 +11,11 @@ using WorkTogether.Models;
 namespace WorkTogether.Migrations
 {
     [DbContext(typeof(WT_DBContext))]
-    partial class WT_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230423235511_SwitchDateOnlyToDateTime")]
+    partial class SwitchDateOnlyToDateTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

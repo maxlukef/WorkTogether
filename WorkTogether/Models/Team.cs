@@ -16,6 +16,6 @@ namespace WorkTogether.Models
         /// </summary>
         public bool Complete { get; set; }
 
-        Project? Project { get; set; }
+        public Project Project { get; set; }
     }
 }
