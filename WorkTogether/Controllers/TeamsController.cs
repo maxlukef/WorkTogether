@@ -22,13 +22,50 @@ namespace WorkTogether.Controllers
 
         // GET: api/Teams
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Team>>> GetTeams()
+        public async Task<ActionResult<IEnumerable<TeamDTO>>> GetTeams()
         {
           if (_context.Teams == null)
           {
               return NotFound();
           }
-            return await _context.Teams.ToListAsync();
+            var teams = await _context.Teams.Include(T => T.Project).ToListAsync();
+
+            List<TeamDTO> toReturn = new List<TeamDTO>();
+            foreach(var team in teams)
+            {
+                var teamMembers = await _context.Teams.Include(T => T.Members).Where(Team => Team.Id == team.Id).Select(Team => Team.Members).FirstOrDefaultAsync();
+
+                if (teamMembers == null)
+                {
+                    return NotFound();
+                }
+
+                TeamDTO t = new TeamDTO();
+                t.Complete = team.Complete;
+                t.projectId = team.Project.Id;
+                t.Id = team.Id;
+                t.Members = new List<UserProfileDTO>();
+
+                foreach (User i in teamMembers)
+                {
+                    //var userToAdd = await _context.Users.FindAsync(i);
+                    if (i != null)
+                    {
+                        UserProfileDTO newUserDTO = new UserProfileDTO();
+                        newUserDTO.StudentStatus = i.StudentStatus;
+                        newUserDTO.Interests = i.Interests;
+                        newUserDTO.Email = i.Email;
+                        newUserDTO.Name = i.Name;
+                        newUserDTO.EmploymentStatus = i.EmploymentStatus;
+                        newUserDTO.Bio = i.Bio;
+                        newUserDTO.Id = i.Id;
+                        t.Members.Add(newUserDTO);
+                    }
+
+                }
+                toReturn.Add(t);
+            }
+            return toReturn;
         }
 
         // GET: api/Teams/5
