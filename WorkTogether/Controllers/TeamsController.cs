@@ -207,6 +207,7 @@ namespace WorkTogether.Controllers
                     return BadRequest("Team Full");
                 }
                 _context.Teams.Remove(t);
+                _context.SaveChanges();
             } else { 
                 t = new Team();
                 t.Project = project[0];
