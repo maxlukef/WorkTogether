@@ -115,7 +115,11 @@ namespace WorkTogether.Models
                 newUser3.EmploymentStatus = "Unemployed";
                 Users.Add(newUser3);
 
+<<<<<<< WorkTogether/Models/WT_DBContext.cs
 
+=======
+                this.SaveChanges();
+>>>>>>> WorkTogether/Models/WT_DBContext.cs
 
                 StudentClass studentClass2 = new StudentClass();
                 studentClass2.Class = newClass;

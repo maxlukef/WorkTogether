@@ -292,8 +292,11 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
+<<<<<<< WorkTogether/Migrations/WT_DBContextModelSnapshot.cs
                     b.HasIndex("ProjectId");
 
+=======
+>>>>>>> WorkTogether/Migrations/WT_DBContextModelSnapshot.cs
                     b.ToTable("Teams");
                 });
 
@@ -316,6 +319,10 @@ namespace WorkTogether.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Interests")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Major")
                         .IsRequired()
                         .HasColumnType("longtext");
 

@@ -92,6 +92,7 @@ namespace WorkTogether.Controllers
                 user.Email = students[x].Email;
                 user.EmploymentStatus = students[x].EmploymentStatus;
                 user.Bio = students[x].Bio;
+                user.Major = students[x].Major;
                 user.Id = students[x].Id;
                 user.Name = students[x].Name; 
                 studentList.Add(user);
@@ -149,6 +150,7 @@ namespace WorkTogether.Controllers
             user.Name = userProfileDTO.Name;
             user.Email = userProfileDTO.Email;
             user.Bio = userProfileDTO.Bio;
+            user.Major = userProfileDTO.Major;
             user.EmploymentStatus = userProfileDTO.EmploymentStatus;
             user.StudentStatus = userProfileDTO.StudentStatus;
             user.Interests = userProfileDTO.Interests;
@@ -190,6 +192,7 @@ namespace WorkTogether.Controllers
                 Name = userDTO.Name,
                 Email = userDTO.Email,
                 Bio = userDTO.Bio,
+                Major = userDTO.Major,
                 EmploymentStatus = userDTO.EmploymentStatus,
                 StudentStatus = userDTO.StudentStatus,
                 Interests = userDTO.Interests
@@ -233,6 +236,7 @@ namespace WorkTogether.Controllers
                 Name = user.Name,
                 Email = user.Email,
                 Bio = user.Bio,
+                Major = user.Major,
                 EmploymentStatus = user.EmploymentStatus,
                 StudentStatus = user.StudentStatus,
                 Interests = user.Interests
