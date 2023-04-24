@@ -49,8 +49,47 @@ namespace WorkTogether.Controllers
             return team;
         }
 
+        // GET: api/Teams/5
+        /// <summary>
+        /// Gets a students team based on a project ID and their user ID
+        /// </summary>
+        /// <param name="ProjectId">The ID of the project</param>
+        /// <param name="studentId">The ID of the student</param>
+        /// <returns>The team that the given student is part of for the given project. Otherwise, returns not found.</returns>
+        [HttpGet("ByStudentAndClass/{classId}/{studentId}")]
+        public async Task<ActionResult<Team>> GetTeamByStudentAndProjectID(int ProjectId, int studentId)
+        {
+            if (_context.Teams == null || _context.Users == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users.FindAsync(studentId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var team = await _context.Teams.Include(T => T.Project).Include(T => T.Members).Where(Team => Team.Project.Id == ProjectId && Team.Members.Contains(user)).FirstOrDefaultAsync();
+            if(team == null)
+            {
+                return NotFound();
+            }
+
+            
+
+            return team;
+        }
+
         // POST: api/Teams/invite/1/2
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Currently,this adds a student to a team. In the future, it will send an invitation
+        /// </summary>
+        /// <param name="projectId">The ID of the project that this team is working on.</param>
+        /// <param name="inviterId">The ID of the student that sent the invitation</param>
+        /// <param name="inviteeId">The ID of the student who is being invited</param>
+        /// <returns>If both students can be added to the team, returns HTTP 200 OK. Otherwise, will return 400. 
+        /// Both students must be in the same class, and if the inviter is already on a team then it cannot be full.
+        /// The Invitee must not already be part of a team.</returns>
         [HttpPost("invite/{projectId}/{inviterId}/{inviteeId}")]
         public async Task<IActionResult> InviteToTeam(int projectId, int inviterId, int inviteeId)
         {
