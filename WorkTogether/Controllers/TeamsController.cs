@@ -56,14 +56,22 @@ namespace WorkTogether.Controllers
             t.Complete = team.Complete;
             t.projectId = team.Project.Id;
             t.Id = team.Id;
-            t.Members = new List<User>();
+            t.Members = new List<UserProfileDTO>();
 
             foreach (User i in teamMembers)
             {
                 //var userToAdd = await _context.Users.FindAsync(i);
                 if (i != null)
                 {
-                    t.Members.Add(i);
+                    UserProfileDTO newUserDTO = new UserProfileDTO();
+                    newUserDTO.StudentStatus = i.StudentStatus;
+                    newUserDTO.Interests = i.Interests;
+                    newUserDTO.Email = i.Email;
+                    newUserDTO.Name = i.Name;
+                    newUserDTO.EmploymentStatus = i.EmploymentStatus;
+                    newUserDTO.Bio = i.Bio;
+                    newUserDTO.Id = i.Id;
+                    t.Members.Add(newUserDTO);
                 }
 
             }
