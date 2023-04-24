@@ -80,12 +80,7 @@ class StudentCard extends StatelessWidget {
                          child:Container(
                              height: 13,
                              width: 13,
-                             decoration: BoxDecoration(
-                               border: Border.all(color: Colors.black),
-                               shape: BoxShape.circle,
-                               color: Color(0xFF11dc5c),
-                             ),
-                           child: Align(alignment: Alignment.center, child: Text("M", style: TextStyle(fontSize: 8, fontWeight: FontWeight.w800),),)
+                             child: Icon(Icons.sunny),
                          ),
                        ),
                        Expanded(
@@ -99,7 +94,8 @@ class StudentCard extends StatelessWidget {
                                    decoration: BoxDecoration(
                                      shape: BoxShape.circle,
                                      color: Color(0xFF11dc5c),
-                                   )
+                                   ),
+                                 child: Align(alignment: Alignment.center, child: Text("M", style: TextStyle(fontSize: 8, fontWeight: FontWeight.w800),),)
                                )),
                          ),
                        ),
