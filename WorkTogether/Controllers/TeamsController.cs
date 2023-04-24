@@ -120,11 +120,11 @@ namespace WorkTogether.Controllers
         /// <summary>
         /// Gets a students team based on a project ID and their user ID
         /// </summary>
-        /// <param name="ProjectId">The ID of the project</param>
+        /// <param name="projectId">The ID of the project</param>
         /// <param name="studentId">The ID of the student</param>
-        /// <returns>The team that the given student is part of for the given project. Otherwise, returns not found.</returns>
-        [HttpGet("ByStudentAndClass/{classId}/{studentId}")]
-        public async Task<ActionResult<Team>> GetTeamByStudentAndProjectID(int ProjectId, int studentId)
+        /// <returns>The team that the given student is part of for the given project. Otherwise, returns 404 not found.</returns>
+        [HttpGet("ByStudentAndProject/{projectId}/{studentId}")]
+        public async Task<ActionResult<TeamDTO>> GetTeamByStudentAndProjectID(int projectId, int studentId)
         {
             if (_context.Teams == null || _context.Users == null)
             {
@@ -135,15 +135,42 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var team = await _context.Teams.Include(T => T.Project).Include(T => T.Members).Where(Team => Team.Project.Id == ProjectId && Team.Members.Contains(user)).FirstOrDefaultAsync();
-            if(team == null)
+            var teamId = await _context.Teams.Include(T => T.Project).Include(T => T.Members).Where(Team => Team.Project.Id == projectId && Team.Members.Contains(user)).Select(Team => Team.Id).FirstOrDefaultAsync();
+
+            var team = await _context.Teams.FindAsync(teamId);
+
+            if (team == null)
             {
                 return NotFound();
             }
 
+            var teamMembers = await _context.Teams.Include(T => T.Members).Where(Team => Team.Id == teamId).Select(Team => Team.Members).FirstOrDefaultAsync();
+
+            TeamDTO t = new TeamDTO();
+            t.Name = team.Name;
+            t.Id = team.Id;
+            t.Complete = team.Complete;
+            t.projectId = projectId;
+            t.Members = new List<UserProfileDTO>();
+            
+            foreach(User i in teamMembers)
+            {
+                if (i != null)
+                {
+                    UserProfileDTO newUserDTO = new UserProfileDTO();
+                    newUserDTO.StudentStatus = i.StudentStatus;
+                    newUserDTO.Interests = i.Interests;
+                    newUserDTO.Email = i.Email;
+                    newUserDTO.Name = i.Name;
+                    newUserDTO.EmploymentStatus = i.EmploymentStatus;
+                    newUserDTO.Bio = i.Bio;
+                    newUserDTO.Id = i.Id;
+                    t.Members.Add(newUserDTO);
+                }
+            }
             
 
-            return team;
+            return t;
         }
 
         // POST: api/Teams/invite/1/2
