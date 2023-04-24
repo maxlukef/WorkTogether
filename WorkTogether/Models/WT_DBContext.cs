@@ -97,10 +97,6 @@ namespace WorkTogether.Models
                 Users.Add(newUser3);
 
                 this.SaveChanges();
-                
-            
-        
-
 
                 StudentClass studentClass2 = new StudentClass();
                 studentClass2.Class = newClass;
