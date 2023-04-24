@@ -33,20 +33,42 @@ namespace WorkTogether.Controllers
 
         // GET: api/Teams/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Team>> GetTeam(int id)
+        public async Task<ActionResult<TeamDTO>> GetTeam(int id)
         {
           if (_context.Teams == null)
           {
               return NotFound();
           }
-            var team = await _context.Teams.FindAsync(id);
+          var team = await _context.Teams.Include(T => T.Project).Where(Team => Team.Id == id).FirstOrDefaultAsync();
 
-            if (team == null)
+          if (team == null)
+          {
+            return NotFound();
+          }
+          var teamMembers = await _context.Teams.Include(T => T.Members).Where(Team => Team.Id == id).Select(Team => Team.Members).FirstOrDefaultAsync();
+
+            if (teamMembers == null)
             {
                 return NotFound();
             }
 
-            return team;
+            TeamDTO t = new TeamDTO();
+            t.Complete = team.Complete;
+            t.projectId = team.Project.Id;
+            t.Id = team.Id;
+            t.Members = new List<User>();
+
+            foreach (User i in teamMembers)
+            {
+                //var userToAdd = await _context.Users.FindAsync(i);
+                if (i != null)
+                {
+                    t.Members.Add(i);
+                }
+
+            }
+
+            return t;
         }
 
         // GET: api/Teams/5
