@@ -5,6 +5,7 @@ import 'package:work_together_flutter/models/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
 import '../../models/tag_list.dart';
+import '../group_search/group_search_page.dart';
 
 enum ExpectedQuality { top1, A, B, C }
 
@@ -401,7 +402,11 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                       child: ElevatedButton(
-                        onPressed: () => {},
+                        onPressed: () => {Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                        return const GroupSearchPage(classId: 1, userId: 2);
+                        },
+                        ))},
                         style: ElevatedButton.styleFrom(
                             minimumSize: const Size(150, 50),
                             backgroundColor: const Color(0xFF7AC8F5)),
