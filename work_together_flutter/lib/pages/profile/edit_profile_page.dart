@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import '../../global_components/custom_app_bar.dart';
+import '../profile/profile_page.dart';
 
 class EditProfilePage extends StatelessWidget {
-  const EditProfilePage({
+  EditProfilePage({
     Key? key,
+    required this.user
   }) : super(key: key);
+
+  final User user;
+  final bioController = TextEditingController();
+  final majorController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    bioController.text = user.bio;
+    majorController.text = user.major;
     return Scaffold(
       appBar: const CustomAppBar(title: "Edit Profile"),
       backgroundColor: const Color(0xFFFFFFFF),
@@ -17,11 +26,11 @@ class EditProfilePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
             child: Text(
-              "Profile Name",
-              style: TextStyle(
+              user.name,
+              style: const TextStyle(
                   fontSize: 16,
                   fontFamily: 'SourceSansPro',
                   fontWeight: FontWeight.bold),
@@ -46,6 +55,7 @@ class EditProfilePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                 child: TextFormField(
+                  controller: bioController,
                   style: const TextStyle(
                       color: Color(0xFF000000),
                       fontSize: 14,
@@ -61,6 +71,7 @@ class EditProfilePage extends StatelessWidget {
                       enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Color(0xFFD9D9D9), width: 2.0))),
+                  maxLines: null,
                 ),
               ),
               const Padding(
@@ -73,6 +84,7 @@ class EditProfilePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                 child: TextFormField(
+                  controller: majorController,
                   style: const TextStyle(
                       color: Color(0xFF000000),
                       fontSize: 14,
@@ -88,6 +100,7 @@ class EditProfilePage extends StatelessWidget {
                       enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Color(0xFFD9D9D9), width: 2.0))),
+                  maxLines: null,
                 ),
               ),
               const Padding(
@@ -100,9 +113,9 @@ class EditProfilePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                 child: Row(
-                  children: const [
+                  children: [
                     Tag(
-                      text: "Full Time Student",
+                      text: user.studentStatus,
                     ),
                   ],
                 ),
@@ -117,9 +130,9 @@ class EditProfilePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                 child: Row(
-                  children: const [
+                  children: [
                     Tag(
-                      text: "Unemployed",
+                      text: user.employmentStatus,
                     ),
                   ],
                 ),
@@ -134,17 +147,8 @@ class EditProfilePage extends StatelessWidget {
               Padding(
                   padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                   child: Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                        child: Tag(text: "Camping"),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                        child: Tag(
-                          text: "Hiking",
-                        ),
-                      ),
+                    children: [
+                      ..._interestList()
                     ],
                   )),
             ],
@@ -159,7 +163,18 @@ class EditProfilePage extends StatelessWidget {
                   width: 45,
                   child: FloatingActionButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      User updatedUser = User(
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        bio: bioController.text,
+                        employmentStatus: user.employmentStatus,
+                        studentStatus: user.studentStatus,
+                        interests: user.interests,
+                        major: majorController.text,
+                      );
+                      HttpService().putUser(updatedUser);
+                      Navigator.pop(context, updatedUser);
                     },
                     child: const Icon(
                       Icons.check,
@@ -173,4 +188,21 @@ class EditProfilePage extends StatelessWidget {
       )),
     );
   }
+
+  _interestList() {
+    List<Widget> interestsList = [];
+
+    for(var i = 0; i < user.interests.length; i++) {
+      interestsList.add(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+          child: Tag(text: user.interests[i]),
+        ),
+      );
+    }
+    return interestsList;
+  }
 }
+
+
+
