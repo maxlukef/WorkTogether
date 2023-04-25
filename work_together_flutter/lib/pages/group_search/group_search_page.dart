@@ -80,7 +80,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                             notifyParent: refresh,
                           );
                         }),
-                    const Divider(color: Colors.black),
+                    const Padding(padding: EdgeInsets.only(left: 5, right: 5), child: Divider(color: Colors.black)),
                   ]);
                 }
 

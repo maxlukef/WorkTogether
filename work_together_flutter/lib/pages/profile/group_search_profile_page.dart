@@ -71,7 +71,7 @@ class _GroupProfileProfilePageState
     }
 
     return Scaffold(
-        appBar: CustomAppBar(title: "${userdata.name}'s Profile"),
+        appBar: CustomAppBar(title: "User Profile"),
         backgroundColor: const Color(0xFFFFFFFF),
         body: SingleChildScrollView(
           child: Column(
