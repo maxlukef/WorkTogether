@@ -14,6 +14,7 @@ namespace WorkTogether.Models
         public string Name { get; set; }
         public string Email { get; set; }
         public string Bio { get; set; }
+        public string Major { get; set; }
         public ICollection<StudentClass>? StudentClasses { get; set; }
         public ICollection<TAClass>? TAClasses { get; set; }
         public ICollection<Team>? Teams { get; set; }
@@ -30,6 +31,7 @@ namespace WorkTogether.Models
         public string Name { get; set; }
         public string Email { get; set; }
         public string Bio { get; set; }
+        public string Major { get; set; }
         public string EmploymentStatus { get; set; }
         public string StudentStatus { get; set; }
         public string Interests { get; set; }

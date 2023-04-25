@@ -52,7 +52,7 @@ namespace WorkTogether.Controllers
 
         // GET: api/Answers/1/5
         [HttpGet("{classID}/{StudentID}")]
-        public async Task<ActionResult<List<Answer>>> GetAnswersForStudentProject(int classID, int StudentID)
+        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersForStudentProject(int classID, int StudentID)
         {
             var result = await (from p in _context.Projects
                    join q in _context.Questionnaires on p.Id equals q.Project.Id
@@ -61,17 +61,15 @@ namespace WorkTogether.Controllers
                    where a.Answerer.Id == StudentID && p.Class.Id == classID
                    select new { question = a.Question, answer = a.AnswerStr }).ToListAsync();
 
-            List<Answer> answerList = new List<Answer>();
+            List<AnswerDTO> answerList = new List<AnswerDTO>();
 
             foreach(var answer in result)
             {
                 answerList.Add(
-                    new Answer { AnswerStr = answer.answer, Question = answer.question });
+                    AnswertoAnswerDTO(new Answer { AnswerStr = answer.answer, Question = answer.question }));
             }
 
             return answerList;
-
-            
         }
 
         // PUT: api/Answers/5
@@ -144,5 +142,12 @@ namespace WorkTogether.Controllers
         {
             return (_context.Answers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        private static AnswerDTO AnswertoAnswerDTO(Answer answer) =>
+        new AnswerDTO
+        {
+            qNum = answer.Question.Id,
+            answerText = answer.AnswerStr
+        };
     }
 }

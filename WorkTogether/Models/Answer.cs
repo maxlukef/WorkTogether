@@ -24,4 +24,11 @@
 
 
     }
+
+    public class AnswerDTO
+    {
+        public int qNum { get; set; }
+        public string answerText { get; set; }
+
+    }
 }

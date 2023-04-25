@@ -121,12 +121,6 @@ class HttpService {
   Future<List<User>> getUsers() async {
     Uri uri = Uri.https('localhost:7277', 'api/Users/studentsbyclassID/1');
 
-    try {
-      Response res = await get(uri);
-    } catch (e) {
-      print(e.toString());
-    }
-
     var res = await get(uri);
 
     if (res.statusCode == 200) {
@@ -137,6 +131,18 @@ class HttpService {
           (dynamic item) => User.fromJson(item),
       )
       .toList();
+
+      List<CardInfo> cardInfo = [];
+
+      for(var i = 0; i < users.length; i++) {
+        Uri cardUri = Uri.https('localhost:7277', 'api/Answers/1/' + users[i].id.toString());
+        var cardRes = await get(cardUri);
+        if (cardRes.statusCode == 200) {
+          List<dynamic> cardBody = jsonDecode(cardRes.body);
+
+          print(cardBody);
+        }
+      }
 
       return users;
     } else {
