@@ -11,6 +11,6 @@ class Pages {
     const HomePage(),
     const ChatPage(),
     const NotificationsPage(),
-    const ProfilePage(),
+    const ProfilePage(userId: 1),
   ];
 }

@@ -35,7 +35,7 @@ class StudentCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => {Navigator.push(context, MaterialPageRoute(
         builder: (context) {
-          return const ProfilePage();
+          return ProfilePage(userId: id);
         },
       ))},
       child:Card(
@@ -210,7 +210,8 @@ class StudentCard extends StatelessWidget {
     List<Widget> interestsList = [];
 
     for(var i = 0; i < interests.length; i++) {
-      interestsList.add(Padding(
+      interestsList.add(
+          Padding(
         padding: const EdgeInsets.only(top: 3, right: 6, bottom: 3),
         child: Tag(text: interests[i]),
       ));
