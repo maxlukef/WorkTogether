@@ -57,6 +57,7 @@ namespace WorkTogether.Models
                 newUser2.Bio = "As a capstone professor and film critic, I spend my days assisting students in learning programming and my evenings watching movies.";
                 newUser2.Email = "u0000001@utah.edu";
                 newUser2.EmploymentStatus = "Full Time";
+                newUser2.Major = "Computer Science";
                 Users.Add(newUser2);
 
                 Class newClass = new Class();
@@ -98,7 +99,7 @@ namespace WorkTogether.Models
                 newUser.Bio = "As an avid outdoor enthusiast and software developer, I have found a perfect balance between my two passions. In my free time, I love to explore new trails and go camping.";
                 newUser.Email = "u0000000@utah.edu";
                 newUser.EmploymentStatus = "Unemployed";
-
+                newUser.Major = "Computer Science";
                 Users.Add(newUser);
 
                 StudentClass studentClass1 = new StudentClass();
@@ -113,6 +114,7 @@ namespace WorkTogether.Models
                 newUser3.Bio = "As a fishing cartographer, I am concerned with the mapping of fishing spots";
                 newUser3.Email = "u0000002@utah.edu";
                 newUser3.EmploymentStatus = "Unemployed";
+                newUser3.Major = "Computer Science";
                 Users.Add(newUser3);
 
 
@@ -128,6 +130,7 @@ namespace WorkTogether.Models
                 newUser4.Bio = "As an avid butterfly watcher, I am very good at writing Flutter frontends. I also smoke a mean brisket.";
                 newUser4.Email = "u0000003@utah.edu";
                 newUser4.EmploymentStatus = "Part Time";
+                newUser4.Major = "Computer Science";
                 Users.Add(newUser4);
 
                 StudentClass studentClass3 = new StudentClass();
@@ -142,6 +145,7 @@ namespace WorkTogether.Models
                 newUser5.Bio = "I specialize in embedded systems. I also enjoy weaving carpets and making cheese.";
                 newUser5.Email = "u0000004@utah.edu";
                 newUser5.EmploymentStatus = "Part Time";
+                newUser5.Major = "Computer Science";
                 Users.Add(newUser5);
 
                 StudentClass studentClass4 = new StudentClass();
@@ -156,6 +160,7 @@ namespace WorkTogether.Models
                 newUser6.Bio = "I specialize in React.js. I also enjoy horseback riding and jigsaw puzzles.";
                 newUser6.Email = "u0000005@utah.edu";
                 newUser6.EmploymentStatus = "Unemployed";
+                newUser6.Major = "Computer Science";
                 Users.Add(newUser6);
 
                 StudentClass studentClass5 = new StudentClass();
@@ -171,6 +176,7 @@ namespace WorkTogether.Models
                 newUser7.Bio = "I specialize in Microsoft's ASP.NET Core architecture. I also play kickball and build furniture.";
                 newUser7.Email = "u0000006@utah.edu";
                 newUser7.EmploymentStatus = "Unemployed";
+                newUser7.Major = "Computer Science";
                 Users.Add(newUser7);
 
                 StudentClass studentClass6 = new StudentClass();
@@ -190,6 +196,7 @@ namespace WorkTogether.Models
                 newUser8.Bio = "I enjoy leetcoding as a hobby. I also like geocaching and urban spelunking.";
                 newUser8.Email = "u0000007@utah.edu";
                 newUser8.EmploymentStatus = "Unemployed";
+                newUser8.Major = "Computer Science";
                 Users.Add(newUser8);
 
                 StudentClass studentClass7 = new StudentClass();
@@ -209,6 +216,7 @@ namespace WorkTogether.Models
                 newUser9.Bio = "As an artist, I am primarily concerned with Rock Painting, Charicatures, and OpenGL";
                 newUser9.Email = "u0000008@utah.edu";
                 newUser9.EmploymentStatus = "Unemployed";
+                newUser9.Major = "Computer Science";
                 Users.Add(newUser9);
 
                 StudentClass studentClass8 = new StudentClass();
@@ -228,6 +236,7 @@ namespace WorkTogether.Models
                 newUser10.Bio = "I am an avid data scientist and i enjoy applying those skills to my record collection. I like to stay active by playing Beach Volleyball.";
                 newUser10.Email = "u0000009@utah.edu";
                 newUser10.EmploymentStatus = "Part Time";
+                newUser10.Major = "Computer Science";
                 Users.Add(newUser10);
 
                 StudentClass studentClass9 = new StudentClass();
@@ -247,6 +256,7 @@ namespace WorkTogether.Models
                 newUser11.Bio = "I am skilled with all aspects of computer networks. In my free time I enjoy windsurfing and flower arranging.";
                 newUser11.Email = "u0000010@utah.edu";
                 newUser11.EmploymentStatus = "Part Time";
+                newUser11.Major = "Computer Science";
                 Users.Add(newUser11);
                 StudentClass studentClass10 = new StudentClass();
                 studentClass10.Class = newClass;
@@ -265,6 +275,7 @@ namespace WorkTogether.Models
                 newUser12.Bio = "I am a skilled game developer. In my free time I like to maintain and build trails, collecting rocks along the way.";
                 newUser12.Email = "u0000011@utah.edu";
                 newUser12.EmploymentStatus = "Part Time";
+                newUser12.Major = "Computer Science";
                 Users.Add(newUser12);
 
                 StudentClass studentClass2_12 = new StudentClass();
@@ -279,6 +290,7 @@ namespace WorkTogether.Models
                 newUser13.Bio = "I am a dedicated Oboe player who is interested in robotics in AI. One day I want to make a fully autonomous robotic oboe player.";
                 newUser13.Email = "u0000012@utah.edu";
                 newUser13.EmploymentStatus = "Part Time";
+                newUser13.Major = "Computer Science";
                 Users.Add(newUser13);
 
                 StudentClass studentClass2_13 = new StudentClass();
@@ -293,6 +305,7 @@ namespace WorkTogether.Models
                 newUser14.Bio = "I am a beekeeper who is currently studying COBOL. I am the only person I know who is learning COBOL, and I like to powerlift in my free time for exercise.";
                 newUser14.Email = "u0000013@utah.edu";
                 newUser14.EmploymentStatus = "Part Time";
+                newUser14.Major = "Computer Science";
                 Users.Add(newUser14);
 
                 StudentClass studentClass2_14 = new StudentClass();
@@ -307,6 +320,7 @@ namespace WorkTogether.Models
                 newUser15.Bio = "My focus in coding is on CUDA. In my free time, I enjoy fencing and collecting model cars.";
                 newUser15.Email = "u0000014@utah.edu";
                 newUser15.EmploymentStatus = "Part Time";
+                newUser15.Major = "Computer Science";
                 Users.Add(newUser15);
 
                 StudentClass studentClass2_15 = new StudentClass();
@@ -321,6 +335,7 @@ namespace WorkTogether.Models
                 newUser16.Bio = "I am primarily concerned with Scientific Computing. In my free time, I enjoy Go-Kart Racing and Crocheting";
                 newUser16.Email = "u0000015@utah.edu";
                 newUser16.EmploymentStatus = "Part Time";
+                newUser16.Major = "Computer Science";
                 Users.Add(newUser16);
 
                 StudentClass studentClass2_16 = new StudentClass();

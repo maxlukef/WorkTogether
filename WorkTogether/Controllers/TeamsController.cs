@@ -51,15 +51,7 @@ namespace WorkTogether.Controllers
                     //var userToAdd = await _context.Users.FindAsync(i);
                     if (i != null)
                     {
-                        UserProfileDTO newUserDTO = new UserProfileDTO();
-                        newUserDTO.StudentStatus = i.StudentStatus;
-                        newUserDTO.Interests = i.Interests;
-                        newUserDTO.Email = i.Email;
-                        newUserDTO.Name = i.Name;
-                        newUserDTO.EmploymentStatus = i.EmploymentStatus;
-                        newUserDTO.Bio = i.Bio;
-                        newUserDTO.Id = i.Id;
-                        t.Members.Add(newUserDTO);
+                        t.Members.Add(UsertoProfileDTO(i));
                     }
 
                 }
@@ -100,15 +92,7 @@ namespace WorkTogether.Controllers
                 //var userToAdd = await _context.Users.FindAsync(i);
                 if (i != null)
                 {
-                    UserProfileDTO newUserDTO = new UserProfileDTO();
-                    newUserDTO.StudentStatus = i.StudentStatus;
-                    newUserDTO.Interests = i.Interests;
-                    newUserDTO.Email = i.Email;
-                    newUserDTO.Name = i.Name;
-                    newUserDTO.EmploymentStatus = i.EmploymentStatus;
-                    newUserDTO.Bio = i.Bio;
-                    newUserDTO.Id = i.Id;
-                    t.Members.Add(newUserDTO);
+                    t.Members.Add(UsertoProfileDTO(i));
                 }
 
             }
@@ -157,14 +141,7 @@ namespace WorkTogether.Controllers
             {
                 if (i != null)
                 {
-                    UserProfileDTO newUserDTO = new UserProfileDTO();
-                    newUserDTO.StudentStatus = i.StudentStatus;
-                    newUserDTO.Interests = i.Interests;
-                    newUserDTO.Email = i.Email;
-                    newUserDTO.Name = i.Name;
-                    newUserDTO.EmploymentStatus = i.EmploymentStatus;
-                    newUserDTO.Bio = i.Bio;
-                    newUserDTO.Id = i.Id;
+                    UserProfileDTO newUserDTO = UsertoProfileDTO(i);
                     t.Members.Add(newUserDTO);
                 }
             }
@@ -323,5 +300,18 @@ namespace WorkTogether.Controllers
         {
             return (_context.Teams?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        private static UserProfileDTO UsertoProfileDTO(User user) =>
+    new UserProfileDTO
+    {
+        Id = user.Id,
+        Name = user.Name,
+        Email = user.Email,
+        Bio = user.Bio,
+        Major = user.Major,
+        EmploymentStatus = user.EmploymentStatus,
+        StudentStatus = user.StudentStatus,
+        Interests = user.Interests
+    };
     }
 }
