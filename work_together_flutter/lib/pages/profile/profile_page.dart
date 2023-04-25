@@ -15,9 +15,9 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final HttpService httpService = HttpService();
 
-    return FutureBuilder<User?>(
+    return FutureBuilder(
         future: httpService.getUser(),
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasError) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -36,6 +36,17 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget buildPage(BuildContext context, User userdata) {
+    List<Widget> interestTags = [];
+
+    for (String interest in userdata.interests) {
+      interestTags.add(Padding(
+        padding: const EdgeInsets.fromLTRB(0.0, 0, 4.0, 0),
+        child: Tag(
+          text: interest,
+        ),
+      ));
+    }
+
     return Scaffold(
         appBar: CustomAppBar(title: userdata.name),
         backgroundColor: const Color(0xFFFFFFFF),
@@ -87,12 +98,12 @@ class ProfilePage extends StatelessWidget {
                           TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                     child: Text(
-                      "B.S. Computer Science",
-                      style:
-                          TextStyle(fontSize: 14, fontFamily: 'SourceSansPro'),
+                      userdata.major,
+                      style: const TextStyle(
+                          fontSize: 14, fontFamily: 'SourceSansPro'),
                     ),
                   ),
                   const Padding(
@@ -142,18 +153,7 @@ class ProfilePage extends StatelessWidget {
                   Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                       child: Row(
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                            child: Tag(text: "Camping"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                            child: Tag(
-                              text: "Hiking",
-                            ),
-                          ),
-                        ],
+                        children: interestTags,
                       )),
                 ],
               ),
@@ -185,8 +185,8 @@ class ProfilePage extends StatelessWidget {
 
 class HttpService {
   Future<User> getUser() async {
-    print("getting users");
-    Uri uri = Uri.https('localhost:7277', 'api/Users/studentsbyclassID/1');
+    print("getting user");
+    Uri uri = Uri.https('localhost:7277', 'api/Users/profile/1');
     print(uri);
 
     try {
@@ -202,17 +202,12 @@ class HttpService {
     print(res.statusCode);
 
     if (res.statusCode == 200) {
-      List<dynamic> body = jsonDecode(res.body);
+      dynamic body = jsonDecode(res.body);
+      User profile = User.fromJson(body);
 
-      List<User> users = body
-          .map(
-            (dynamic item) => User.fromJson(item),
-          )
-          .toList();
-
-      return users.first;
+      return profile;
     } else {
-      throw "Unable to retrieve posts.";
+      throw "Unable to retrieve user.";
     }
   }
 }
@@ -224,7 +219,8 @@ class User {
   final String bio;
   final String employmentStatus;
   final String studentStatus;
-  final String interests;
+  final List<String> interests;
+  final String major;
 
   User({
     required this.id,
@@ -234,6 +230,7 @@ class User {
     required this.employmentStatus,
     required this.studentStatus,
     required this.interests,
+    required this.major,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -244,7 +241,8 @@ class User {
       bio: json["bio"] as String,
       employmentStatus: json["employmentStatus"] as String,
       studentStatus: json["studentStatus"],
-      interests: json["interests"] as String,
+      interests: json["interests"].split(','),
+      major: json["major"] as String,
     );
   }
 }
