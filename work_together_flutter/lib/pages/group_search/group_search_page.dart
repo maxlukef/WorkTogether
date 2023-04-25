@@ -9,7 +9,9 @@ import '../../models/card_info.dart';
 
 class GroupSearchPage extends ConsumerStatefulWidget {
   const GroupSearchPage({
-    Key? key, required this.userId, required this.classId,
+    Key? key,
+    required this.userId,
+    required this.classId,
   }) : super(key: key);
 
   final int userId;
@@ -19,10 +21,9 @@ class GroupSearchPage extends ConsumerStatefulWidget {
   ConsumerState<GroupSearchPage> createState() => _GroupSearchPageState();
 }
 
-class _GroupSearchPageState extends ConsumerState<GroupSearchPage>{
+class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
   @override
   Widget build(BuildContext context) {
-
     refresh() {
       print("refreshing");
       setState(() => {});
@@ -34,91 +35,89 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage>{
     List<CardInfo>? users = [];
 
     return Scaffold(
-      appBar: const CustomAppBar(title: "Group Search"),
-      backgroundColor: const Color(0xFFFFFFFF),
-      body: SingleChildScrollView(child: Column(children: [
-        const Padding(
-            padding: EdgeInsets.only(left: 30, top: 15, bottom: 20),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text("CS4480",
-                    style: TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.w700)))),
-        FutureBuilder(
-            future: httpService.getTeam(widget.classId, widget.userId),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<CardInfo>> snapshot) {
-              if (snapshot.hasData) {
-                teamMates = snapshot.data;
-              }
+        appBar: const CustomAppBar(title: "Group Search"),
+        backgroundColor: const Color(0xFFFFFFFF),
+        body: SingleChildScrollView(
+            child: Column(children: [
+          const Padding(
+              padding: EdgeInsets.only(left: 30, top: 15, bottom: 20),
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("CS4480",
+                      style: TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.w700)))),
+          FutureBuilder(
+              future: httpService.getTeam(widget.classId, widget.userId),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<CardInfo>> snapshot) {
+                if (snapshot.hasData) {
+                  teamMates = snapshot.data;
+                }
 
-              if(teamMates!.isNotEmpty) {
-                return Column(children: [MasonryGridView.count(
+                if (teamMates!.isNotEmpty) {
+                  return Column(children: [
+                    MasonryGridView.count(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 15,
+                        crossAxisSpacing: 10,
+                        itemCount: teamMates?.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return StudentCard(
+                            id: teamMates![index].id,
+                            fullName: teamMates![index].name,
+                            major: teamMates![index].major,
+                            availableMornings:
+                                teamMates![index].availableMornings,
+                            availableAfternoons:
+                                teamMates![index].availableAfternoons,
+                            availableEvenings:
+                                teamMates![index].availableEvenings,
+                            skills: teamMates![index].skills,
+                            expectedGrade: teamMates![index].expectedGrade,
+                            weeklyHours: teamMates![index].weeklyHours,
+                            interests: teamMates![index].interests,
+                            notifyParent: refresh,
+                          );
+                        }),
+                    const Divider(color: Colors.black),
+                  ]);
+                }
+
+                return const SizedBox.shrink();
+              }),
+          FutureBuilder(
+              future: httpService.getUsers(widget.classId, widget.userId),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<CardInfo>> snapshot) {
+                if (snapshot.hasData) {
+                  users = snapshot.data;
+                }
+
+                return MasonryGridView.count(
                     crossAxisCount: 2,
                     mainAxisSpacing: 15,
                     crossAxisSpacing: 10,
-                    itemCount: teamMates?.length,
+                    itemCount: users?.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return StudentCard(
-                        id: teamMates![index].id,
-                        fullName: teamMates![index].name,
-                        major: teamMates![index].major,
-                        availableMornings: teamMates![index].availableMornings,
-                        availableAfternoons: teamMates![index].availableAfternoons,
-                        availableEvenings: teamMates![index].availableEvenings,
-                        skills: teamMates![index].skills,
-                        expectedGrade: teamMates![index].expectedGrade,
-                        weeklyHours: teamMates![index].weeklyHours,
-                        interests: teamMates![index].interests,
+                        id: users![index].id,
+                        fullName: users![index].name,
+                        major: users![index].major,
+                        availableMornings: users![index].availableMornings,
+                        availableAfternoons: users![index].availableAfternoons,
+                        availableEvenings: users![index].availableEvenings,
+                        skills: users![index].skills,
+                        expectedGrade: users![index].expectedGrade,
+                        weeklyHours: users![index].weeklyHours,
+                        interests: users![index].interests,
                         notifyParent: refresh,
                       );
-                    }
-                ),
-                  const Divider(color: Colors.black),
-                ]);
-              }
-
-              return const SizedBox.shrink();
-            }
-        ),
-
-        FutureBuilder(
-            future: httpService.getUsers(widget.classId, widget.userId),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<CardInfo>> snapshot) {
-              if (snapshot.hasData) {
-                users = snapshot.data;
-              }
-
-              return MasonryGridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 10,
-                  itemCount: users?.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return StudentCard(
-                      id: users![index].id,
-                      fullName: users![index].name,
-                      major: users![index].major,
-                      availableMornings: users![index].availableMornings,
-                      availableAfternoons: users![index].availableAfternoons,
-                      availableEvenings: users![index].availableEvenings,
-                      skills: users![index].skills,
-                      expectedGrade: users![index].expectedGrade,
-                      weeklyHours: users![index].weeklyHours,
-                      interests: users![index].interests,
-                      notifyParent: refresh,
-                    );
-                  }
-              );
-            })
-      ]))
-    );
+                    });
+              })
+        ])));
   }
-
-
 }
 
 class Tile extends StatelessWidget {
@@ -166,4 +165,3 @@ class Tile extends StatelessWidget {
     );
   }
 }
-

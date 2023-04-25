@@ -61,7 +61,8 @@ class LoginForm extends StatelessWidget {
         ),
         ElevatedButton(
             onPressed: () async {
-              await HttpService().getUserByEmail(emailController.text);
+              loggedUserId =
+                  await HttpService().getUserByEmail(emailController.text);
               print(loggedUserId);
               Navigator.pushReplacement(context, MaterialPageRoute(
                 builder: (context) {
