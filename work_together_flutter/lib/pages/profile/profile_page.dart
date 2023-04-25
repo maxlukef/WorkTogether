@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
@@ -11,17 +8,15 @@ import '../../http_request.dart';
 import '../../models/user.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({
-    Key? key, required this.userId
-  }) : super(key: key);
+  const ProfilePage({Key? key, required this.userId}) : super(key: key);
 
   final int userId;
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
-class _ProfilePageState extends ConsumerState<ProfilePage> {
 
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     print(widget.userId);
@@ -176,12 +171,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       height: 45,
                       width: 45,
                       child: FloatingActionButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return EditProfilePage(
-                                user: userdata
-                              );
+                              return EditProfilePage(user: userdata);
                             },
                           )).whenComplete(() => setState(() => {}));
                         },

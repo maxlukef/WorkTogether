@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/tab_navigations/components/pages.dart';
 import 'package:work_together_flutter/tab_navigations/tab_navigator.dart';
 

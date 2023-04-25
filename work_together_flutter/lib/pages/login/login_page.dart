@@ -24,12 +24,12 @@ class LoginPage extends StatelessWidget {
             ),
             Row(
               children: [
-                Spacer(),
+                const Spacer(),
                 Expanded(
                   flex: 8,
                   child: LoginForm(),
                 ),
-                Spacer(),
+                const Spacer(),
               ],
             ),
           ],

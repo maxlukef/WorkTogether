@@ -4,7 +4,6 @@ import 'package:work_together_flutter/pages/signup/signup_page.dart';
 import '../../../http_request.dart';
 import '../../../main.dart';
 import '../../../main_container.dart';
-import '../../../models/user.dart';
 
 class LoginForm extends StatelessWidget {
   LoginForm({
@@ -62,14 +61,14 @@ class LoginForm extends StatelessWidget {
         ),
         ElevatedButton(
             onPressed: () async {
-                  await HttpService().getUserByEmail(emailController.text);
-                  print(loggedUserId);
-                  Navigator.pushReplacement(context, MaterialPageRoute(
-                    builder: (context) {
-                      return const MainContainer();
-                    },
-                  ));
+              await HttpService().getUserByEmail(emailController.text);
+              print(loggedUserId);
+              Navigator.pushReplacement(context, MaterialPageRoute(
+                builder: (context) {
+                  return const MainContainer();
                 },
+              ));
+            },
             child: const Text(
               "Login",
               style: TextStyle(fontSize: 24),

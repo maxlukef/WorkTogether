@@ -33,13 +33,13 @@ class User {
   }
 
   String toJson() {
-    return '{"id": ${this.id.toString()},'
-        '"name": "${this.name}",'
-        '"email": "${this.email}",'
-        '"bio": "${this.bio}",'
-        '"major": "${this.major}",'
-        '"employmentStatus": "${this.employmentStatus}",'
-        '"studentStatus": "${this.studentStatus}",'
-        '"interests": "${this.interests.join(",")}"}';
+    return '{"id": ${id.toString()},'
+        '"name": "$name",'
+        '"email": "$email",'
+        '"bio": "$bio",'
+        '"major": "$major",'
+        '"employmentStatus": "$employmentStatus",'
+        '"studentStatus": "$studentStatus",'
+        '"interests": "${interests.join(",")}"}';
   }
 }

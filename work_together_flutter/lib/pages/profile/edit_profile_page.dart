@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import '../../global_components/custom_app_bar.dart';
 import '../../http_request.dart';
 import '../../models/user.dart';
-import '../profile/profile_page.dart';
 
 class EditProfilePage extends StatelessWidget {
-  EditProfilePage({
-    Key? key,
-    required this.user
-  }) : super(key: key);
+  EditProfilePage({Key? key, required this.user}) : super(key: key);
 
   final User user;
   final bioController = TextEditingController();
@@ -149,9 +144,7 @@ class EditProfilePage extends StatelessWidget {
               Padding(
                   padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                   child: Row(
-                    children: [
-                      ..._interestList()
-                    ],
+                    children: [..._interestList()],
                   )),
             ],
           ),
@@ -194,7 +187,7 @@ class EditProfilePage extends StatelessWidget {
   _interestList() {
     List<Widget> interestsList = [];
 
-    for(var i = 0; i < user.interests.length; i++) {
+    for (var i = 0; i < user.interests.length; i++) {
       interestsList.add(
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
@@ -205,6 +198,3 @@ class EditProfilePage extends StatelessWidget {
     return interestsList;
   }
 }
-
-
-
