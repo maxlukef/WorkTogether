@@ -65,11 +65,30 @@ namespace WorkTogether.Models
                 newClass.Professor = newUser2;
                 Classes.Add(newClass);
 
+                Project newProject = new Project();
+                newProject.Deadline = new DateTime(2023, 5, 5);
+                newProject.Name = "Implement a hash map";
+                newProject.Description = "Implement a hashmap in Java. This will take some time, so make sure you start early!";
+                newProject.MaxTeamSize = 3;
+                newProject.MinTeamSize = 1;
+                newProject.Class = newClass;
+                Projects.Add(newProject);
+
                 Class newClass2 = new Class();
                 newClass2.Name = "CS 4000: Capstone Design";
                 newClass2.Description = "The first phase of the capstone project.";
                 newClass2.Professor = newUser2;
                 Classes.Add(newClass2);
+
+                Project newProject2 = new Project();
+                newProject2.Deadline = new DateTime(2023, 4, 26);
+                newProject2.Name = "Create a prototype of your project";
+                newProject2.Description = "Prepare for the prototype demo day on 4/26!";
+                newProject2.MaxTeamSize = 4;
+                newProject2.MinTeamSize = 4;
+                newProject2.Class = newClass2;
+                Projects.Add(newProject2 );
+
 
 
                 User newUser = new User();
@@ -96,7 +115,6 @@ namespace WorkTogether.Models
                 newUser3.EmploymentStatus = "Unemployed";
                 Users.Add(newUser3);
 
-                this.SaveChanges();
 
                 StudentClass studentClass2 = new StudentClass();
                 studentClass2.Class = newClass;
