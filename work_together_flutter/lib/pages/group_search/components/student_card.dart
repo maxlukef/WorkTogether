@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/global_components/tag_small.dart';
 
-import '../../profile/profile_page.dart';
+import '../../profile/group_search_profile_page.dart';
 
 class StudentCard extends StatelessWidget {
   StudentCard({
     required this.id,
-    required this.profilePic,
     required this.fullName,
     required this.major,
     required this.availableMornings,
@@ -16,6 +15,7 @@ class StudentCard extends StatelessWidget {
     required this.expectedGrade,
     required this.weeklyHours,
     required this.interests,
+    required this.notifyParent,
   });
 
   int id;
@@ -28,16 +28,23 @@ class StudentCard extends StatelessWidget {
   String expectedGrade;
   String weeklyHours;
   List<String> interests;
-  Image profilePic;
+  final Function() notifyParent;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => {Navigator.push(context, MaterialPageRoute(
         builder: (context) {
-          return ProfilePage(userId: id);
+          return GroupSearchProfilePage(
+              id: id,
+          availableMornings: availableMornings,
+          availableAfternoons: availableAfternoons,
+          availableEvenings: availableEvenings,
+          skills: skills,
+          expectedGrade: expectedGrade,
+          weeklyHours: weeklyHours,);
         },
-      ))},
+      )).whenComplete(() => notifyParent())},
       child:Card(
         elevation: 10,
         color: const Color(0xFFf2f2f2),

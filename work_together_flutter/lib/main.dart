@@ -7,6 +7,8 @@ void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
+int loggedUserId = 2;
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

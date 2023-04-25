@@ -23,7 +23,7 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             Row(
-              children: const [
+              children: [
                 Spacer(),
                 Expanded(
                   flex: 8,

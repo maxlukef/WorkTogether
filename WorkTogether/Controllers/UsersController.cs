@@ -224,6 +224,24 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<UserProfileDTO>> GetUserProfile(String email)
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+
+            var user = (from u in _context.Users where u.Email == email select u).First();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return UsertoProfileDTO(user);
+        }
+
         private bool UserExists(int id)
         {
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();

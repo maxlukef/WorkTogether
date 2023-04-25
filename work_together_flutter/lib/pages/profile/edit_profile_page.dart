@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import '../../global_components/custom_app_bar.dart';
+import '../../http_request.dart';
+import '../../models/user.dart';
 import '../profile/profile_page.dart';
 
 class EditProfilePage extends StatelessWidget {
