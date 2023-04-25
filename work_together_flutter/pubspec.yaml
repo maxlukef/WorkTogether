@@ -39,8 +39,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_nav_bar: ^5.0.6
   flutter_svg: ^2.0.4
+<<<<<<< HEAD
   riverpod: ^2.3.5
   hooks_riverpod: ^2.3.5
+=======
+  http: ^0.13.5
+>>>>>>> f9bd653846f2246119ad53ab667257778978e4cc
 
 dev_dependencies:
   flutter_test:
