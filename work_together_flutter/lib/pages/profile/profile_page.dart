@@ -15,32 +15,40 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final HttpService httpService = HttpService();
 
-    return FutureBuilder(
-        future: httpService.getUsers(),
+    return FutureBuilder<User?>(
+        future: httpService.getUser(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Text("An error has occurred while loading page.");
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Text("An error has occurred while loading page."),
+              ],
+            );
           } else if (snapshot.hasData) {
-            return buildPage(context);
+            User u = snapshot.data!;
+
+            return buildPage(context, u);
           }
           return const CircularProgressIndicator();
         });
   }
 
-  Widget buildPage(BuildContext context) {
+  Widget buildPage(BuildContext context, User userdata) {
     return Scaffold(
-        appBar: const CustomAppBar(title: "Profile"),
+        appBar: CustomAppBar(title: userdata.name),
         backgroundColor: const Color(0xFFFFFFFF),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                 child: Text(
-                  "Profile Name",
-                  style: TextStyle(
+                  userdata.name,
+                  style: const TextStyle(
                       fontSize: 16,
                       fontFamily: 'SourceSansPro',
                       fontWeight: FontWeight.bold),
@@ -63,12 +71,12 @@ class ProfilePage extends StatelessWidget {
                           TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                     child: Text(
-                      "As an avid outdoor enthusiast and a software developer, I have found a perfect balance between my two passions. During my free time, I love to explore new trails and go camping.",
-                      style:
-                          TextStyle(fontSize: 14, fontFamily: 'SourceSansPro'),
+                      userdata.bio,
+                      style: const TextStyle(
+                          fontSize: 14, fontFamily: 'SourceSansPro'),
                     ),
                   ),
                   const Padding(
@@ -98,9 +106,9 @@ class ProfilePage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                     child: Row(
-                      children: const [
+                      children: [
                         Tag(
-                          text: "Full Time Student",
+                          text: userdata.studentStatus,
                         ),
                       ],
                     ),
@@ -116,9 +124,9 @@ class ProfilePage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                     child: Row(
-                      children: const [
+                      children: [
                         Tag(
-                          text: "Unemployed",
+                          text: userdata.employmentStatus,
                         ),
                       ],
                     ),
@@ -176,9 +184,9 @@ class ProfilePage extends StatelessWidget {
 }
 
 class HttpService {
-  Future<List<User>> getUsers() async {
+  Future<User> getUser() async {
     print("getting users");
-    Uri uri = Uri.https('localhost:3306', 'api/Users/studentsbyclassID/1');
+    Uri uri = Uri.https('localhost:7277', 'api/Users/studentsbyclassID/1');
     print(uri);
 
     try {
@@ -202,7 +210,7 @@ class HttpService {
           )
           .toList();
 
-      return users;
+      return users.first;
     } else {
       throw "Unable to retrieve posts.";
     }
