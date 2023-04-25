@@ -5,6 +5,8 @@ import 'package:work_together_flutter/pages/group_search/components/student_card
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart';
 
+import '../../global_components/custom_app_bar.dart';
+
 class GroupSearchPage extends StatelessWidget {
   const GroupSearchPage({
     Key? key, required this.userId, required this.classId,
@@ -22,61 +24,65 @@ class GroupSearchPage extends StatelessWidget {
     List<CardInfo>? users = [];
     List<int>? teamIds = [];
 
-    return SingleChildScrollView(child: Column(children: [
-      const Padding(
-          padding: EdgeInsets.only(left: 30, top: 15, bottom: 20),
-          child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text("CS4480",
-                  style: TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.w700)))),
-      FutureBuilder(
-        future: httpService.getTeam(classId, userId),
-        builder:
-        (BuildContext context, AsyncSnapshot<List<CardInfo>> snapshot) {
-          if (snapshot.hasData) {
-            teamMates = snapshot.data;
-          }
+    return Scaffold(
+      appBar: const CustomAppBar(title: "Group Search"),
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: SingleChildScrollView(child: Column(children: [
+        const Padding(
+            padding: EdgeInsets.only(left: 30, top: 15, bottom: 20),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text("CS4480",
+                    style: TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.w700)))),
+        FutureBuilder(
+            future: httpService.getTeam(classId, userId),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<CardInfo>> snapshot) {
+              if (snapshot.hasData) {
+                teamMates = snapshot.data;
+              }
 
-          if(teamMates!.isNotEmpty) {
-            return Column(children: [MasonryGridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 10,
-                itemCount: teamMates?.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return StudentCard(
-                    profilePic: profilePic,
-                    fullName: teamMates![index].name,
-                    major: teamMates![index].major,
-                    availableMornings: teamMates![index].availableMornings,
-                    availableAfternoons: teamMates![index].availableAfternoons,
-                    availableEvenings: teamMates![index].availableEvenings,
-                    skills: teamMates![index].skills,
-                    expectedGrade: teamMates![index].expectedGrade,
-                    weeklyHours: teamMates![index].weeklyHours,
-                    interests: teamMates![index].interests,
-                  );
-                }
-            ),
-              const Divider(color: Colors.black),
-            ]);
-          }
+              if(teamMates!.isNotEmpty) {
+                return Column(children: [MasonryGridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 10,
+                    itemCount: teamMates?.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return StudentCard(
+                        id: teamMates![index].id,
+                        profilePic: profilePic,
+                        fullName: teamMates![index].name,
+                        major: teamMates![index].major,
+                        availableMornings: teamMates![index].availableMornings,
+                        availableAfternoons: teamMates![index].availableAfternoons,
+                        availableEvenings: teamMates![index].availableEvenings,
+                        skills: teamMates![index].skills,
+                        expectedGrade: teamMates![index].expectedGrade,
+                        weeklyHours: teamMates![index].weeklyHours,
+                        interests: teamMates![index].interests,
+                      );
+                    }
+                ),
+                  const Divider(color: Colors.black),
+                ]);
+              }
 
-          return const SizedBox.shrink();
-        }
-      ),
-
-      FutureBuilder(
-          future: httpService.getUsers(classId, userId),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<CardInfo>> snapshot) {
-            if (snapshot.hasData) {
-              users = snapshot.data;
+              return const SizedBox.shrink();
             }
+        ),
 
-            return MasonryGridView.count(
+        FutureBuilder(
+            future: httpService.getUsers(classId, userId),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<CardInfo>> snapshot) {
+              if (snapshot.hasData) {
+                users = snapshot.data;
+              }
+
+              return MasonryGridView.count(
                   crossAxisCount: 2,
                   mainAxisSpacing: 15,
                   crossAxisSpacing: 10,
@@ -84,6 +90,7 @@ class GroupSearchPage extends StatelessWidget {
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     return StudentCard(
+                      id: users![index].id,
                       profilePic: profilePic,
                       fullName: users![index].name,
                       major: users![index].major,
@@ -96,9 +103,10 @@ class GroupSearchPage extends StatelessWidget {
                       interests: users![index].interests,
                     );
                   }
-            );
-          })
-    ]));
+              );
+            })
+      ]))
+    );
   }
 }
 
@@ -195,6 +203,7 @@ class HttpService {
             }
 
             cardInfo.add(CardInfo(
+                id: users[i].id,
                 name: users[i].name,
                 major: users[i].major,
                 availableMornings: mornings,
@@ -266,6 +275,7 @@ class HttpService {
             }
 
             teamMates.add(CardInfo(
+                id: curMember["id"],
                 name: curMember["name"],
                 major: curMember["major"],
                 availableMornings: mornings,
@@ -319,6 +329,7 @@ class User {
 }
 
 class CardInfo {
+  final int id;
   final String name;
   final String major;
   final List<String> availableMornings;
@@ -330,7 +341,9 @@ class CardInfo {
   final String weeklyHours;
 
   CardInfo(
-      {required this.name,
+      {
+        required this.id,
+        required this.name,
       required this.major,
       required this.availableMornings,
       required this.availableAfternoons,

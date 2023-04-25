@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/global_components/tag_small.dart';
 
+import '../../profile/profile_page.dart';
+
 class StudentCard extends StatelessWidget {
   StudentCard({
+    required this.id,
     required this.profilePic,
     required this.fullName,
     required this.major,
@@ -15,6 +18,7 @@ class StudentCard extends StatelessWidget {
     required this.interests,
   });
 
+  int id;
   final String fullName;
   String major;
   List<String> availableMornings;
@@ -28,110 +32,117 @@ class StudentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 10,
-      color: const Color(0xFFf2f2f2),
-      child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(children: [
-            Row(children: [
-              const Icon(
-                Icons.account_circle,
-                color: Colors.black26,
-                size: 40.0,
-              ),
-              Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(fullName,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700))),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(major,
-                                style: const TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700))),
-                      ]))
-            ]),
-            const Divider(color: Colors.black),
-            const Padding(
-                padding: EdgeInsets.only(bottom: 5),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("Availability",
-                        style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w700)))),
-            ..._availabilityCards(),
-            const Divider(color: Colors.black),
-            const Padding(
-                padding: EdgeInsets.only(bottom: 5),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("Skills",
-                        style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w700)))),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Wrap(children: [
-                ..._skillsList()
+    return GestureDetector(
+      onTap: () => {Navigator.push(context, MaterialPageRoute(
+        builder: (context) {
+          return const ProfilePage();
+        },
+      ))},
+      child:Card(
+        elevation: 10,
+        color: const Color(0xFFf2f2f2),
+        child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(children: [
+              Row(children: [
+                const Icon(
+                  Icons.account_circle,
+                  color: Colors.black26,
+                  size: 40.0,
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(fullName,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700))),
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(major,
+                                  style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700))),
+                        ]))
               ]),
-            ),
-            const Divider(color: Colors.black),
-            const Padding(
-                padding: EdgeInsets.only(bottom: 5),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("Project Expectations",
-                        style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w700)))),
-            IntrinsicHeight(child: Flex(
-              direction: Axis.horizontal,
-                children: [
-              Expanded(
-                flex: 10,
-                child: Column(children: [
-                  const Text("Grade", style: TextStyle(fontSize: 8)),
-                  Text(expectedGrade,
-                      style:
-                          const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+              const Divider(color: Colors.black),
+              const Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("Availability",
+                          style: TextStyle(
+                              fontSize: 10, fontWeight: FontWeight.w700)))),
+              ..._availabilityCards(),
+              const Divider(color: Colors.black),
+              const Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("Skills",
+                          style: TextStyle(
+                              fontSize: 10, fontWeight: FontWeight.w700)))),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(children: [
+                  ..._skillsList()
                 ]),
               ),
-              const Expanded(
-                flex: 1,
-                child: VerticalDivider(thickness: 1, color: Colors.black),
-              ),
-              Expanded(
-                flex: 10,
-                child: Column(children: [
-                  const Text("Weekly Hours", style: TextStyle(fontSize: 8)),
-                  Text(weeklyHours,
-                      style:
-                          const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+              const Divider(color: Colors.black),
+              const Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("Project Expectations",
+                          style: TextStyle(
+                              fontSize: 10, fontWeight: FontWeight.w700)))),
+              IntrinsicHeight(child: Flex(
+                  direction: Axis.horizontal,
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Column(children: [
+                        const Text("Grade", style: TextStyle(fontSize: 8)),
+                        Text(expectedGrade,
+                            style:
+                            const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+                      ]),
+                    ),
+                    const Expanded(
+                      flex: 1,
+                      child: VerticalDivider(thickness: 1, color: Colors.black),
+                    ),
+                    Expanded(
+                      flex: 10,
+                      child: Column(children: [
+                        const Text("Weekly Hours", style: TextStyle(fontSize: 8)),
+                        Text(weeklyHours,
+                            style:
+                            const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+                      ]),
+                    )
+                  ])),
+              const Divider(color: Colors.black),
+              const Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("Interests",
+                          style: TextStyle(
+                              fontSize: 10, fontWeight: FontWeight.w700)))),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(children: [
+                  ..._interestsList()
                 ]),
-              )
+              ),
+              const Divider(color: Colors.black),
             ])),
-            const Divider(color: Colors.black),
-            const Padding(
-                padding: EdgeInsets.only(bottom: 5),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("Interests",
-                        style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w700)))),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Wrap(children: [
-                ..._interestsList()
-              ]),
-            ),
-            const Divider(color: Colors.black),
-          ])),
+      )
     );
   }
 
