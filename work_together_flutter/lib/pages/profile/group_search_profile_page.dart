@@ -1,18 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
-import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
 
 import '../../http_request.dart';
 import '../../main.dart';
 import '../../models/user.dart';
 
 class GroupSearchProfilePage extends ConsumerStatefulWidget {
-  GroupSearchProfilePage({
+  const GroupSearchProfilePage({
     Key? key,
     required this.id,
     required this.availableMornings,
@@ -24,18 +20,20 @@ class GroupSearchProfilePage extends ConsumerStatefulWidget {
   }) : super(key: key);
 
   final int id;
-  List<String> availableMornings;
-  List<String> availableAfternoons;
-  List<String> availableEvenings;
-  List<String> skills;
-  String expectedGrade;
-  String weeklyHours;
+  final List<String> availableMornings;
+  final List<String> availableAfternoons;
+  final List<String> availableEvenings;
+  final List<String> skills;
+  final String expectedGrade;
+  final String weeklyHours;
 
   @override
-  ConsumerState<GroupSearchProfilePage> createState() => _GroupProfileProfilePageState();
+  ConsumerState<GroupSearchProfilePage> createState() =>
+      _GroupProfileProfilePageState();
 }
-class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage> {
 
+class _GroupProfileProfilePageState
+    extends ConsumerState<GroupSearchProfilePage> {
   @override
   Widget build(BuildContext context) {
     final HttpService httpService = HttpService();
@@ -73,7 +71,7 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
     }
 
     return Scaffold(
-        appBar: const CustomAppBar(title: "User Profile"),
+        appBar: CustomAppBar(title: "${userdata.name}'s Profile"),
         backgroundColor: const Color(0xFFFFFFFF),
         body: SingleChildScrollView(
           child: Column(
@@ -85,8 +83,7 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
                 child: Text(
                   userdata.name,
                   style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
               const Icon(
@@ -94,6 +91,24 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
                 color: Colors.blue,
                 size: 110.0,
               ),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      HttpService().inviteToTeam(1, loggedUserId, widget.id);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(125, 35),
+                        backgroundColor: const Color(0xFF1192dc)),
+                    child: const Text(
+                      "Invite to Group",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  )),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,44 +117,38 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
                     padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                     child: Text(
                       "Bio:",
-                      style:
-                          TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                     child: Text(
                       userdata.bio,
-                      style: const TextStyle(
-                          fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                   const Padding(
                     padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                     child: Text(
                       "Major:",
-                      style:
-                          TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
                     child: Text(
                       userdata.major,
-                      style: const TextStyle(
-                          fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
-                    child: Column(children: [..._availabilityCards()])
-                  ),
+                      padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
+                      child: Column(children: [..._availabilityCards()])),
                   const Padding(
                     padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                     child: Text(
                       "Student Status:",
-                      style:
-                          TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
                   Padding(
@@ -156,8 +165,7 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
                     padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                     child: Text(
                       "Employment Status:",
-                      style:
-                          TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
                   Padding(
@@ -174,8 +182,7 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
                     padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                     child: Text(
                       "Interests:",
-                      style:
-                          TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
                   Padding(
@@ -183,46 +190,11 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
                       child: Row(
                         children: interestTags,
                       )),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 16, 32, 4),
-                    child: Text("Project Expectations", style:
-                    TextStyle(fontSize: 24))
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 10, 32, 10),
-                    child: IntrinsicHeight(child: Flex(
-                        direction: Axis.horizontal,
-                        children: [
-                          Expanded(
-                            flex: 10,
-                            child: Column(children: [
-                              const Text("Grade", style: TextStyle(fontSize: 16)),
-                              Text(widget.expectedGrade,
-                                  style:
-                                  const TextStyle(fontSize: 48, fontWeight: FontWeight.w900)),
-                            ]),
-                          ),
-                          const Expanded(
-                            flex: 1,
-                            child: VerticalDivider(thickness: 1, color: Colors.black),
-                          ),
-                          Expanded(
-                            flex: 10,
-                            child: Column(children: [
-                              const Text("Weekly Hours", style: TextStyle(fontSize: 16)),
-                              Text(widget.weeklyHours,
-                                  style:
-                                  const TextStyle(fontSize: 48, fontWeight: FontWeight.w900)),
-                            ]),
-                          )
-                        ])),
-                  ),
                   const Padding(
                     padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                     child: Text(
                       "Skills:",
-                      style:
-                      TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
                   Padding(
@@ -230,43 +202,59 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
                       child: Row(
                         children: _skillsList(),
                       )),
+                  const Padding(
+                      padding: EdgeInsets.fromLTRB(32, 16, 32, 4),
+                      child: Text("Project Expectations",
+                          style: TextStyle(fontSize: 24))),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 10, 32, 10),
+                    child: IntrinsicHeight(
+                        child: Flex(direction: Axis.horizontal, children: [
+                      Expanded(
+                        flex: 10,
+                        child: Column(children: [
+                          const Text("Grade", style: TextStyle(fontSize: 16)),
+                          Text(widget.expectedGrade,
+                              style: const TextStyle(
+                                  fontSize: 48, fontWeight: FontWeight.w900)),
+                        ]),
+                      ),
+                      const Expanded(
+                        flex: 1,
+                        child:
+                            VerticalDivider(thickness: 1, color: Colors.black),
+                      ),
+                      Expanded(
+                        flex: 10,
+                        child: Column(children: [
+                          const Text("Weekly Hours",
+                              style: TextStyle(fontSize: 16)),
+                          Text(widget.weeklyHours,
+                              style: const TextStyle(
+                                  fontSize: 48, fontWeight: FontWeight.w900)),
+                        ]),
+                      )
+                    ])),
+                  ),
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(32, 20, 0, 10),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child:ElevatedButton(
-                    onPressed: () {
-                      HttpService().inviteToTeam(1, loggedUserId, widget.id);
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(150, 50),
-                        backgroundColor: const Color(0xFF1192dc)),
-                    child: const Text(
-                      "Invite to Group",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                )
-              )
             ],
           ),
         ));
   }
 
   _availabilityCards() {
-    List<List<String>> availabilityList = [widget.availableMornings, widget.availableAfternoons, widget.availableEvenings];
+    List<List<String>> availabilityList = [
+      widget.availableMornings,
+      widget.availableAfternoons,
+      widget.availableEvenings
+    ];
     List<IconData> timeIcons = [Icons.alarm, Icons.sunny, Icons.mode_night];
     List<String> timeStrings = ["Morning", "Afternoon", "Evening"];
     List<Widget> availabilityCards = [];
-    for(var i = 0; i < availabilityList.length; i++) {
+    for (var i = 0; i < availabilityList.length; i++) {
       List<Widget> availableDays = [];
-      for(var j = 0; j < availabilityList[i].length; j++) {
+      for (var j = 0; j < availabilityList[i].length; j++) {
         availableDays.add(Align(
           alignment: Alignment.centerRight,
           child: Padding(
@@ -289,31 +277,30 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
                   ))),
         ));
       }
-      if(availableDays.isNotEmpty) {
+      if (availableDays.isNotEmpty) {
         availabilityCards.add(Padding(
-          padding: EdgeInsets.only(top: 3, bottom: 3),
-          child:Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFF88ccf2), width: 2)
-              ),
-              child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Row(children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Icon(timeIcons[i], size: 25, fill: 0),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(timeStrings[i], style: TextStyle(fontSize: 14))
+            padding: const EdgeInsets.only(top: 3, bottom: 3),
+            child: Container(
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(color: const Color(0xFF88ccf2), width: 2)),
+                child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Row(children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Icon(timeIcons[i], size: 25, fill: 0),
                       ),
-                    ),
-                    const Spacer(),
-                    ...availableDays
-                  ]))))
-        );
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(timeStrings[i],
+                                style: const TextStyle(fontSize: 14))),
+                      ),
+                      const Spacer(),
+                      ...availableDays
+                    ])))));
       }
     }
     return availabilityCards;
@@ -322,7 +309,7 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
   _skillsList() {
     List<Widget> skillsList = [];
 
-    for(var i = 0; i < widget.skills.length; i++) {
+    for (var i = 0; i < widget.skills.length; i++) {
       skillsList.add(Padding(
         padding: const EdgeInsets.only(top: 3, right: 6, bottom: 3),
         child: Tag(text: widget.skills[i]),
@@ -331,4 +318,3 @@ class _GroupProfileProfilePageState extends ConsumerState<GroupSearchProfilePage
     return skillsList;
   }
 }
-
