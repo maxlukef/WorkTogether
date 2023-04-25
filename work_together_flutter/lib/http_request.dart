@@ -24,15 +24,16 @@ class HttpService {
   putUser(User user) async {
     Uri uri = Uri.https('localhost:7277', 'api/Users/profile/${user.id}');
     var body = user.toJson();
-    try{
-      Response res = await put(uri, body: body, headers: { "Content-Type" : "application/json" });
-    }catch (e) {
+    try {
+      await put(uri, body: body, headers: {"Content-Type": "application/json"});
+    } catch (e) {
       print(e);
     }
   }
 
   Future<List<CardInfo>> getUsers(classId, userId) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Users/studentsbyclassID/$classId');
+    Uri uri =
+        Uri.https('localhost:7277', 'api/Users/studentsbyclassID/$classId');
 
     var res = await get(uri);
 
@@ -42,16 +43,16 @@ class HttpService {
       List<User> users = body
           .map(
             (dynamic item) => User.fromJson(item),
-      )
+          )
           .toList();
 
       List<CardInfo> cardInfo = [];
       List<int> teamIds = await getTeamIds(classId, userId);
 
       for (var i = 0; i < users.length; i++) {
-        if(!teamIds.contains(users[i].id) && users[i].id != loggedUserId){
-          Uri cardUri =
-          Uri.https('localhost:7277', 'api/Answers/$classId/${users[i].id}');
+        if (!teamIds.contains(users[i].id) && users[i].id != loggedUserId) {
+          Uri cardUri = Uri.https(
+              'localhost:7277', 'api/Answers/$classId/${users[i].id}');
           var cardRes = await get(cardUri);
           if (cardRes.statusCode == 200) {
             List<dynamic> cardBody = jsonDecode(cardRes.body);
@@ -98,7 +99,8 @@ class HttpService {
   }
 
   Future<List<int>> getTeamIds(classId, userId) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Teams/ByStudentAndProject/$classId/$userId');
+    Uri uri = Uri.https(
+        'localhost:7277', 'api/Teams/ByStudentAndProject/$classId/$userId');
     var res = await get(uri);
     List<int> teamIds = [];
     if (res.statusCode == 200) {
@@ -113,17 +115,28 @@ class HttpService {
   }
 
   Future<List<CardInfo>> getTeam(classId, userId) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Teams/ByStudentAndProject/$classId/$userId');
-    var res = await get(uri);
+    Uri uri = Uri.https(
+        'localhost:7277', 'api/Teams/ByStudentAndProject/$classId/$userId');
+    var res;
     List<CardInfo> teamMates = [];
+    try {
+      res = await get(uri);
+    } catch (e) {
+      print(e);
+      return teamMates;
+    }
+
+    if (res.statusCode == 404) {
+      return teamMates;
+    }
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode("[${res.body}]");
 
-      for(var i = 0; i < body[0]["members"].length; i++) {
+      for (var i = 0; i < body[0]["members"].length; i++) {
         var curMember = body[0]["members"][i];
-        if(curMember["id"] != userId) {
-          Uri cardUri =
-          Uri.https('localhost:7277', 'api/Answers/$classId/${curMember["id"]}');
+        if (curMember["id"] != userId) {
+          Uri cardUri = Uri.https(
+              'localhost:7277', 'api/Answers/$classId/${curMember["id"]}');
           var cardRes = await get(cardUri);
           if (cardRes.statusCode == 200) {
             List<dynamic> cardBody = jsonDecode(cardRes.body);
@@ -167,7 +180,8 @@ class HttpService {
   }
 
   inviteToTeam(int projectId, int inviterId, int inviteeId) async {
-    Uri uri = Uri.https("localhost:7277", "api/Teams/invite/$projectId/$inviterId/$inviteeId");
+    Uri uri = Uri.https(
+        "localhost:7277", "api/Teams/invite/$projectId/$inviterId/$inviteeId");
     print(uri);
     Response res = await post(uri);
     print(res);
@@ -188,6 +202,5 @@ class HttpService {
     } else {
       throw "unable to get user with email $email";
     }
-
   }
 }
