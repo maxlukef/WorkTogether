@@ -49,7 +49,7 @@ class HttpService {
       List<int> teamIds = await getTeamIds(classId, userId);
 
       for (var i = 0; i < users.length; i++) {
-        if(!teamIds.contains(users[i].id) && users[i].id != userId){
+        if(!teamIds.contains(users[i].id) && users[i].id != loggedUserId){
           Uri cardUri =
           Uri.https('localhost:7277', 'api/Answers/$classId/${users[i].id}');
           var cardRes = await get(cardUri);

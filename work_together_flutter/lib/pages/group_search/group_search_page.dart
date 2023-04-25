@@ -22,6 +22,12 @@ class GroupSearchPage extends ConsumerStatefulWidget {
 class _GroupSearchPageState extends ConsumerState<GroupSearchPage>{
   @override
   Widget build(BuildContext context) {
+
+    refresh() {
+      print("refreshing");
+      setState(() => {});
+    }
+
     final HttpService httpService = HttpService();
 
     List<CardInfo>? teamMates = [];
@@ -112,10 +118,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage>{
     );
   }
 
-  refresh() {
-    print("refreshing");
-    setState(() {});
-  }
+
 }
 
 class Tile extends StatelessWidget {
