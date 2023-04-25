@@ -131,14 +131,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.6"
-  hooks_riverpod:
-    dependency: "direct main"
-    description:
-      name: hooks_riverpod
-      sha256: "480265a59ab0be2063ab99fee669c84c488548cc38ed37ef5dba80d4e35f1c07"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.5"
   hex:
     dependency: transitive
     description:
@@ -147,6 +139,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
+  hooks_riverpod:
+    dependency: "direct main"
+    description:
+      name: hooks_riverpod
+      sha256: "480265a59ab0be2063ab99fee669c84c488548cc38ed37ef5dba80d4e35f1c07"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.5"
   http:
     dependency: "direct main"
     description:
@@ -227,14 +227,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
-  riverpod:
-    dependency: "direct main"
-    description:
-      name: riverpod
-      sha256: ec5641067d111681ef825754d1327565c987985c7cb52e09bc867b78248854b2
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.5"
   quiver:
     dependency: transitive
     description:
@@ -251,6 +243,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.7.0"
+  riverpod:
+    dependency: "direct main"
+    description:
+      name: riverpod
+      sha256: ec5641067d111681ef825754d1327565c987985c7cb52e09bc867b78248854b2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.5"
   sky_engine:
     dependency: transitive
     description: flutter
