@@ -16,15 +16,13 @@ class GroupSearchPage extends StatelessWidget {
     final HttpService httpService = HttpService();
 
     Image profilePic = Image.asset('images/sample_profile.jpg');
-    String studentName = "Alex Childs";
     String major = "Computer Science";
-    List<String> availableMornings = ['Monday', 'Tuesday', 'Thursday'];
-    List<String> availableAfternoons = ['Friday', 'Saturday'];
+    List<String> availableMornings = ['M', 'Tu', 'Th'];
+    List<String> availableAfternoons = ['F', 'Sa'];
     List<String> availableEvenings = [];
     List<String> skills = ['Backend', 'Javascript', 'Python', 'Django'];
     String expectedGrade = "A";
     int weeklyHours = 10;
-    List<String> interests = ['Climbing', 'Reading', 'Racquetball'];
     List<User>? users = [];
 
     return FutureBuilder(
@@ -32,13 +30,12 @@ class GroupSearchPage extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
         if (snapshot.hasData) {
           users = snapshot.data;
-          print(users);
         }
 
         return SingleChildScrollView(
           child: Column(
             children: [
-              Padding(padding: EdgeInsets.only(left: 10), child: Align(alignment: Alignment.centerLeft, child: Text("CS4480", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)))),
+              const Padding(padding: EdgeInsets.only(left: 10), child: Align(alignment: Alignment.centerLeft, child: Text("CS4480", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)))),
               MasonryGridView.count(
               crossAxisCount: 2,
               mainAxisSpacing: 15,
@@ -53,7 +50,7 @@ class GroupSearchPage extends StatelessWidget {
                 return StudentCard(
                   profilePic: profilePic,
                   fullName: users![index].name,
-                  major: major,
+                  major: users![index].major,
                   availableMornings: availableMornings,
                   availableAfternoons: availableAfternoons,
                   availableEvenings: availableEvenings,
@@ -122,9 +119,7 @@ class Tile extends StatelessWidget {
 
 class HttpService {
   Future<List<User>> getUsers() async {
-    print("getting users");
     Uri uri = Uri.https('localhost:7277', 'api/Users/studentsbyclassID/1');
-    print(uri);
 
     try {
       Response res = await get(uri);
@@ -132,12 +127,7 @@ class HttpService {
       print(e.toString());
     }
 
-    print(await get(uri));
     var res = await get(uri);
-
-
-    print("status code");
-    print(res.statusCode);
 
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
@@ -160,6 +150,7 @@ class User {
   final String name;
   final String email;
   final String bio;
+  final String major;
   final String employmentStatus;
   final String studentStatus;
   final List<String> interests;
@@ -169,6 +160,7 @@ class User {
     required this.name,
     required this.email,
     required this.bio,
+    required this.major,
     required this.employmentStatus,
     required this.studentStatus,
     required this.interests,
@@ -180,9 +172,34 @@ class User {
       name: json["name"] as String,
       email: json["email"] as String,
       bio: json["bio"] as String,
+      major: json["major"] as String,
       employmentStatus: json["employmentStatus"] as String,
       studentStatus: json["studentStatus"],
       interests: json["interests"].split(','),
     );
   }
+}
+
+class CardInfo {
+  final String name;
+  final String major;
+  final List<String> availableMornings;
+  final List<String> availableAfternoons;
+  final List<String> availableEvenings;
+  final List<String> skills;
+  final List<String> interests;
+  final String expectedGrade;
+  final int weeklyHours;
+
+  CardInfo({
+    required this.name,
+    required this.major,
+    required this.availableMornings,
+    required this.availableAfternoons,
+    required this.availableEvenings,
+    required this.skills,
+    required this.interests,
+    required this.expectedGrade,
+    required this.weeklyHours
+  });
 }

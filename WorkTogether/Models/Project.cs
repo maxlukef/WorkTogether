@@ -16,7 +16,7 @@
 
         public int MaxTeamSize { get; set; }
 
-        public DateOnly Deadline { get; set; }
+        public DateOnly? Deadline { get; set; }
 
         public Questionnaire Questionnaire { get; set; }
     }

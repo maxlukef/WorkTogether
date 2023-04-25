@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,30 @@ namespace WorkTogether.Controllers
             }
 
             return answer;
+        }
+
+        // GET: api/Answers/1/5
+        [HttpGet("{classID}/{StudentID}")]
+        public async Task<ActionResult<List<Answer>>> GetAnswersForStudentProject(int classID, int StudentID)
+        {
+            var result = await (from p in _context.Projects
+                   join q in _context.Questionnaires on p.Id equals q.Project.Id
+                   join que in _context.Questions on q equals que.Questionnaire
+                   join a in _context.Answers on que equals a.Question
+                   where a.Answerer.Id == StudentID && p.Class.Id == classID
+                   select new { question = a.Question, answer = a.AnswerStr }).ToListAsync();
+
+            List<Answer> answerList = new List<Answer>();
+
+            foreach(var answer in result)
+            {
+                answerList.Add(
+                    new Answer { AnswerStr = answer.answer, Question = answer.question });
+            }
+
+            return answerList;
+
+            
         }
 
         // PUT: api/Answers/5
