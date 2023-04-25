@@ -15,7 +15,6 @@ class StudentCard extends StatelessWidget {
     required this.interests,
   });
 
-  String text = "this is some cool text";
   final String fullName;
   String major;
   List<String> availableMornings;
@@ -23,7 +22,7 @@ class StudentCard extends StatelessWidget {
   List<String> availableEvenings;
   List<String> skills;
   String expectedGrade;
-  int weeklyHours;
+  String weeklyHours;
   List<String> interests;
   Image profilePic;
 
@@ -111,7 +110,7 @@ class StudentCard extends StatelessWidget {
                 flex: 10,
                 child: Column(children: [
                   const Text("Weekly Hours", style: TextStyle(fontSize: 8)),
-                  Text(weeklyHours.toString(),
+                  Text(weeklyHours,
                       style:
                           const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
                 ]),
@@ -189,7 +188,7 @@ class StudentCard extends StatelessWidget {
 
     for(var i = 0; i < skills.length; i++) {
       skillsList.add(Padding(
-        padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+        padding: const EdgeInsets.only(top: 3, right: 6, bottom: 3),
         child: Tag(text: skills[i]),
       ));
     }
@@ -201,7 +200,7 @@ class StudentCard extends StatelessWidget {
 
     for(var i = 0; i < interests.length; i++) {
       interestsList.add(Padding(
-        padding: EdgeInsets.only(top: 3, right: 6, bottom: 3),
+        padding: const EdgeInsets.only(top: 3, right: 6, bottom: 3),
         child: Tag(text: interests[i]),
       ));
     }
