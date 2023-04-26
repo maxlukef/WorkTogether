@@ -182,21 +182,16 @@ class HttpService {
   inviteToTeam(int projectId, int inviterId, int inviteeId) async {
     Uri uri = Uri.https(
         "localhost:7277", "api/Teams/invite/$projectId/$inviterId/$inviteeId");
-    print(uri);
     Response res = await post(uri);
-    print(res);
   }
 
   Future<int> getUserByEmail(String email) async {
     Uri uri = Uri.https("localhost:7277", "api/Users/email/$email");
-    print(uri);
     Response res = await get(uri);
 
     if (res.statusCode == 200) {
       dynamic body = jsonDecode(res.body);
-      print(body);
       User profile = User.fromJson(body);
-      print(profile.id);
       loggedUserId = profile.id;
       return profile.id;
     } else {

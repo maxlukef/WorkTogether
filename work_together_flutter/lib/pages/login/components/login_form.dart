@@ -63,7 +63,6 @@ class LoginForm extends StatelessWidget {
             onPressed: () async {
               loggedUserId =
                   await HttpService().getUserByEmail(emailController.text);
-              print(loggedUserId);
               Navigator.pushReplacement(context, MaterialPageRoute(
                 builder: (context) {
                   return const MainContainer();

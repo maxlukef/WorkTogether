@@ -25,7 +25,6 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
   @override
   Widget build(BuildContext context) {
     refresh() {
-      print("refreshing");
       setState(() => {});
     }
 
@@ -40,12 +39,12 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
         body: SingleChildScrollView(
             child: Column(children: [
           const Padding(
-              padding: EdgeInsets.only(left: 30, top: 15, bottom: 20),
+              padding: EdgeInsets.only(left: 5, top: 15, bottom: 20),
               child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("CS4480",
+                  child: Text("CS4400",
                       style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.w700)))),
+                          fontSize: 32, fontWeight: FontWeight.w700)))),
           FutureBuilder(
               future: httpService.getTeam(widget.classId, widget.userId),
               builder: (BuildContext context,
@@ -56,7 +55,16 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
 
                 if (teamMates!.isNotEmpty) {
                   return Column(children: [
-                    MasonryGridView.count(
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text("My Team",
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.w700)),
+                        )
+                      ),
+                MasonryGridView.count(
                         crossAxisCount: 2,
                         mainAxisSpacing: 15,
                         crossAxisSpacing: 10,
@@ -80,7 +88,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                             notifyParent: refresh,
                           );
                         }),
-                    const Padding(padding: EdgeInsets.only(left: 5, right: 5), child: Divider(color: Colors.black)),
+                    const Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 5), child: Divider(color: Colors.black)),
                   ]);
                 }
 

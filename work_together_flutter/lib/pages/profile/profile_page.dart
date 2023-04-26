@@ -19,7 +19,6 @@ class ProfilePage extends ConsumerStatefulWidget {
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    print(widget.userId);
     final HttpService httpService = HttpService();
 
     return FutureBuilder(
