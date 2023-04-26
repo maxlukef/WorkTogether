@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
+import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/models/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
@@ -402,11 +403,14 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                       child: ElevatedButton(
-                        onPressed: () => {Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                        return const GroupSearchPage(classId: 1, userId: 2);
+                        onPressed: () => {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return GroupSearchPage(
+                                  classId: 1, userId: loggedUserId);
+                            },
+                          ))
                         },
-                        ))},
                         style: ElevatedButton.styleFrom(
                             minimumSize: const Size(150, 50),
                             backgroundColor: const Color(0xFF7AC8F5)),

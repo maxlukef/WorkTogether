@@ -1,24 +1,22 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
 
+import '../../http_request.dart';
+import '../../models/user.dart';
+
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({
-    Key? key, required this.userId
-  }) : super(key: key);
+  const ProfilePage({Key? key, required this.userId}) : super(key: key);
 
   final int userId;
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
-class _ProfilePageState extends ConsumerState<ProfilePage> {
 
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final HttpService httpService = HttpService();
@@ -172,12 +170,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       height: 45,
                       width: 45,
                       child: FloatingActionButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return EditProfilePage(
-                                user: userdata
-                              );
+                              return EditProfilePage(user: userdata);
                             },
                           )).whenComplete(() => setState(() => {}));
                         },
@@ -190,77 +186,5 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ],
           ),
         ));
-  }
-}
-
-class HttpService {
-  Future<User> getUser(userId) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Users/profile/$userId');
-
-    Response res = await get(uri);
-
-    if (res.statusCode == 200) {
-      dynamic body = jsonDecode(res.body);
-      User profile = User.fromJson(body);
-      return profile;
-    } else {
-      throw "Unable to retrieve user.";
-    }
-  }
-
-  putUser(User user) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Users/profile/${user.id}');
-    var body = user.toJson();
-    try{
-      Response res = await put(uri, body: body, headers: { "Content-Type" : "application/json" });
-    }catch (e) {
-      print(e);
-    }
-  }
-}
-
-class User {
-  final int id;
-  final String name;
-  final String email;
-  final String bio;
-  final String employmentStatus;
-  final String studentStatus;
-  final List<String> interests;
-  final String major;
-
-  User({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.bio,
-    required this.employmentStatus,
-    required this.studentStatus,
-    required this.interests,
-    required this.major,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json["id"] as int,
-      name: json["name"] as String,
-      email: json["email"] as String,
-      bio: json["bio"] as String,
-      employmentStatus: json["employmentStatus"] as String,
-      studentStatus: json["studentStatus"],
-      interests: json["interests"].split(','),
-      major: json["major"] as String,
-    );
-  }
-
-  String toJson() {
-    return '{"id": ${this.id.toString()},'
-        '"name": "${this.name}",'
-        '"email": "${this.email}",'
-        '"bio": "${this.bio}",'
-        '"major": "${this.major}",'
-        '"employmentStatus": "${this.employmentStatus}",'
-        '"studentStatus": "${this.studentStatus}",'
-        '"interests": "${this.interests.join(",")}"}';
   }
 }

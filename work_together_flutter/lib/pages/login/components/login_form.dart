@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/pages/signup/signup_page.dart';
 
+import '../../../http_request.dart';
+import '../../../main.dart';
 import '../../../main_container.dart';
 
 class LoginForm extends StatelessWidget {
-  const LoginForm({
+  LoginForm({
     Key? key,
   }) : super(key: key);
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,7 @@ class LoginForm extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextFormField(
+            controller: emailController,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             onSaved: (email) {},
@@ -40,6 +46,7 @@ class LoginForm extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextFormField(
+            controller: passwordController,
             keyboardType: TextInputType.visiblePassword,
             textInputAction: TextInputAction.next,
             onSaved: (password) {},
@@ -53,13 +60,15 @@ class LoginForm extends StatelessWidget {
           ),
         ),
         ElevatedButton(
-            onPressed: () => {
-                  Navigator.pushReplacement(context, MaterialPageRoute(
-                    builder: (context) {
-                      return const MainContainer();
-                    },
-                  ))
+            onPressed: () async {
+              loggedUserId =
+                  await HttpService().getUserByEmail(emailController.text);
+              Navigator.pushReplacement(context, MaterialPageRoute(
+                builder: (context) {
+                  return const MainContainer();
                 },
+              ));
+            },
             child: const Text(
               "Login",
               style: TextStyle(fontSize: 24),
