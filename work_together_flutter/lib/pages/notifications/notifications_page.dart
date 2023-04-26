@@ -15,8 +15,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      backgroundColor: Color(0xFFFFFFFF),
       appBar: CustomAppBar(title: "Notifications"),
-      body: Text("THIS IS THE NOTIFICATIONS PAGE"),
+      body: Center(child: Text("Notifications Coming Soon")),
     );
   }
 }

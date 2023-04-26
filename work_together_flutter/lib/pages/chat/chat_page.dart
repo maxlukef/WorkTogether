@@ -14,9 +14,10 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(title: "Chat"),
-      body: Text("THIS IS THE CHAT PAGE"),
+    return const Scaffold(
+      backgroundColor: Color(0xFFFFFFFF),
+      appBar: CustomAppBar(title: "Chat"),
+      body: Center(child: Text("Chat Coming Soon")),
     );
   }
 }
