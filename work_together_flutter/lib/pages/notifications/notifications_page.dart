@@ -43,18 +43,16 @@ class _NotificationsPageState extends State<NotificationsPage> {
         appBar: const CustomAppBar(title: "Notifications"),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView.separated(
+          child: ListView.builder(
               padding: const EdgeInsets.all(8),
               itemCount: notifications.length,
-              separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(
-                    color: Colors.black,
-                    thickness: 2.0,
-                  ),
               itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  child: notifications[index],
-                );
+                return Card(
+                    elevation: 4.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: notifications[index],
+                    ));
               }),
         ));
   }
