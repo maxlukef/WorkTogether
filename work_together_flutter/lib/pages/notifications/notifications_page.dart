@@ -47,12 +47,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
               padding: const EdgeInsets.all(8),
               itemCount: notifications.length,
               itemBuilder: (BuildContext context, int index) {
-                return Card(
-                    elevation: 4.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: notifications[index],
-                    ));
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
+                      // Bring user to relavant page regarding the notification.
+                      onPressed: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: notifications[index],
+                      )),
+                );
               }),
         ));
   }
@@ -64,17 +70,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
       children: [
         Text(
           className,
-          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+          style: const TextStyle(
+              color: Colors.black, fontWeight: FontWeight.normal, fontSize: 15),
         ),
         Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 23),
+          style: const TextStyle(
+              color: Colors.black, fontWeight: FontWeight.normal, fontSize: 23),
         ),
         Row(
           children: [
             const Text(
               "Due: ",
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 15),
             ),
             Text(
               dueDate,
