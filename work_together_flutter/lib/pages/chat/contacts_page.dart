@@ -12,15 +12,14 @@ class ConversationPage extends StatefulWidget {
 }
 
 class _ConversationPageState extends State<ConversationPage> {
-  List<Widget> conversations = [];
-  double dividerGap = 20.0;
+  List<List<String>> conversations = [];
 
   @override
   Widget build(BuildContext context) {
     List<String> garyList = ["Gary"];
     List<String> comboNameList = ["Gary", "Danny", "Robert"];
-    conversations.add(createConversation(garyList));
-    conversations.add(createConversation(comboNameList));
+    conversations.add(garyList);
+    conversations.add(comboNameList);
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
@@ -30,30 +29,33 @@ class _ConversationPageState extends State<ConversationPage> {
       body: ListView.builder(
           padding: const EdgeInsets.all(8),
           itemCount: conversations.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return const ChatPage();
-                      },
-                    ));
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: conversations[index],
-                  )),
-            );
-          }),
+          itemBuilder: createConversation),
+    );
+  }
+
+  Widget? createConversation(BuildContext context, int index) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) {
+                return ChatPage(
+                  names: conversations[index],
+                );
+              },
+            ));
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: createConversationBody(conversations[index]),
+          )),
     );
   }
 
   // Eventually add a profile picture to the conversations.
-  Widget createConversation(List<String> names) {
+  Widget createConversationBody(List<String> names) {
     String combinedNames = names.join(", ");
 
     return Row(

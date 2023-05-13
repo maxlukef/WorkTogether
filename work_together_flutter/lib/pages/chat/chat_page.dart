@@ -1,69 +1,85 @@
 import 'package:flutter/material.dart';
-
+import 'package:work_together_flutter/main.dart';
+import 'package:work_together_flutter/pages/chat/Components/message.dart';
 import '../../global_components/custom_app_bar.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({
     Key? key,
+    required this.names,
   }) : super(key: key);
 
+  // List of users the conversation is happening between.
+  final List<String> names;
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List<Widget> contacts = [];
-  double dividerGap = 20.0;
+  List<Message> messages = [];
+
+  // Test Messages.
+  Message m1 = Message("Hello!", "John Coder", 2);
+  Message m2 = Message("Hi John!", "Sebastian Carson", 4);
 
   @override
   Widget build(BuildContext context) {
-    contacts.add(createContact("Gary"));
-
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      appBar: const CustomAppBar(
-        title: "Chat",
+      appBar: CustomAppBar(
+        title: widget.names.join(", "),
       ),
       body: ListView.builder(
           padding: const EdgeInsets.all(8),
-          itemCount: contacts.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return const ChatPage();
-                    },
-                  ));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: contacts[index],
-                ));
-          }),
+          itemCount: messages.length,
+          itemBuilder: createMessage),
     );
   }
 
-  // Eventually add a profile picture to the contacts.
-  Widget createContact(String name) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Replace this with profile picture.
-        const Padding(
-          padding: EdgeInsets.fromLTRB(8.0, 0, 24, 0),
-          child: Icon(
-            Icons.account_circle,
-            color: Colors.blue,
-            size: 50.0,
+  Widget? createMessage(BuildContext context, int index) {
+    Message currentMessage = messages[index];
+    Widget textMessage;
+
+    // Change message look if the logged in user sent it.
+    if (currentMessage.senderID == loggedUserId) {
+      textMessage = Column(
+        children: [
+          Text(
+            currentMessage.senderName,
+            style: const TextStyle(fontSize: 15, color: Colors.black),
           ),
-        ),
-        Text(
-          name,
-          style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
-        ),
-      ],
+          Container(
+            color: Colors.blue,
+            child: Text(
+              currentMessage.messageText,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      );
+    }
+    // Different appearance if the message was sent by anybody else.
+    else {
+      textMessage = Column(
+        children: [
+          Text(
+            currentMessage.senderName,
+            style: const TextStyle(fontSize: 15, color: Colors.black),
+          ),
+          Container(
+            color: Colors.grey.shade50,
+            child: Text(
+              currentMessage.messageText,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: textMessage,
     );
   }
 }
