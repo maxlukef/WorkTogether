@@ -51,7 +51,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white),
+                          backgroundColor: Colors.grey.shade200),
                       // Bring user to relavant page regarding the notification.
                       onPressed: () {},
                       child: Padding(

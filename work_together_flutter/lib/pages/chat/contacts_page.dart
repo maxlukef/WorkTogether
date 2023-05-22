@@ -37,7 +37,8 @@ class _ConversationPageState extends State<ConversationPage> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+          style:
+              ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade200),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(
               builder: (context) {
