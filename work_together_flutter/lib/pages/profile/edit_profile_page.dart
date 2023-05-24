@@ -10,6 +10,7 @@ class EditProfilePage extends StatelessWidget {
   final User user;
   final bioController = TextEditingController();
   final majorController = TextEditingController();
+  final interestsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +143,31 @@ class EditProfilePage extends StatelessWidget {
                 ),
               ),
               Padding(
-                  padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                child: TextFormField(
+                  controller: interestsController,
+                  style: const TextStyle(
+                      color: Color(0xFF000000),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (interest) {
+                    user.interests.add(interest.toString());
+                  },
+                  decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xFFFAFAFA),
+                      hintText: "Type to Add an Interest",
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color(0xFFD9D9D9), width: 2.0))),
+                  maxLines: null,
+                ),
+              ),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                   child: Row(
                     children: [..._interestList()],
                   )),
