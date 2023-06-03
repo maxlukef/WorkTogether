@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:work_together_flutter/pages/all_tasks/all_tasks.dart';
+import 'package:work_together_flutter/pages/create_tasks/create_tasks.dart';
 
 import '../../global_components/custom_app_bar.dart';
 
@@ -38,7 +40,6 @@ class GroupHome extends StatelessWidget {
               "Create a custom networking socket",
               "Go outside"
             ]),
-            // Create task and All tasks buttons.
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -48,7 +49,13 @@ class GroupHome extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue),
                       // Bring user to create task page.
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return const CreateTaskPage();
+                          },
+                        ));
+                      },
                       child: const Padding(
                         padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
                         child: Text(
@@ -66,7 +73,13 @@ class GroupHome extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue),
                       // Bring user to create task page.
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return const AllTasksPage();
+                          },
+                        ));
+                      },
                       child: const Padding(
                         padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
                         child: Text(
