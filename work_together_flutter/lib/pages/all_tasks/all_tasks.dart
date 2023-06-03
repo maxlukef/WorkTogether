@@ -3,6 +3,7 @@ import 'package:work_together_flutter/pages/all_tasks/components/task.dart';
 
 import '../../global_components/custom_app_bar.dart';
 import '../../global_components/tag.dart';
+import '../create_tasks/create_tasks.dart';
 
 class AllTasksPage extends StatefulWidget {
   const AllTasksPage({
@@ -61,7 +62,13 @@ class _AllTasksPageState extends State<AllTasksPage> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue),
                           // Bring user to create task page.
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return const CreateTaskPage();
+                              },
+                            ));
+                          },
                           child: const Padding(
                             padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
                             child: Text(
