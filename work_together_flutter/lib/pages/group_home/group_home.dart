@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/pages/all_tasks/all_tasks.dart';
 import 'package:work_together_flutter/pages/create_tasks/create_tasks.dart';
+import 'package:work_together_flutter/pages/milestone%20description/milestone_description.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../global_components/milestone.dart';
+import '../../global_components/task.dart';
+import '../task description/task_description.dart';
 
 class GroupHome extends StatelessWidget {
   const GroupHome({super.key, required this.groupName});
@@ -10,10 +14,45 @@ class GroupHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Milestone m1 = Milestone(
+        "Milestone 1", "A milestone description.", "02/01/2023", 10, 10);
+
+    Milestone m2 = Milestone("Milestone 2",
+        "A different milestone description.", "02/14/2023", 12, 12);
+
+    Milestone m3 = Milestone("Milestone 3", "Yet another milestone description",
+        "02/22/2023", 7, 10);
+
+    Milestone m4 = Milestone(
+        "Milestone 4",
+        "Build a chat server that supports multiple clients. Each client should be able to select a display name when joining so that they can be identified by that name. You will need to utilize multithreading to support multiple clients. Lorem ipsum dolor sit amet. Cum quasi facilis et voluptas temporibus quo incidunt accusamus? Qui error obcaecati sed adipisci voluptas est tempora molestiae. Vel quaerat quas id eligendi quibusdam ut molestiae natus ex quia provident sit eaque sunt. Cum similique quia et dolorem quia At mollitia maxime vel omnis sequi non omnis temporibus ea consequatur numquam.",
+        "04/19/2023",
+        2,
+        4);
+
     List<Widget> milestones = [];
-    milestones.add(createMilestoneTile("Milestone 1", 10, 10, "02/01/2023"));
-    milestones.add(createMilestoneTile("Milestone 2", 12, 12, "02/14/2023"));
-    milestones.add(createMilestoneTile("Milestone 3", 7, 10, "02/22/2023"));
+    milestones.add(createMilestoneTile(m1, context));
+    milestones.add(createMilestoneTile(m2, context));
+    milestones.add(createMilestoneTile(m3, context));
+    milestones.add(createMilestoneTile(m4, context));
+
+    Task t1 = Task(
+        "Draft a home screen UI",
+        "Create a rough blockout of the home screen.",
+        "09/12/11",
+        "Rory Donald");
+    Task t2 = Task("Go outside", "Leave the abode", "09/12/11", "Rory Donald");
+    Task t3 = Task(
+        "Create a custom networking socket",
+        "Create a socket to allow network connections.",
+        "09/12/11",
+        "Rory Donald");
+    List<Task> tasks = [];
+
+    tasks.add(t1);
+    tasks.add(t2);
+    tasks.add(t3);
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       appBar: CustomAppBar(title: groupName),
@@ -35,11 +74,7 @@ class GroupHome extends StatelessWidget {
               ),
             ),
             Center(child: createMilestoneProgressMeter(0.7)),
-            createTaskSection([
-              "Draft a home screen UI",
-              "Create a custom networking socket",
-              "Go outside"
-            ]),
+            createTaskSection(tasks, context),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -190,8 +225,7 @@ class GroupHome extends StatelessWidget {
     );
   }
 
-  // tasks are currently strings, probably replace this with a more sophisticated structure later.
-  Widget createTaskSection(List<String> tasks) {
+  Widget createTaskSection(List<Task> tasks, BuildContext context) {
     List<Widget> taskWidgets = [];
 
     // Add header.
@@ -214,13 +248,21 @@ class GroupHome extends StatelessWidget {
             color: Colors.grey.shade200,
             child: InkWell(
                 // Bring user to relavant page regarding the task.
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return TaskDescriptionPage(
+                        task: tasks[i],
+                      );
+                    },
+                  ));
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    tasks[i],
+                    tasks[i].name,
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.black,
                     ),
                   ),
@@ -236,59 +278,74 @@ class GroupHome extends StatelessWidget {
     );
   }
 
-  Widget createMilestoneTile(String milestoneName, int tasksCompleted,
-      int tasksTotal, String deadline) {
+  Widget createMilestoneTile(Milestone milestone, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 8, 16, 8),
       child: Container(
         width: 200,
         height: 100,
         color: Colors.grey.shade200,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  milestoneName,
+        child: Material(
+          color: Colors.grey.shade200,
+          child: InkWell(
+            // Brings user to relavant milestone page.
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return MilestoneDescriptionPage(
+                    milestone: milestone,
+                  );
+                },
+              ));
+            },
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      milestone.name,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    if (milestone.tasksCompleted == milestone.totalTasks)
+                      const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                      ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                child: Text(
+                  "${milestone.tasksCompleted}/${milestone.totalTasks} Total Tasks",
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
-                if (tasksCompleted == tasksTotal)
-                  const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                  ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            child: Text(
-              "$tasksCompleted/$tasksTotal Total Tasks",
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            child: Row(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                  child: Text(
-                    "Deadline:",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                child: Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                      child: Text(
+                        "Deadline:",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Text(
+                      milestone.deadline,
+                      style: const TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.w600),
+                    ),
+                  ],
                 ),
-                Text(
-                  deadline,
-                  style: const TextStyle(
-                      color: Colors.blue, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
+              ),
+            ]),
           ),
-        ]),
+        ),
       ),
     );
   }
