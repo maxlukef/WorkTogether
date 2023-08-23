@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:work_together_flutter/pages/all_tasks/components/task.dart';
 
 import '../../global_components/custom_app_bar.dart';
 import '../../global_components/tag.dart';
+import '../../global_components/task.dart';
+import '../create_tasks/create_tasks.dart';
 
 class AllTasksPage extends StatefulWidget {
   const AllTasksPage({
@@ -17,18 +18,38 @@ class _AllTasksPageState extends State<AllTasksPage> {
   @override
   Widget build(BuildContext context) {
     List<Task> groupTasks = [
-      Task("Draft a home screen UI", "02/14/2023", "Rory Donald"),
-      Task("Create a custom socket", "04/23/2023", "Rory Donald"),
-      Task("Develop client side API", "03/09/2023", "Alex Childs"),
+      Task(
+          "Draft a home screen UI",
+          "Create a rough blockout of the home screen.",
+          "02/14/2023",
+          "Rory Donald"),
+      Task("Create a custom socket", "Create a socket to allow connections.",
+          "04/23/2023", "Rory Donald"),
+      Task(
+          "Develop client side API",
+          "Develop an api that the client uses to connect to the server.",
+          "03/09/2023",
+          "Alex Childs"),
     ];
     List<Task> yourTasks = [
-      Task("Create a custom socket", "04/23/2023", "Rory Donald"),
-      Task("Draft a home screen UI", "02/14/2023", "Rory Donald"),
-      Task("Create a custom socket", "04/23/2023", "Rory Donald"),
+      Task("Create a custom socket", "Create a socket to allow connections.",
+          "04/23/2023", "Rory Donald"),
+      Task(
+          "Draft a home screen UI",
+          "Create a rough blockout of the home screen.",
+          "02/14/2023",
+          "Rory Donald"),
+      Task("Create a custom socket", "Create a socket to allow connections.",
+          "04/23/2023", "Rory Donald"),
     ];
     List<Task> completedTasks = [
-      Task("Complete Client side networking", "02/14/2023", "Rory Donald"),
-      Task("Create a super user", "04/23/2023", "Alex Childs"),
+      Task(
+          "Complete Client side networking",
+          "Develop an api that the client uses to connect to the server.",
+          "02/14/2023",
+          "Rory Donald"),
+      Task("Create a super user", "Create a user with extensive permissions.",
+          "04/23/2023", "Alex Childs"),
     ];
 
     return Scaffold(
@@ -61,7 +82,13 @@ class _AllTasksPageState extends State<AllTasksPage> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue),
                           // Bring user to create task page.
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return const CreateTaskPage();
+                              },
+                            ));
+                          },
                           child: const Padding(
                             padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
                             child: Text(
@@ -112,7 +139,7 @@ class _AllTasksPageState extends State<AllTasksPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        tasks[i].taskText,
+                        tasks[i].name,
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black,
@@ -169,7 +196,7 @@ class _AllTasksPageState extends State<AllTasksPage> {
                       Column(
                         children: [
                           Text(
-                            tasks[i].taskText,
+                            tasks[i].name,
                             style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.black,
