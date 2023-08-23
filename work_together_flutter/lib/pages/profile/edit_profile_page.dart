@@ -168,7 +168,7 @@ class EditProfilePage extends StatelessWidget {
               ),
               Padding(
                   padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                  child: Row(
+                  child: Wrap(
                     children: [..._interestList()],
                   )),
             ],
@@ -215,7 +215,7 @@ class EditProfilePage extends StatelessWidget {
     for (var i = 0; i < user.interests.length; i++) {
       interestsList.add(
         Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+          padding: const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
           child: Tag(text: user.interests[i]),
         ),
       );

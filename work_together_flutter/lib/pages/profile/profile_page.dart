@@ -46,7 +46,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     for (String interest in userdata.interests) {
       interestTags.add(Padding(
-        padding: const EdgeInsets.fromLTRB(0.0, 0, 4.0, 0),
+        padding: const EdgeInsets.fromLTRB(0.0, 4.0, 4.0, 0),
         child: Tag(
           text: interest,
         ),
@@ -158,7 +158,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      child: Row(
+                      child: Wrap(
                         children: interestTags,
                       )),
                 ],
