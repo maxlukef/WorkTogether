@@ -166,10 +166,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       fontWeight: FontWeight.w400,
                       fontFamily: 'SourceSansPro'),
                   keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.go,
                   onFieldSubmitted: (interest) {
                     widget.user.interests.add(interest.toString());
                     ref.read(tagListNotifierProvider.notifier).addTag(interest);
+                    interestsController.clear();
                   },
                   decoration: const InputDecoration(
                       filled: true,
