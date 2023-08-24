@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import '../../global_components/custom_app_bar.dart';
 import '../../http_request.dart';
+import '../../models/tag_list.dart';
 import '../../models/user.dart';
 
-class EditProfilePage extends StatelessWidget {
-  EditProfilePage({Key? key, required this.user}) : super(key: key);
+enum StudentStatus { fullTime, partTime }
 
+class EditProfilePage extends ConsumerStatefulWidget {
+  const EditProfilePage({Key? key, required this.user}) : super(key: key);
   final User user;
+
+  @override
+  ConsumerState<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final bioController = TextEditingController();
   final majorController = TextEditingController();
   final interestsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    bioController.text = user.bio;
-    majorController.text = user.major;
+    List<String> tagList = ref.watch(tagListNotifierProvider);
+
+    bioController.text = widget.user.bio;
+    majorController.text = widget.user.major;
+
+    tagList.addAll(widget.user.interests);
+
     return Scaffold(
       appBar: const CustomAppBar(title: "Edit Profile"),
       backgroundColor: const Color(0xFFFFFFFF),
@@ -27,7 +41,7 @@ class EditProfilePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
             child: Text(
-              user.name,
+              widget.user.name,
               style: const TextStyle(
                   fontSize: 16,
                   fontFamily: 'SourceSansPro',
@@ -113,7 +127,7 @@ class EditProfilePage extends StatelessWidget {
                 child: Row(
                   children: [
                     Tag(
-                      text: user.studentStatus,
+                      text: widget.user.studentStatus,
                     ),
                   ],
                 ),
@@ -130,7 +144,7 @@ class EditProfilePage extends StatelessWidget {
                 child: Row(
                   children: [
                     Tag(
-                      text: user.employmentStatus,
+                      text: widget.user.employmentStatus,
                     ),
                   ],
                 ),
@@ -154,7 +168,8 @@ class EditProfilePage extends StatelessWidget {
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (interest) {
-                    user.interests.add(interest.toString());
+                    widget.user.interests.add(interest.toString());
+                    ref.read(tagListNotifierProvider.notifier).addTag(interest);
                   },
                   decoration: const InputDecoration(
                       filled: true,
@@ -169,7 +184,37 @@ class EditProfilePage extends StatelessWidget {
               Padding(
                   padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                   child: Wrap(
-                    children: [..._interestList()],
+                    children: [
+                      ...widget.user.interests.map(
+                        (e) {
+                          if (e.toString() != "") {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
+                              child: Wrap(
+                                children: [
+                                  Tag(text: e.toString()),
+                                  GestureDetector(
+                                    child:
+                                        const Icon(Icons.remove_circle_outline),
+                                    onTap: () {
+                                      widget.user.interests
+                                          .remove(e.toString());
+                                      ref
+                                          .read(
+                                              tagListNotifierProvider.notifier)
+                                          .removeTag(tagList.indexOf(e));
+                                    },
+                                  )
+                                ],
+                              ),
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      )
+                    ],
                   )),
             ],
           ),
@@ -184,13 +229,13 @@ class EditProfilePage extends StatelessWidget {
                   child: FloatingActionButton(
                     onPressed: () {
                       User updatedUser = User(
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
+                        id: widget.user.id,
+                        name: widget.user.name,
+                        email: widget.user.email,
                         bio: bioController.text,
-                        employmentStatus: user.employmentStatus,
-                        studentStatus: user.studentStatus,
-                        interests: user.interests,
+                        employmentStatus: widget.user.employmentStatus,
+                        studentStatus: widget.user.studentStatus,
+                        interests: widget.user.interests,
                         major: majorController.text,
                       );
                       HttpService().putUser(updatedUser);
@@ -207,19 +252,5 @@ class EditProfilePage extends StatelessWidget {
         ],
       )),
     );
-  }
-
-  _interestList() {
-    List<Widget> interestsList = [];
-
-    for (var i = 0; i < user.interests.length; i++) {
-      interestsList.add(
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
-          child: Tag(text: user.interests[i]),
-        ),
-      );
-    }
-    return interestsList;
   }
 }

@@ -45,12 +45,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     List<Widget> interestTags = [];
 
     for (String interest in userdata.interests) {
-      interestTags.add(Padding(
-        padding: const EdgeInsets.fromLTRB(0.0, 4.0, 4.0, 0),
-        child: Tag(
-          text: interest,
-        ),
-      ));
+      if (interest != "") {
+        interestTags.add(Padding(
+          padding: const EdgeInsets.fromLTRB(0.0, 4.0, 4.0, 0),
+          child: Tag(
+            text: interest,
+          ),
+        ));
+      }
     }
 
     return Scaffold(
