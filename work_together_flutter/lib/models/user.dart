@@ -2,11 +2,11 @@ class User {
   final int id;
   final String name;
   final String email;
-  final String bio;
-  final String employmentStatus;
-  final String studentStatus;
-  final List<String> interests;
-  final String major;
+  String bio;
+  String employmentStatus;
+  String studentStatus;
+  List<String> interests;
+  String major;
 
   User({
     required this.id,

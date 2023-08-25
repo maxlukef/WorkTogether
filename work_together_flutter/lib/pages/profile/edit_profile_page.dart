@@ -20,6 +20,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final bioController = TextEditingController();
   final majorController = TextEditingController();
   final interestsController = TextEditingController();
+  StudentStatus? _studentStatus;
+
+  @override
+  void initState() {
+    _studentStatus =
+        (widget.user.studentStatus.toString() == "Full Time Student")
+            ? StudentStatus.fullTime
+            : StudentStatus.partTime;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +83,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       fontWeight: FontWeight.w400,
                       fontFamily: 'SourceSansPro'),
                   keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.next,
-                  onSaved: (bio) {},
+                  textInputAction: TextInputAction.go,
+                  onSaved: (bio) {
+                    widget.user.bio = bio.toString();
+                  },
                   decoration: const InputDecoration(
                       filled: true,
                       fillColor: Color(0xFFFAFAFA),
@@ -103,8 +114,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       fontWeight: FontWeight.w400,
                       fontFamily: 'SourceSansPro'),
                   keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.next,
-                  onSaved: (bio) {},
+                  textInputAction: TextInputAction.go,
+                  onSaved: (major) {
+                    widget.user.major = major.toString();
+                  },
                   decoration: const InputDecoration(
                       filled: true,
                       fillColor: Color(0xFFFAFAFA),
@@ -122,15 +135,61 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   style: TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                child: Row(
-                  children: [
-                    Tag(
-                      text: widget.user.studentStatus,
-                    ),
-                  ],
-                ),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          children: [
+                            Radio(
+                              value: StudentStatus.fullTime,
+                              groupValue: _studentStatus,
+                              onChanged: (StudentStatus? value) {
+                                setState(() {
+                                  _studentStatus = value;
+                                });
+                                widget.user.studentStatus = "Full Time Student";
+                              },
+                            ),
+                            const Expanded(
+                              child: Text(
+                                'Full Time Student',
+                                style: TextStyle(
+                                    fontSize: 14, fontFamily: 'SourceSansPro'),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          children: [
+                            Radio(
+                              value: StudentStatus.partTime,
+                              groupValue: _studentStatus,
+                              onChanged: (StudentStatus? value) {
+                                setState(() {
+                                  _studentStatus = value;
+                                });
+                                widget.user.studentStatus = "Part Time Student";
+                              },
+                            ),
+                            const Expanded(
+                                child: Text(
+                              'Part Time Student',
+                              style: TextStyle(
+                                  fontSize: 14, fontFamily: 'SourceSansPro'),
+                            ))
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
