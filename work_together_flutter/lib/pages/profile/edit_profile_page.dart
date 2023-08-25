@@ -142,62 +142,68 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   style: TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          children: [
-                            Radio(
-                              value: StudentStatus.fullTime,
-                              groupValue: _studentStatus,
-                              onChanged: (StudentStatus? value) {
-                                setState(() {
-                                  _studentStatus = value;
-                                });
-                                widget.user.studentStatus = "Full Time Student";
-                              },
-                            ),
-                            const Expanded(
-                              child: Text(
-                                'Full Time Student',
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Row(
+                            children: [
+                              Radio(
+                                value: StudentStatus.fullTime,
+                                groupValue: _studentStatus,
+                                onChanged: (StudentStatus? value) {
+                                  setState(() {
+                                    _studentStatus = value;
+                                  });
+                                  widget.user.studentStatus =
+                                      "Full Time Student";
+                                },
+                              ),
+                              const Expanded(
+                                child: Text(
+                                  'Full Time Student',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'SourceSansPro'),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Row(
+                            children: [
+                              Radio(
+                                value: StudentStatus.partTime,
+                                groupValue: _studentStatus,
+                                onChanged: (StudentStatus? value) {
+                                  setState(() {
+                                    _studentStatus = value;
+                                  });
+                                  widget.user.studentStatus =
+                                      "Part Time Student";
+                                },
+                              ),
+                              const Expanded(
+                                  child: Text(
+                                'Part Time Student',
                                 style: TextStyle(
                                     fontSize: 14, fontFamily: 'SourceSansPro'),
-                              ),
-                            )
-                          ],
+                              ))
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          children: [
-                            Radio(
-                              value: StudentStatus.partTime,
-                              groupValue: _studentStatus,
-                              onChanged: (StudentStatus? value) {
-                                setState(() {
-                                  _studentStatus = value;
-                                });
-                                widget.user.studentStatus = "Part Time Student";
-                              },
-                            ),
-                            const Expanded(
-                                child: Text(
-                              'Part Time Student',
-                              style: TextStyle(
-                                  fontSize: 14, fontFamily: 'SourceSansPro'),
-                            ))
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
@@ -206,62 +212,66 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   style: TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          children: [
-                            Radio(
-                              value: EmploymentStatus.employed,
-                              groupValue: _employmentStatus,
-                              onChanged: (EmploymentStatus? value) {
-                                setState(() {
-                                  _employmentStatus = value;
-                                });
-                                widget.user.employmentStatus = "Employed";
-                              },
-                            ),
-                            const Expanded(
-                              child: Text(
-                                'Employed',
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Row(
+                            children: [
+                              Radio(
+                                value: EmploymentStatus.employed,
+                                groupValue: _employmentStatus,
+                                onChanged: (EmploymentStatus? value) {
+                                  setState(() {
+                                    _employmentStatus = value;
+                                  });
+                                  widget.user.employmentStatus = "Employed";
+                                },
+                              ),
+                              const Expanded(
+                                child: Text(
+                                  'Employed',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'SourceSansPro'),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Row(
+                            children: [
+                              Radio(
+                                value: EmploymentStatus.unemployed,
+                                groupValue: _employmentStatus,
+                                onChanged: (EmploymentStatus? value) {
+                                  setState(() {
+                                    _employmentStatus = value;
+                                  });
+                                  widget.user.employmentStatus = "Unemployed";
+                                },
+                              ),
+                              const Expanded(
+                                  child: Text(
+                                'Unemployed',
                                 style: TextStyle(
                                     fontSize: 14, fontFamily: 'SourceSansPro'),
-                              ),
-                            )
-                          ],
+                              ))
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          children: [
-                            Radio(
-                              value: EmploymentStatus.unemployed,
-                              groupValue: _employmentStatus,
-                              onChanged: (EmploymentStatus? value) {
-                                setState(() {
-                                  _employmentStatus = value;
-                                });
-                                widget.user.employmentStatus = "Unemployed";
-                              },
-                            ),
-                            const Expanded(
-                                child: Text(
-                              'Unemployed',
-                              style: TextStyle(
-                                  fontSize: 14, fontFamily: 'SourceSansPro'),
-                            ))
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
