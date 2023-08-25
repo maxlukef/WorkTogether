@@ -8,6 +8,8 @@ import '../../models/user.dart';
 
 enum StudentStatus { fullTime, partTime }
 
+enum EmploymentStatus { employed, unemployed }
+
 class EditProfilePage extends ConsumerStatefulWidget {
   const EditProfilePage({Key? key, required this.user}) : super(key: key);
   final User user;
@@ -21,13 +23,18 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final majorController = TextEditingController();
   final interestsController = TextEditingController();
   StudentStatus? _studentStatus;
+  EmploymentStatus? _employmentStatus;
 
   @override
   void initState() {
+    super.initState();
     _studentStatus =
         (widget.user.studentStatus.toString() == "Full Time Student")
             ? StudentStatus.fullTime
             : StudentStatus.partTime;
+    _employmentStatus = (widget.user.employmentStatus.toString() == "Employed")
+        ? EmploymentStatus.employed
+        : EmploymentStatus.unemployed;
   }
 
   @override
@@ -199,15 +206,62 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   style: TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                child: Row(
-                  children: [
-                    Tag(
-                      text: widget.user.employmentStatus,
-                    ),
-                  ],
-                ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          children: [
+                            Radio(
+                              value: EmploymentStatus.employed,
+                              groupValue: _employmentStatus,
+                              onChanged: (EmploymentStatus? value) {
+                                setState(() {
+                                  _employmentStatus = value;
+                                });
+                                widget.user.employmentStatus = "Employed";
+                              },
+                            ),
+                            const Expanded(
+                              child: Text(
+                                'Employed',
+                                style: TextStyle(
+                                    fontSize: 14, fontFamily: 'SourceSansPro'),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          children: [
+                            Radio(
+                              value: EmploymentStatus.unemployed,
+                              groupValue: _employmentStatus,
+                              onChanged: (EmploymentStatus? value) {
+                                setState(() {
+                                  _employmentStatus = value;
+                                });
+                                widget.user.employmentStatus = "Unemployed";
+                              },
+                            ),
+                            const Expanded(
+                                child: Text(
+                              'Unemployed',
+                              style: TextStyle(
+                                  fontSize: 14, fontFamily: 'SourceSansPro'),
+                            ))
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
@@ -296,11 +350,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         id: widget.user.id,
                         name: widget.user.name,
                         email: widget.user.email,
-                        bio: bioController.text,
+                        bio: widget.user.bio,
                         employmentStatus: widget.user.employmentStatus,
                         studentStatus: widget.user.studentStatus,
                         interests: widget.user.interests,
-                        major: majorController.text,
+                        major: widget.user.major,
                       );
                       HttpService().putUser(updatedUser);
                       Navigator.pop(context, updatedUser);
