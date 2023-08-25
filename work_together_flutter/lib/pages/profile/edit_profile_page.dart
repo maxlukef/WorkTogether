@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
+import 'package:work_together_flutter/provider/interest_list.dart';
 import '../../global_components/custom_app_bar.dart';
 import '../../http_request.dart';
-import '../../models/tag_list.dart';
 import '../../models/user.dart';
 
 enum StudentStatus { fullTime, partTime }
@@ -32,12 +32,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> tagList = ref.watch(tagListNotifierProvider);
+    List<String> interestList = ref.watch(interestListNotifierProvider);
 
     bioController.text = widget.user.bio;
     majorController.text = widget.user.major;
 
-    tagList.addAll(widget.user.interests);
+    interestList.addAll(widget.user.interests);
 
     return Scaffold(
       appBar: const CustomAppBar(title: "Edit Profile"),
@@ -47,6 +47,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const Icon(
+            Icons.account_circle,
+            color: Colors.blue,
+            size: 110.0,
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
             child: Text(
@@ -56,11 +61,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   fontFamily: 'SourceSansPro',
                   fontWeight: FontWeight.bold),
             ),
-          ),
-          const Icon(
-            Icons.account_circle,
-            color: Colors.blue,
-            size: 110.0,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -136,9 +136,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 ),
               ),
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
                         flex: 1,
@@ -228,7 +229,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   textInputAction: TextInputAction.go,
                   onFieldSubmitted: (interest) {
                     widget.user.interests.add(interest.toString());
-                    ref.read(tagListNotifierProvider.notifier).addTag(interest);
+                    ref
+                        .read(interestListNotifierProvider.notifier)
+                        .addInterest(interest);
                     interestsController.clear();
                   },
                   decoration: const InputDecoration(
@@ -261,9 +264,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                       widget.user.interests
                                           .remove(e.toString());
                                       ref
-                                          .read(
-                                              tagListNotifierProvider.notifier)
-                                          .removeTag(tagList.indexOf(e));
+                                          .read(interestListNotifierProvider
+                                              .notifier)
+                                          .removeInterest(
+                                              interestList.indexOf(e));
                                     },
                                   )
                                 ],

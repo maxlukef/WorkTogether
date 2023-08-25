@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/main.dart';
-import 'package:work_together_flutter/models/meeting_time_list.dart';
+import 'package:work_together_flutter/provider/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
-import '../../models/tag_list.dart';
+import '../../provider/skill_list.dart';
 import '../group_search/group_search_page.dart';
 
 enum ExpectedQuality { top1, A, B, C }
@@ -26,7 +26,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
   Widget build(BuildContext context) {
     var formController = TextEditingController();
 
-    List<String> tagList = ref.watch(tagListNotifierProvider);
+    List<String> skillList = ref.watch(skillListNotifierProvider);
     List<MeetingTime> meetingTimeList =
         ref.watch(meetingTimeListNotifierProvider);
 
@@ -291,7 +291,9 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (e) {
-                          ref.read(tagListNotifierProvider.notifier).addTag(e);
+                          ref
+                              .read(skillListNotifierProvider.notifier)
+                              .addSkill(e);
                           formController.clear();
                         },
                         decoration: const InputDecoration(
@@ -305,7 +307,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                     ),
                   ),
                   Wrap(runSpacing: 12, children: [
-                    ...tagList.map(
+                    ...skillList.map(
                       (e) => Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -313,10 +315,10 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                           GestureDetector(
                             child: const Icon(Icons.remove_circle_outline),
                             onTap: () {
-                              int index = tagList.indexOf(e);
+                              int index = skillList.indexOf(e);
                               ref
-                                  .read(tagListNotifierProvider.notifier)
-                                  .removeTag(index);
+                                  .read(skillListNotifierProvider.notifier)
+                                  .removeSkill(index);
                             },
                           )
                         ],

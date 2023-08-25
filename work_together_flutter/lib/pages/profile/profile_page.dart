@@ -63,6 +63,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const Icon(
+                Icons.account_circle,
+                color: Colors.blue,
+                size: 110.0,
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                 child: Text(
@@ -72,11 +77,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       fontFamily: 'SourceSansPro',
                       fontWeight: FontWeight.bold),
                 ),
-              ),
-              const Icon(
-                Icons.account_circle,
-                color: Colors.blue,
-                size: 110.0,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
