@@ -45,12 +45,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     List<Widget> interestTags = [];
 
     for (String interest in userdata.interests) {
-      interestTags.add(Padding(
-        padding: const EdgeInsets.fromLTRB(0.0, 0, 4.0, 0),
-        child: Tag(
-          text: interest,
-        ),
-      ));
+      if (interest != "") {
+        interestTags.add(Padding(
+          padding: const EdgeInsets.fromLTRB(0.0, 4.0, 4.0, 0),
+          child: Tag(
+            text: interest,
+          ),
+        ));
+      }
     }
 
     return Scaffold(
@@ -61,6 +63,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const Icon(
+                Icons.account_circle,
+                color: Colors.blue,
+                size: 110.0,
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                 child: Text(
@@ -70,11 +77,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       fontFamily: 'SourceSansPro',
                       fontWeight: FontWeight.bold),
                 ),
-              ),
-              const Icon(
-                Icons.account_circle,
-                color: Colors.blue,
-                size: 110.0,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -158,7 +160,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      child: Row(
+                      child: Wrap(
                         children: interestTags,
                       )),
                 ],
