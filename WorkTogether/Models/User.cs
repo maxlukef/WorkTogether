@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,12 +8,13 @@ namespace WorkTogether.Models
     /// <summary>
     /// Model class for a user in Work Together
     /// </summary>
-    public class User
+    [Index(nameof(UserId), IsUnique = true)]
+    [Table("AspNetUsers")]
+    public class User : IdentityUser
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        
+        public int UserId { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
         public string Bio { get; set; }
         public string Major { get; set; }
         public ICollection<StudentClass>? StudentClasses { get; set; }

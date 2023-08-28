@@ -4,10 +4,12 @@ using MySql.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkTogether.Models
 {
-    public class WT_DBContext : DbContext
+    public class WT_DBContext : IdentityDbContext<User>
     {
         public WT_DBContext(DbContextOptions<WT_DBContext> options)
             : base(options)
@@ -17,8 +19,14 @@ namespace WorkTogether.Models
         protected readonly IConfiguration Configuration;
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
+            base.OnConfiguring(options);
         }
-       
+
+        protected override void OnModelCreating(ModelBuilder modelbuilder)
+        {
+            base.OnModelCreating(modelbuilder);
+        }
+
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Class> Classes { get; set; } = null!;
@@ -52,6 +60,7 @@ namespace WorkTogether.Models
             {
                 User newUser2 = new User();
                 newUser2.Name = "Bob Programmer";
+                newUser2.UserId = 1;
                 newUser2.Interests = "Cinema,Skiing,Programming";
                 newUser2.StudentStatus = "Professor";
                 newUser2.Bio = "As a capstone professor and film critic, I spend my days assisting students in learning programming and my evenings watching movies.";
@@ -59,6 +68,7 @@ namespace WorkTogether.Models
                 newUser2.Email = "u0000001@utah.edu";
                 newUser2.EmploymentStatus = "Full Time";
                 newUser2.Major = "Computer Science";
+                
                 Users.Add(newUser2);
 
                 Class newClass = new Class();
@@ -102,6 +112,7 @@ namespace WorkTogether.Models
                 newUser.Email = "u0000000@utah.edu";
                 newUser.EmploymentStatus = "Unemployed";
                 newUser.Major = "Computer Science";
+                newUser.UserId = 0;
                 Users.Add(newUser);
 
                 StudentClass studentClass1 = new StudentClass();
@@ -118,6 +129,7 @@ namespace WorkTogether.Models
                 newUser3.Email = "u0000002@utah.edu";
                 newUser3.EmploymentStatus = "Unemployed";
                 newUser3.Major = "Computer Science";
+                newUser3.UserId = 2;
                 Users.Add(newUser3);
 
 
@@ -135,6 +147,7 @@ namespace WorkTogether.Models
                 newUser4.Email = "u0000003@utah.edu";
                 newUser4.EmploymentStatus = "Part Time";
                 newUser4.Major = "Computer Science";
+                newUser4.UserId = 3;
                 Users.Add(newUser4);
 
                 StudentClass studentClass3 = new StudentClass();
@@ -151,6 +164,7 @@ namespace WorkTogether.Models
                 newUser5.Email = "u0000004@utah.edu";
                 newUser5.EmploymentStatus = "Part Time";
                 newUser5.Major = "Computer Science";
+                newUser5.UserId = 4;
                 Users.Add(newUser5);
 
                 StudentClass studentClass4 = new StudentClass();
@@ -167,6 +181,7 @@ namespace WorkTogether.Models
                 newUser6.Email = "u0000005@utah.edu";
                 newUser6.EmploymentStatus = "Unemployed";
                 newUser6.Major = "Computer Science";
+                newUser6.UserId = 5;
                 Users.Add(newUser6);
 
                 StudentClass studentClass5 = new StudentClass();
@@ -184,6 +199,7 @@ namespace WorkTogether.Models
                 newUser7.Email = "u0000006@utah.edu";
                 newUser7.EmploymentStatus = "Unemployed";
                 newUser7.Major = "Computer Science";
+                newUser7.UserId = 6;
                 Users.Add(newUser7);
 
                 StudentClass studentClass6 = new StudentClass();
@@ -205,6 +221,7 @@ namespace WorkTogether.Models
                 newUser8.Email = "u0000007@utah.edu";
                 newUser8.EmploymentStatus = "Unemployed";
                 newUser8.Major = "Computer Science";
+                newUser8.UserId = 7;
                 Users.Add(newUser8);
 
                 StudentClass studentClass7 = new StudentClass();
@@ -226,6 +243,7 @@ namespace WorkTogether.Models
                 newUser9.Email = "u0000008@utah.edu";
                 newUser9.EmploymentStatus = "Unemployed";
                 newUser9.Major = "Computer Science";
+                newUser9.UserId = 8;
                 Users.Add(newUser9);
 
                 StudentClass studentClass8 = new StudentClass();
@@ -247,6 +265,7 @@ namespace WorkTogether.Models
                 newUser10.Email = "u0000009@utah.edu";
                 newUser10.EmploymentStatus = "Part Time";
                 newUser10.Major = "Computer Science";
+                newUser10.UserId = 9;
                 Users.Add(newUser10);
 
                 StudentClass studentClass9 = new StudentClass();
@@ -268,6 +287,7 @@ namespace WorkTogether.Models
                 newUser11.Email = "u0000010@utah.edu";
                 newUser11.EmploymentStatus = "Part Time";
                 newUser11.Major = "Computer Science";
+                newUser11.UserId = 10;
                 Users.Add(newUser11);
                 StudentClass studentClass10 = new StudentClass();
                 studentClass10.Class = newClass;
@@ -288,6 +308,7 @@ namespace WorkTogether.Models
                 newUser12.Email = "u0000011@utah.edu";
                 newUser12.EmploymentStatus = "Part Time";
                 newUser12.Major = "Computer Science";
+                newUser12.UserId = 11;
                 Users.Add(newUser12);
 
                 StudentClass studentClass2_12 = new StudentClass();
@@ -304,6 +325,7 @@ namespace WorkTogether.Models
                 newUser13.Email = "u0000012@utah.edu";
                 newUser13.EmploymentStatus = "Part Time";
                 newUser13.Major = "Computer Science";
+                newUser13.UserId = 12;
                 Users.Add(newUser13);
 
                 StudentClass studentClass2_13 = new StudentClass();
@@ -320,6 +342,7 @@ namespace WorkTogether.Models
                 newUser14.Email = "u0000013@utah.edu";
                 newUser14.EmploymentStatus = "Part Time";
                 newUser14.Major = "Computer Science";
+                newUser14.UserId = 13;
                 Users.Add(newUser14);
 
                 StudentClass studentClass2_14 = new StudentClass();
@@ -336,6 +359,7 @@ namespace WorkTogether.Models
                 newUser15.Email = "u0000014@utah.edu";
                 newUser15.EmploymentStatus = "Part Time";
                 newUser15.Major = "Computer Science";
+                newUser15.UserId = 14;
                 Users.Add(newUser15);
 
                 StudentClass studentClass2_15 = new StudentClass();
@@ -352,6 +376,7 @@ namespace WorkTogether.Models
                 newUser16.Email = "u0000015@utah.edu";
                 newUser16.EmploymentStatus = "Part Time";
                 newUser16.Major = "Computer Science";
+                newUser16.UserId = 15;
                 Users.Add(newUser16);
 
                 StudentClass studentClass2_16 = new StudentClass();

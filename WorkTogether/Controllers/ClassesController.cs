@@ -64,7 +64,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var @classes = await _context.StudentClasses.Where<StudentClass>(row => row.Student.Id == id).ToListAsync();
+            var @classes = await _context.StudentClasses.Where<StudentClass>(row => row.Student.UserId == id).ToListAsync();
 
             var classList = new List<ClassDTO>();
             for (int x = 0; x < classes.Count; x++)
@@ -120,7 +120,7 @@ namespace WorkTogether.Controllers
             {
                 Id = classDTO.Id,
                 Name = classDTO.Name,
-                ProfessorID = classDTO.ProfessorID,
+                ProfessorUserID = classDTO.ProfessorID,
                 Description = classDTO.Description
             };
 
@@ -161,7 +161,7 @@ namespace WorkTogether.Controllers
             { 
                 Id = curClass.Id,
                 Name = curClass.Name,
-                ProfessorID = curClass.ProfessorID,
+                ProfessorID = curClass.ProfessorUserID,
                 Description = curClass.Description
             };
 
