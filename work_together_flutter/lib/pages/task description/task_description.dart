@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../global_components/task.dart';
+import '../../models/task.dart';
 import '../../global_components/custom_app_bar.dart';
 
 class TaskDescriptionPage extends StatefulWidget {

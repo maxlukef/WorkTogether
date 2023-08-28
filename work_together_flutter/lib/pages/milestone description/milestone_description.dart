@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:work_together_flutter/global_components/milestone.dart';
+import 'package:work_together_flutter/models/milestone.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:work_together_flutter/pages/task%20description/task_description.dart';
 import '../../global_components/custom_app_bar.dart';
-import '../../global_components/task.dart';
+import '../../models/task.dart';
 import '../../global_components/tag.dart';
 
 class MilestoneDescriptionPage extends StatefulWidget {
