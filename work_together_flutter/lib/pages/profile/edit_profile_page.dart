@@ -37,6 +37,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         : EmploymentStatus.unemployed;
   }
 
+  onInterestsSubmitted(interest) {
+    widget.user.interests.add(interest.toString());
+    ref.read(interestListNotifierProvider.notifier).addInterest(interest);
+    interestsController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> interestList = ref.watch(interestListNotifierProvider);
@@ -91,8 +97,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       fontFamily: 'SourceSansPro'),
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.go,
-                  onSaved: (bio) {
-                    widget.user.bio = bio.toString();
+                  onChanged: (bio) {
+                    widget.user.bio = bioController.text;
                   },
                   decoration: const InputDecoration(
                       filled: true,
@@ -122,8 +128,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       fontFamily: 'SourceSansPro'),
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.go,
-                  onSaved: (major) {
-                    widget.user.major = major.toString();
+                  onChanged: (major) {
+                    widget.user.major = majorController.text;
                   },
                   decoration: const InputDecoration(
                       filled: true,
@@ -292,11 +298,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.go,
                   onFieldSubmitted: (interest) {
-                    widget.user.interests.add(interest.toString());
-                    ref
-                        .read(interestListNotifierProvider.notifier)
-                        .addInterest(interest);
-                    interestsController.clear();
+                    onInterestsSubmitted(interestsController.text);
                   },
                   decoration: const InputDecoration(
                       filled: true,
@@ -307,6 +309,37 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               color: Color(0xFFD9D9D9), width: 2.0))),
                   maxLines: null,
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
+                child: ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    onPressed: () {
+                      onInterestsSubmitted(interestsController.text);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Text(
+                            "Add Interest",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 4.0),
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.white,
+                            ),
+                          )
+                        ],
+                      ),
+                    )),
               ),
               Padding(
                   padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
