@@ -1,3 +1,6 @@
+// Didn't use the fancy JSON Serialization since the interetests are expected
+// to be in this specific format.
+
 class User {
   final int id;
   final String name;
