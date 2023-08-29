@@ -246,15 +246,24 @@ namespace WorkTogether.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<bool>("Completed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ParentMilestoneId")
+                    b.Property<int?>("ParentMilestoneId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ParentTaskId")
@@ -292,9 +301,7 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-
                     b.HasIndex("ProjectId");
-
 
                     b.ToTable("Teams");
                 });
@@ -475,10 +482,8 @@ namespace WorkTogether.Migrations
             modelBuilder.Entity("WorkTogether.Models.TaskItem", b =>
                 {
                     b.HasOne("WorkTogether.Models.Milestone", "ParentMilestone")
-                        .WithMany()
-                        .HasForeignKey("ParentMilestoneId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("tasks")
+                        .HasForeignKey("ParentMilestoneId");
 
                     b.HasOne("WorkTogether.Models.TaskItem", "ParentTask")
                         .WithMany()
@@ -513,6 +518,11 @@ namespace WorkTogether.Migrations
                     b.Navigation("StudentClasses");
 
                     b.Navigation("TAClasses");
+                });
+
+            modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
+                {
+                    b.Navigation("tasks");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Project", b =>
