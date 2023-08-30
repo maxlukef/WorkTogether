@@ -29,7 +29,7 @@ builder.Services.AddDbContext<WT_DBContext>(options => options.UseMySQL(builder.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<WT_DBContext>()
     .AddDefaultTokenProviders();
 
@@ -53,8 +53,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"]))
     };
 });
-
 builder.Services.AddControllers();
+
 
 
 
@@ -63,7 +63,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var DB = scope.ServiceProvider.GetRequiredService<WT_DBContext>();
-    await DB.Seed();
+    //await DB.Seed(); //comment this out to start WorkTogether without seeding
 
 }
 

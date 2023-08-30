@@ -15,17 +15,20 @@ namespace WorkTogether.Controllers
     /// </summary>
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly WT_DBContext _context;
+        private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         public AuthController(
-            UserManager<IdentityUser> userManager,
+            UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            WT_DBContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _context = context;
         }
 
 
@@ -60,14 +63,23 @@ namespace WorkTogether.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] Register model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
+            var userExists = await _userManager.FindByNameAsync(model.Email);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-            IdentityUser user = new()
+
+            int max_userID = _context.Users.Max(p => p.UserId);
+            User user = new()
             {
                 Email = model.Email,
+                UserName = model.Email, //we dont have much use for a username at this point, just set it to the email
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                Name = model.Name,
+                Bio = model.Bio,
+                Major = model.Major,
+                EmploymentStatus = model.EmploymentStatus,
+                Interests = model.Interests,
+                StudentStatus = model.EmploymentStatus,
+                UserId = max_userID + 1
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
@@ -79,14 +91,24 @@ namespace WorkTogether.Controllers
         [Route("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] Register model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
+            //ensure that there isn't already a user with this email
+            var userExists = await _userManager.FindByNameAsync(model.Email);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-            IdentityUser user = new()
+            int max_userID = _context.Users.Max(p => p.UserId);
+            User user = new()
             {
                 Email = model.Email,
+                UserName = model.Email, //we dont have much use for a username at this point, just set it to the email
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                Name = model.Name,
+                Bio = model.Bio,
+                Major = model.Major,
+                EmploymentStatus = model.EmploymentStatus,
+                Interests = model.Interests,
+                StudentStatus = model.EmploymentStatus,
+                UserId = max_userID + 1
+
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
