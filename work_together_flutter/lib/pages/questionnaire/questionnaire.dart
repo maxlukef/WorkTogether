@@ -57,7 +57,22 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                   {_quality = ExpectedQuality.C},
                 numberHoursTextFieldController.text =
                     loggedUserAnswers.weeklyHours,
-                skillList.addAll(loggedUserAnswers.skills)
+                skillList.addAll(loggedUserAnswers.skills),
+                if (loggedUserAnswers.availableAfternoons.isNotEmpty)
+                  {
+                    meetingTimeList.add(MeetingTime("Afternoon",
+                        loggedUserAnswers.availableAfternoons, "NA"))
+                  },
+                if (loggedUserAnswers.availableMornings.isNotEmpty)
+                  {
+                    meetingTimeList.add(MeetingTime(
+                        "Morning", loggedUserAnswers.availableMornings, "NA")),
+                  },
+                if (loggedUserAnswers.availableEvenings.isNotEmpty)
+                  {
+                    meetingTimeList.add(MeetingTime(
+                        "Evening", loggedUserAnswers.availableEvenings, "NA"))
+                  }
               });
       setState(() {});
     });
@@ -424,7 +439,7 @@ class QuestionnairePopup extends ConsumerStatefulWidget {
 }
 
 class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
-  final List<String> daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+  final List<String> daysOfWeek = ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'];
 
   String? _timeOfDay = "Morning";
   List<String>? _selectedDaysOfWeek = [];
