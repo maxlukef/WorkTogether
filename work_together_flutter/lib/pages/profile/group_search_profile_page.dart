@@ -60,6 +60,13 @@ class _GroupProfileProfilePageState
 
   Widget buildPage(BuildContext context, User userdata) {
     List<Widget> interestTags = [];
+    String inviteToGroupOrEdit;
+
+    if (userdata.id == loggedUserId) {
+      inviteToGroupOrEdit = "Edit My Questionnaire";
+    } else {
+      inviteToGroupOrEdit = "Invite to Group";
+    }
 
     for (String interest in userdata.interests) {
       interestTags.add(Padding(
@@ -95,15 +102,19 @@ class _GroupProfileProfilePageState
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      HttpService().inviteToTeam(1, loggedUserId, widget.id);
-                      Navigator.pop(context);
+                      if (userdata.id == loggedUserId) {
+                        // Go back to edit questionnaire page
+                      } else {
+                        HttpService().inviteToTeam(1, loggedUserId, widget.id);
+                        Navigator.pop(context);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(125, 35),
                         backgroundColor: const Color(0xFF1192dc)),
-                    child: const Text(
-                      "Invite to Group",
-                      style: TextStyle(
+                    child: Text(
+                      inviteToGroupOrEdit,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w400,
                       ),

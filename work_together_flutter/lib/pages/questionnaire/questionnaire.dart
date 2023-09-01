@@ -5,30 +5,68 @@ import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/provider/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
+import '../../http_request.dart';
+import '../../models/card_info.dart';
 import '../../provider/skill_list.dart';
 import '../group_search/group_search_page.dart';
 
-enum ExpectedQuality { top1, A, B, C }
+enum ExpectedQuality { A, B, C }
 
 class QuestionnairePage extends ConsumerStatefulWidget {
   const QuestionnairePage({
     Key? key,
+    required this.userId,
+    required this.classId,
   }) : super(key: key);
+
+  final int userId;
+  final int classId;
 
   @override
   ConsumerState<QuestionnairePage> createState() => _QuestionnairePageState();
 }
 
 class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
-  ExpectedQuality? _quality = ExpectedQuality.top1;
+  ExpectedQuality? _quality;
+  CardInfo? loggedUser;
+
+  var skillsTextFieldController = TextEditingController();
+  var numberHoursTextFieldController = TextEditingController();
+
+  final HttpService httpService = HttpService();
+
+  late List<String> skillList;
+
+  late List<MeetingTime> meetingTimeList;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await httpService
+          .getQuestionnaireAnswersByClassIdAndUserId(
+              widget.classId, widget.userId)
+          .then((loggedUserAnswers) => {
+                loggedUser = loggedUserAnswers,
+                if (loggedUserAnswers.expectedGrade == "A")
+                  {_quality = ExpectedQuality.A}
+                else if (loggedUserAnswers.expectedGrade == "B")
+                  {_quality = ExpectedQuality.B}
+                else
+                  {_quality = ExpectedQuality.C},
+                numberHoursTextFieldController.text =
+                    loggedUserAnswers.weeklyHours,
+                skillList.addAll(loggedUserAnswers.skills)
+              });
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var formController = TextEditingController();
-
-    List<String> skillList = ref.watch(skillListNotifierProvider);
-    List<MeetingTime> meetingTimeList =
-        ref.watch(meetingTimeListNotifierProvider);
+    skillList = ref.watch(skillListNotifierProvider);
+    meetingTimeList = ref.watch(meetingTimeListNotifierProvider);
 
     return Scaffold(
       appBar: const CustomAppBar(title: "Questionnaire"),
@@ -171,30 +209,6 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                             child: Row(
                               children: [
                                 Radio(
-                                  value: ExpectedQuality.top1,
-                                  groupValue: _quality,
-                                  onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
-                                  },
-                                ),
-                                const Expanded(
-                                  child: Text(
-                                    'Top 1%',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'SourceSansPro'),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                Radio(
                                   value: ExpectedQuality.A,
                                   groupValue: _quality,
                                   onChanged: (ExpectedQuality? value) {
@@ -282,7 +296,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       width: 330,
                       height: 50,
                       child: TextFormField(
-                        controller: formController,
+                        controller: skillsTextFieldController,
                         style: const TextStyle(
                             color: Color(0xFF000000),
                             fontSize: 14,
@@ -294,7 +308,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                           ref
                               .read(skillListNotifierProvider.notifier)
                               .addSkill(e);
-                          formController.clear();
+                          skillsTextFieldController.clear();
                         },
                         decoration: const InputDecoration(
                             filled: true,
@@ -344,6 +358,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       width: 330,
                       height: 50,
                       child: TextFormField(
+                        controller: numberHoursTextFieldController,
                         style: const TextStyle(
                             color: Color(0xFF000000),
                             fontSize: 14,
@@ -356,44 +371,6 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                             filled: true,
                             fillColor: Color(0xFFFAFAFA),
                             hintText: "Type to Add Number of Hours",
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xFFD9D9D9), width: 2.0))),
-                      ),
-                    ),
-                  ),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                      child: Text(
-                        "Additional Notes",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: 330,
-                      height: 50,
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: Color(0xFF000000),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        onSaved: (email) {},
-                        decoration: const InputDecoration(
-                            filled: true,
-                            fillColor: Color(0xFFFAFAFA),
-                            hintText:
-                                "Roadblocks, circumstances, or other notes",
                             enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Color(0xFFD9D9D9), width: 2.0))),
@@ -429,7 +406,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
