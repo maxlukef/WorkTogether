@@ -57,7 +57,9 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                   {_quality = ExpectedQuality.C},
                 numberHoursTextFieldController.text =
                     loggedUserAnswers.weeklyHours,
+                skillList.clear(),
                 skillList.addAll(loggedUserAnswers.skills),
+                meetingTimeList.clear(),
                 if (loggedUserAnswers.availableAfternoons.isNotEmpty)
                   {
                     meetingTimeList.add(MeetingTime("Afternoon",
