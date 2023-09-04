@@ -11,15 +11,39 @@ class TaskDropDown extends StatefulWidget {
 }
 
 class _TaskDropDownState extends State<TaskDropDown> {
-  String dropdownValue = "No Users";
-  List<String> students = ["Gary Makarov", "Lemony Grace", "Oliver Black"];
+  late String dropdownValue;
+  List<String>? students;
+
+  @override
+  void initState() {
+    super.initState();
+    getUsersApiCall();
+  }
+
+  Future<void> getUsersApiCall() async {
+    // Replace this with the api call to get the student names.
+    // await Future.delayed(const Duration(seconds: 4));
+
+    students = ["Gary Makarov", "Lemony Grace", "Oliver Black"];
+
+    // Initialize to the first student.
+    dropdownValue = students!.first;
+
+    // Callback to sync the initial value to the parent widget.
+    widget.dropdownValueSetter(dropdownValue);
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (students.isNotEmpty && dropdownValue == "No Users") {
-      dropdownValue = students.first;
+    if (students == null) {
+      return const Tooltip(
+        message: "Loading Students.",
+        child: CircularProgressIndicator(),
+      );
     }
-    // TODO: figure out how to deal with empty student lists.
+
     return DropdownButton<String>(
       value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
@@ -30,12 +54,11 @@ class _TaskDropDownState extends State<TaskDropDown> {
         color: Colors.black,
       ),
       onChanged: (String? value) {
-        setState(() {
-          dropdownValue = value!;
-          widget.dropdownValueSetter(dropdownValue);
-        });
+        dropdownValue = value!;
+        widget.dropdownValueSetter(dropdownValue);
+        setState(() {});
       },
-      items: students.map<DropdownMenuItem<String>>((String value) {
+      items: students!.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),

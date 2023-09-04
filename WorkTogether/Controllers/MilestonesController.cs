@@ -83,16 +83,27 @@ namespace WorkTogether.Controllers
         // POST: api/Milestones
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Milestone>> PostMilestone(Milestone milestone)
+        public async Task<ActionResult<MilestoneDTO>> PostMilestone(MilestoneDTO milestoneDTO)
         {
-          if (_context.Milestones == null)
-          {
-              return Problem("Entity set 'WT_DBContext.Milestones'  is null.");
-          }
+            if (_context.Milestones == null)
+            {
+                return Problem("Entity set 'WT_DBContext.Milestones'  is null.");
+            }
+
+            var milestone = new Milestone
+            {
+                Id = milestoneDTO.Id,
+                Project = await _context.Projects.FindAsync(milestoneDTO.ProjectID),
+                Title = milestoneDTO.Title,
+                Description = milestoneDTO.Description,
+                Deadline = milestoneDTO.Deadline,
+                tasks = new List<TaskItem>(),
+            };
+
             _context.Milestones.Add(milestone);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMilestone", new { id = milestone.Id }, milestone);
+            return CreatedAtAction("GetMilestone", new { id = milestoneDTO.Id }, milestoneDTO);
         }
 
         // DELETE: api/Milestones/5
