@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
 using WorkTogether.Models;
@@ -27,7 +28,38 @@ builder.Services.AddDbContext<WT_DBContext>(options => options.UseMySQL(builder.
 //builder.Services.AddDbContext<WorkTogether.Models.WT_DBContext>(options => { builder.Configuration.GetConnectionString("DefaultConnection");});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "WorkTogether",
+        Version = "v1",
+    });
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Paste \"Bearer <JWT token> \" here."
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+        new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                Type=ReferenceType.SecurityScheme,
+                Id="Bearer"
+            }
+        },
+        new string[]{ } 
+    }
+    });
+}) ;
+
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<WT_DBContext>()
@@ -45,10 +77,10 @@ builder.Services.AddAuthentication(options =>
     options.SaveToken = true;
     options.RequireHttpsMetadata = false;
     options.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidAudience = configuration["JWTAuth:ValidIssuerURL"],
+    {//TODO: change issuer, audience when we get Work Together hosted. This can be done in appsettings.json. Then set these to true
+        ValidateIssuer = false,
+        ValidateAudience = false, 
+        ValidAudience = configuration["JWTAuth:ValidAudienceURL"],
         ValidIssuer = configuration["JWTAuth:ValidIssuerURL"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"]))
     };

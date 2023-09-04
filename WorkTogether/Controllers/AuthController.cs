@@ -10,7 +10,7 @@ using System.Text;
 namespace WorkTogether.Controllers
 {
     /// <summary>
-    /// This code is mostly from this tutorial: https://jayanttripathy.com/jwt-authentication-and-authorization-with-identity-framework-in-net-core-6-0/
+    /// This code is based on this tutorial: https://jayanttripathy.com/jwt-authentication-and-authorization-with-identity-framework-in-net-core-6-0/. D
     /// Supplies the endpoints for authorization actions.
     /// </summary>
     public class AuthController : ControllerBase
@@ -32,6 +32,11 @@ namespace WorkTogether.Controllers
         }
 
 
+        /// <summary>
+        /// Generates a JWT bearer token
+        /// </summary>
+        /// <param name="model">The login model, which contains 2 fields, Username and Password</param>
+        /// <returns>a token to be sent in future requests for authentication</returns>
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] Login model)
@@ -59,6 +64,9 @@ namespace WorkTogether.Controllers
             return Unauthorized();
         }
 
+        /// <summary>
+        /// Registers a new user
+        /// </summary>
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] Register model)
@@ -90,6 +98,9 @@ namespace WorkTogether.Controllers
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
+        /// <summary>
+        /// Registers an administrator
+        /// </summary>
         [HttpPost]
         [Route("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] Register model)
@@ -131,6 +142,7 @@ namespace WorkTogether.Controllers
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
+        
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
 
