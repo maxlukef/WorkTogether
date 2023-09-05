@@ -304,7 +304,7 @@ namespace WorkTogether.Controllers
         private static UserProfileDTO UsertoProfileDTO(User user) =>
     new UserProfileDTO
     {
-        Id = user.Id,
+        Id = user.UserId,
         Name = user.Name,
         Email = user.Email,
         Bio = user.Bio,

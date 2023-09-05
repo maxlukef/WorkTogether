@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ namespace WorkTogether.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
           if (_context.Users == null)
@@ -93,7 +95,7 @@ namespace WorkTogether.Controllers
                 user.EmploymentStatus = students[x].EmploymentStatus;
                 user.Bio = students[x].Bio;
                 user.Major = students[x].Major;
-                user.Id = students[x].Id;
+                user.Id = students[x].UserId;
                 user.Name = students[x].Name; 
                 studentList.Add(user);
             }
@@ -106,7 +108,7 @@ namespace WorkTogether.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != user.Id)
+            if (id != user.UserId)
             {
                 return BadRequest();
             }
@@ -188,7 +190,7 @@ namespace WorkTogether.Controllers
         {
             var user = new User
             {
-                Id = userDTO.Id,
+                UserId = userDTO.Id,
                 Name = userDTO.Name,
                 Email = userDTO.Email,
                 Bio = userDTO.Bio,
@@ -244,13 +246,13 @@ namespace WorkTogether.Controllers
 
         private bool UserExists(int id)
         {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
 
         private static UserProfileDTO UsertoProfileDTO(User user) =>
             new UserProfileDTO
             {
-                Id = user.Id,
+                Id = user.UserId,
                 Name = user.Name,
                 Email = user.Email,
                 Bio = user.Bio,

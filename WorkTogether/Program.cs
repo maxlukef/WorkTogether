@@ -1,12 +1,18 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Text;
 using WorkTogether.Models;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
+ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.AddCors(options =>
 {
@@ -17,23 +23,79 @@ builder.Services.AddCors(options =>
                       });
 });
 
-// Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
-
 builder.Services.AddControllers();
 builder.Services.AddDbContext<WT_DBContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddDbContext<WorkTogether.Models.WT_DBContext>(options => { builder.Configuration.GetConnectionString("DefaultConnection");});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "WorkTogether",
+        Version = "v1",
+    });
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Paste \"Bearer <JWT token> \" here."
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+        new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                Type=ReferenceType.SecurityScheme,
+                Id="Bearer"
+            }
+        },
+        new string[]{ } 
+    }
+    });
+}) ;
+
+
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<WT_DBContext>()
+    .AddDefaultTokenProviders();
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {//TODO: change issuer, audience when we get Work Together hosted. This can be done in appsettings.json. Then set these to true
+        ValidateIssuer = false,
+        ValidateAudience = false, 
+        ValidAudience = configuration["JWTAuth:ValidAudienceURL"],
+        ValidIssuer = configuration["JWTAuth:ValidIssuerURL"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"]))
+    };
+});
+builder.Services.AddControllers();
+
+
+
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var DB = scope.ServiceProvider.GetRequiredService<WT_DBContext>();
-    await DB.Seed();
+    //await DB.Seed(); //comment this out to start WorkTogether without seeding
 
 }
 
