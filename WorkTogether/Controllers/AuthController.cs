@@ -75,7 +75,11 @@ namespace WorkTogether.Controllers
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
-            int max_userID = _context.Users.Max(p => p.UserId);
+            int max_userID = 0;
+            if (_context.Users.Count() > 0)
+            {
+                max_userID = _context.Users.Max(p => p.UserId);
+            }
             User user = new()
             {
                 Email = model.Email,
@@ -109,7 +113,11 @@ namespace WorkTogether.Controllers
             var userExists = await _userManager.FindByNameAsync(model.Email);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
-            int max_userID = _context.Users.Max(p => p.UserId);
+            int max_userID = 0;
+            if (_context.Users.Count() > 0)
+            {
+                max_userID = _context.Users.Max(p => p.UserId);
+            }
             User user = new()
             {
                 Email = model.Email,
