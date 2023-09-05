@@ -434,11 +434,8 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProjectId");
 
-<<<<<<< WorkTogether/Migrations/WT_DBContextModelSnapshot.cs
+        WorkTogether/Migrations/WT_DBContextModelSnapshot.cs
                     b.ToTable("Teams", (string)null);
-=======
-                    b.ToTable("Teams");
->>>>>>> WorkTogether/Migrations/WT_DBContextModelSnapshot.cs
                 });
 
             modelBuilder.Entity("WorkTogether.Models.User", b =>
