@@ -434,7 +434,6 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProjectId");
 
-        WorkTogether/Migrations/WT_DBContextModelSnapshot.cs
                     b.ToTable("Teams", (string)null);
                 });
 
