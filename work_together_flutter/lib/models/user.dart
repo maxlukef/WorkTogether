@@ -3,7 +3,7 @@
 
 class User {
   final int id;
-  final String name;
+  String name;
   final String email;
   String bio;
   String employmentStatus;

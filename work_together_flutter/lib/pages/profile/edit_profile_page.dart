@@ -19,9 +19,11 @@ class EditProfilePage extends ConsumerStatefulWidget {
 }
 
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
+  final nameController = TextEditingController();
   final bioController = TextEditingController();
   final majorController = TextEditingController();
   final interestsController = TextEditingController();
+
   StudentStatus? _studentStatus;
   EmploymentStatus? _employmentStatus;
 
@@ -46,7 +48,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     List<String> interestList = ref.watch(interestListNotifierProvider);
-
+    nameController.text = widget.user.name;
     bioController.text = widget.user.bio;
     majorController.text = widget.user.major;
 
@@ -65,20 +67,41 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             color: Colors.blue,
             size: 110.0,
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-            child: Text(
-              widget.user.name,
-              style: const TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'SourceSansPro',
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                child: Text(
+                  "Name:",
+                  style: TextStyle(fontSize: 24, fontFamily: 'SourceSansPro'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                child: TextFormField(
+                  controller: nameController,
+                  style: const TextStyle(
+                      color: Color(0xFF000000),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.go,
+                  onChanged: (name) {
+                    widget.user.name = nameController.text;
+                  },
+                  decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xFFFAFAFA),
+                      hintText: "Type to change name.",
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color(0xFFD9D9D9), width: 2.0))),
+                  maxLines: null,
+                ),
+              ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                 child: Text(

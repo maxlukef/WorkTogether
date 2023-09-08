@@ -9,6 +9,17 @@ import 'models/card_info.dart';
 import 'models/user.dart';
 
 class HttpService {
+  var authHeader = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $authToken'
+  };
+
+  var nonAuthHeader = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+
   Future<User> getUser(userId) async {
     Uri uri = Uri.https('localhost:7277', 'api/Users/profile/$userId');
 
@@ -24,10 +35,11 @@ class HttpService {
   }
 
   putUser(User user) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Users/profile/${user.id}');
+    Uri uri = Uri.https('localhost:7277', 'api/Users/profile');
     var body = user.toJson();
     try {
-      await put(uri, body: body, headers: {"Content-Type": "application/json"});
+      var res = await post(uri, body: body, headers: authHeader);
+      int x = 0;
     } catch (e) {
       print(e);
     }
@@ -190,13 +202,9 @@ class HttpService {
   Future<bool> login(String email, String password) async {
     LoginRequest requestData =
         LoginRequest(username: email, password: password);
-    var headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
     String body = jsonEncode(requestData);
     Uri uri = Uri.https("localhost:7277", "login");
-    Response res = await post(uri, body: body, headers: headers);
+    Response res = await post(uri, body: body, headers: nonAuthHeader);
 
     if (res.statusCode == 200) {
       Map<String, dynamic> temp = jsonDecode(res.body);
