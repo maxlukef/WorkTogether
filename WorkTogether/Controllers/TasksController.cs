@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +16,13 @@ namespace WorkTogether.Controllers
     public class TasksController : ControllerBase
     {
         private readonly WT_DBContext _context;
+        private readonly UserManager<User> _um;
 
-        public TasksController(WT_DBContext context)
+        public TasksController(WT_DBContext context, UserManager<User> um)
         {
             _context = context;
+            _um = um;
+            
         }
 
         // GET: api/Tasks
@@ -64,7 +69,7 @@ namespace WorkTogether.Controllers
         [HttpGet("UserTasks")]
         public async Task<ActionResult<BasicTaskDTO>> GetUserTasks()
         {
-            User curr_user = await _userManager.GetUserAsync(User);
+            User curr_user = await _um.GetUserAsync(User);
             if (_context.Tasks == null)
             {
                 return NotFound();
