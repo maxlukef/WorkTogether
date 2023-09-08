@@ -192,8 +192,16 @@ namespace WorkTogether.Controllers
         [Authorize]
         public async Task<ActionResult<UserProfileDTO>> PostUserProfile(UserProfileDTO userDTO)
         {
-            User u2 = await _um.FindByEmailAsync(userDTO.Email);
-            User u1 = await _um.GetUserAsync(User);
+            User u2;
+            try
+            {
+                u2 = await _context.Users.Where(u => u.UserId == userDTO.Id).FirstOrDefaultAsync();
+            } catch
+            {
+                return BadRequest("User ID does not exist");
+            }
+            string userEmail = HttpContext.User.Identity.Name;
+            User u1 = await _context.Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
             if(u1.UserId != u2.UserId)
             {
                 return Unauthorized();
