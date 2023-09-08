@@ -20,6 +20,14 @@ class FilterChoices {
     skillsSet.add(skill);
   }
 
+  getSkillsSet() {
+    return skillsSet;
+  }
+
+  getInterestsSet() {
+    return interestsSet;
+  }
+
   removeSkillFromSet(String skill) {
     skillsSet.remove(skill);
   }
@@ -32,12 +40,8 @@ class FilterChoices {
     interestsSet.remove(interest);
   }
 
-  setIsOverlappingMeetingTime() {
-    if (isOverlappingMeetingTime = false) {
-      isOverlappingMeetingTime = true;
-    } else {
-      isOverlappingMeetingTime = false;
-    }
+  setIsOverlappingMeetingTime(bool isOverlappingMeetingTime) {
+    this.isOverlappingMeetingTime = isOverlappingMeetingTime;
   }
 
   setExpectedHours(String expectedHours) {

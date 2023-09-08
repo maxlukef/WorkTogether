@@ -4,8 +4,10 @@ import 'package:work_together_flutter/pages/group_search/components/student_card
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../global_components/tag.dart';
 import '../../http_request.dart';
 import '../../models/card_info.dart';
+import '../../provider/filter_choices.dart';
 
 enum StudentStatus { fullTime, partTime, notApplicable }
 
@@ -36,6 +38,8 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
 
     List<CardInfo>? teamMates = [];
     List<CardInfo>? users = [];
+
+    FilterChoices filterChoices = ref.watch(filterChoicesNotifierProvider);
 
     return Scaffold(
         appBar: const CustomAppBar(title: "Group Search"),
@@ -221,6 +225,8 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
 
   @override
   Widget build(BuildContext context) {
+    FilterChoices filterChoices = ref.watch(filterChoicesNotifierProvider);
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -244,11 +250,13 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                 padding: const EdgeInsets.fromLTRB(40.0, 16.0, 2.0, 16.0),
                 child: Checkbox(
                   checkColor: Colors.white,
-                  // fillColor: MaterialStateProperty.resolveWith(getColor),
                   value: isFilterByMeetingTimeChecked,
                   onChanged: (bool? value) {
                     setState(() {
                       isFilterByMeetingTimeChecked = value!;
+                      ref
+                          .read(filterChoicesNotifierProvider)
+                          .setIsOverlappingMeetingTime(value);
                     });
                   },
                 ),
@@ -295,7 +303,13 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                         fontFamily: 'SourceSansPro'),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    onSaved: (e) {},
+                    onFieldSubmitted: (skill) {
+                      setState(() {
+                        ref
+                            .read(filterChoicesNotifierProvider)
+                            .addToSkillsSet(skill);
+                      });
+                    },
                     decoration: const InputDecoration(
                         filled: true,
                         fillColor: Color(0xFFFAFAFA),
@@ -308,6 +322,38 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               ),
             ],
           ),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+              child: Wrap(
+                children: [
+                  ...ref.read(filterChoicesNotifierProvider).getSkillsSet().map(
+                    (skill) {
+                      if (skill.toString().trim() != "") {
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
+                          child: Wrap(
+                            children: [
+                              Tag(text: skill.toString()),
+                              GestureDetector(
+                                child: const Icon(Icons.remove_circle_outline),
+                                onTap: () {
+                                  setState(() {
+                                    ref
+                                        .read(filterChoicesNotifierProvider)
+                                        .removeSkillFromSet(skill);
+                                  });
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  )
+                ],
+              )),
           Row(
             children: const [
               Padding(
@@ -338,7 +384,13 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                         fontFamily: 'SourceSansPro'),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    onSaved: (e) {},
+                    onFieldSubmitted: (interest) {
+                      setState(() {
+                        ref
+                            .read(filterChoicesNotifierProvider)
+                            .addToInterestsSet(interest);
+                      });
+                    },
                     decoration: const InputDecoration(
                         filled: true,
                         fillColor: Color(0xFFFAFAFA),
@@ -351,6 +403,41 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               ),
             ],
           ),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+              child: Wrap(
+                children: [
+                  ...ref
+                      .read(filterChoicesNotifierProvider)
+                      .getInterestsSet()
+                      .map(
+                    (interest) {
+                      if (interest.toString().trim() != "") {
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
+                          child: Wrap(
+                            children: [
+                              Tag(text: interest.toString()),
+                              GestureDetector(
+                                child: const Icon(Icons.remove_circle_outline),
+                                onTap: () {
+                                  setState(() {
+                                    ref
+                                        .read(filterChoicesNotifierProvider)
+                                        .removeInterestFromSet(interest);
+                                  });
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  )
+                ],
+              )),
           Row(
             children: const [
               Padding(
@@ -381,7 +468,11 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                         fontFamily: 'SourceSansPro'),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    onSaved: (e) {},
+                    onFieldSubmitted: (expectedHours) {
+                      ref
+                          .read(filterChoicesNotifierProvider)
+                          .setExpectedHours(expectedHours!);
+                    },
                     decoration: const InputDecoration(
                         filled: true,
                         fillColor: Color(0xFFFAFAFA),
@@ -427,6 +518,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                               setState(() {
                                 _studentStatus = value;
                               });
+                              ref
+                                  .read(filterChoicesNotifierProvider)
+                                  .setStudentStatus("N/A");
                             },
                           ),
                           const Expanded(
@@ -449,6 +543,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                               setState(() {
                                 _studentStatus = value;
                               });
+                              ref
+                                  .read(filterChoicesNotifierProvider)
+                                  .setStudentStatus("Full Time Student");
                             },
                           ),
                           const Expanded(
@@ -472,6 +569,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                               setState(() {
                                 _studentStatus = value;
                               });
+                              ref
+                                  .read(filterChoicesNotifierProvider)
+                                  .setStudentStatus("Part Time Student");
                             },
                           ),
                           const Expanded(
@@ -521,6 +621,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                               setState(() {
                                 _employmentStatus = value;
                               });
+                              ref
+                                  .read(filterChoicesNotifierProvider)
+                                  .setEmploymentStatus("N/A");
                             },
                           ),
                           const Expanded(
@@ -543,6 +646,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                               setState(() {
                                 _employmentStatus = value;
                               });
+                              ref
+                                  .read(filterChoicesNotifierProvider)
+                                  .setEmploymentStatus("Employed");
                             },
                           ),
                           const Expanded(
@@ -566,6 +672,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                               setState(() {
                                 _employmentStatus = value;
                               });
+                              ref
+                                  .read(filterChoicesNotifierProvider)
+                                  .setEmploymentStatus("Unemployed");
                             },
                           ),
                           const Expanded(
@@ -588,7 +697,21 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 32.0, 0, 32.0),
                 child: ElevatedButton(
-                  onPressed: () => {Navigator.pop(context)},
+                  onPressed: () => {
+                    print(ref
+                        .read(filterChoicesNotifierProvider)
+                        .isOverlappingMeetingTime),
+                    print(ref.read(filterChoicesNotifierProvider).skillsSet),
+                    print(ref.read(filterChoicesNotifierProvider).interestsSet),
+                    print(
+                        ref.read(filterChoicesNotifierProvider).expectedHours),
+                    print(
+                        ref.read(filterChoicesNotifierProvider).studentStatus),
+                    print(ref
+                        .read(filterChoicesNotifierProvider)
+                        .employmentStatus),
+                    Navigator.pop(context)
+                  },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 50),
                       backgroundColor: const Color(0xFF7AC8F5)),
