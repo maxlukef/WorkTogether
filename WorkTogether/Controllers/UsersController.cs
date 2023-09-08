@@ -211,6 +211,7 @@ namespace WorkTogether.Controllers
             u2.Major = userDTO.Major;
             u2.StudentStatus = userDTO.StudentStatus;
             u2.EmploymentStatus = userDTO.EmploymentStatus;
+            u2.Interests = userDTO.Interests;
 
             var result = _um.UpdateAsync(u2);
             if(result.IsCompletedSuccessfully)
