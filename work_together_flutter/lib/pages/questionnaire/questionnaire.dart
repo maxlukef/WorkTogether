@@ -80,6 +80,11 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
     });
   }
 
+  onSkillSubmitted(skill) {
+    ref.read(skillListNotifierProvider.notifier).addSkill(skill);
+    skillsTextFieldController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     skillList = ref.watch(skillListNotifierProvider);
@@ -337,6 +342,37 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue),
+                        onPressed: () {
+                          onSkillSubmitted(skillsTextFieldController.text);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Text(
+                                "Add Interest",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 4.0),
+                                child: Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          ),
+                        )),
+                  ),
                   Wrap(runSpacing: 12, children: [
                     ...skillList.map(
                       (e) => Row(
@@ -383,7 +419,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                             fontFamily: 'SourceSansPro'),
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        onSaved: (email) {},
+                        onSaved: (hours) {},
                         decoration: const InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFFAFAFA),

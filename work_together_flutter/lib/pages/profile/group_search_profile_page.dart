@@ -204,7 +204,7 @@ class _GroupProfileProfilePageState
                   ),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      child: Row(
+                      child: Wrap(
                         children: interestTags,
                       )),
                   const Padding(
@@ -216,7 +216,7 @@ class _GroupProfileProfilePageState
                   ),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      child: Row(
+                      child: Wrap(
                         children: _skillsList(),
                       )),
                   const Padding(
