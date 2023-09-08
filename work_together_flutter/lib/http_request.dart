@@ -199,12 +199,11 @@ class HttpService {
     Response res = await post(uri, body: body, headers: headers);
 
     if (res.statusCode == 200) {
-      var a = jsonDecode(res.body);
+      Map<String, dynamic> temp = jsonDecode(res.body);
+      LoginResults result = LoginResults.fromJson(temp);
 
-      // LoginResults result = jsonDecode(res.body);
-
-      // authToken = result.authToken;
-      // loggedUserId = result.id;
+      authToken = result.authToken;
+      loggedUserId = result.id;
       return true;
     } else {
       return false;
