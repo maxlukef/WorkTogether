@@ -55,6 +55,34 @@ namespace WorkTogether.Controllers
             return taskDTO;
         }
 
+        // GET: api/UserTasks
+        /// <summary>
+        /// Gets all tasks for the user signed in.
+        /// </summary>
+        /// <returns>List of tasks for the current user</returns>
+        [Authorize]
+        [HttpGet("UserTasks")]
+        public async Task<ActionResult<BasicTaskDTO>> GetUserTasks()
+        {
+            User curr_user = await _userManager.GetUserAsync(User);
+            if (_context.Tasks == null)
+            {
+                return NotFound();
+            }
+            var tasks = await _context.Tasks.Where(t => t.Assignees.Contains(curr_user) && !t.Completed).ToListAsync();
+
+            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            foreach (TaskItem task in tasks) {
+                tasks_dto.Add(TaskToBasicDTO(task));
+            }
+
+            return new ObjectResult(tasks_dto);
+        }
+
+
+
+
+
         // PUT: api/Tasks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
