@@ -61,13 +61,14 @@ class LoginForm extends StatelessWidget {
         ),
         ElevatedButton(
             onPressed: () async {
-              loggedUserId =
-                  await HttpService().getUserByEmail(emailController.text);
-              Navigator.pushReplacement(context, MaterialPageRoute(
-                builder: (context) {
-                  return const MainContainer();
-                },
-              ));
+              if (await HttpService()
+                  .login(emailController.text, passwordController.text)) {
+                Navigator.pushReplacement(context, MaterialPageRoute(
+                  builder: (context) {
+                    return const MainContainer();
+                  },
+                ));
+              }
             },
             child: const Text(
               "Login",

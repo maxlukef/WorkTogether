@@ -58,7 +58,7 @@ namespace WorkTogether.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    id = user.UserId
                 });
             }
             return Unauthorized();

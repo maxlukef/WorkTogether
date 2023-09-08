@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:work_together_flutter/models/login_request.dart';
+import 'package:work_together_flutter/models/login_results.dart';
 
 import 'main.dart';
 import 'models/card_info.dart';
@@ -185,17 +187,27 @@ class HttpService {
     Response res = await post(uri);
   }
 
-  Future<int> getUserByEmail(String email) async {
-    Uri uri = Uri.https("localhost:7277", "api/Users/email/$email");
-    Response res = await get(uri);
+  Future<bool> login(String email, String password) async {
+    LoginRequest requestData =
+        LoginRequest(username: email, password: password);
+    var headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    String body = jsonEncode(requestData);
+    Uri uri = Uri.https("localhost:7277", "login");
+    Response res = await post(uri, body: body, headers: headers);
 
     if (res.statusCode == 200) {
-      dynamic body = jsonDecode(res.body);
-      User profile = User.fromJson(body);
-      loggedUserId = profile.id;
-      return profile.id;
+      var a = jsonDecode(res.body);
+
+      // LoginResults result = jsonDecode(res.body);
+
+      // authToken = result.authToken;
+      // loggedUserId = result.id;
+      return true;
     } else {
-      throw "unable to get user with email $email";
+      return false;
     }
   }
 }

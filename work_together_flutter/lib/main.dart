@@ -7,6 +7,7 @@ void main() {
 }
 
 int loggedUserId = 2;
+String authToken = "";
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
