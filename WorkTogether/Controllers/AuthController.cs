@@ -90,7 +90,7 @@ namespace WorkTogether.Controllers
                 Major = model.Major,
                 EmploymentStatus = model.EmploymentStatus,
                 Interests = model.Interests,
-                StudentStatus = model.EmploymentStatus,
+                StudentStatus = model.StudentStatus,
                 UserId = max_userID + 1
             };
             var result = await _userManager.CreateAsync(user, model.Password);

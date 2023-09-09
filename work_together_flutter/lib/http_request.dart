@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:work_together_flutter/models/login_request.dart';
 import 'package:work_together_flutter/models/login_results.dart';
+import 'package:work_together_flutter/models/new_user.dart';
 
 import 'main.dart';
 import 'models/card_info.dart';
@@ -38,8 +39,7 @@ class HttpService {
     Uri uri = Uri.https('localhost:7277', 'api/Users/profile');
     var body = user.toJson();
     try {
-      var res = await post(uri, body: body, headers: authHeader);
-      int x = 0;
+      await post(uri, body: body, headers: authHeader);
     } catch (e) {
       print(e);
     }
@@ -131,7 +131,7 @@ class HttpService {
   Future<List<CardInfo>> getTeam(classId, userId) async {
     Uri uri = Uri.https(
         'localhost:7277', 'api/Teams/ByStudentAndProject/$classId/$userId');
-    var res;
+    Response res;
     List<CardInfo> teamMates = [];
     try {
       res = await get(uri);
@@ -196,7 +196,7 @@ class HttpService {
   inviteToTeam(int projectId, int inviterId, int inviteeId) async {
     Uri uri = Uri.https(
         "localhost:7277", "api/Teams/invite/$projectId/$inviterId/$inviteeId");
-    Response res = await post(uri);
+    await post(uri);
   }
 
   Future<bool> login(String email, String password) async {
@@ -204,6 +204,23 @@ class HttpService {
         LoginRequest(username: email, password: password);
     String body = jsonEncode(requestData);
     Uri uri = Uri.https("localhost:7277", "login");
+    Response res = await post(uri, body: body, headers: nonAuthHeader);
+
+    if (res.statusCode == 200) {
+      Map<String, dynamic> temp = jsonDecode(res.body);
+      LoginResults result = LoginResults.fromJson(temp);
+
+      authToken = result.authToken;
+      loggedUserId = result.id;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> registerUser(NewUser newUser) async {
+    String body = newUser.toJson();
+    Uri uri = Uri.https("localhost:7277", "register");
     Response res = await post(uri, body: body, headers: nonAuthHeader);
 
     if (res.statusCode == 200) {

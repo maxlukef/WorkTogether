@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:work_together_flutter/pages/signup/signup_page.dart';
 
 import '../../../http_request.dart';
-import '../../../main.dart';
 import '../../../main_container.dart';
 
 class LoginForm extends StatelessWidget {
@@ -63,11 +62,13 @@ class LoginForm extends StatelessWidget {
             onPressed: () async {
               if (await HttpService()
                   .login(emailController.text, passwordController.text)) {
-                Navigator.pushReplacement(context, MaterialPageRoute(
-                  builder: (context) {
-                    return const MainContainer();
-                  },
-                ));
+                if (context.mounted) {
+                  Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const MainContainer();
+                    },
+                  ));
+                }
               }
             },
             child: const Text(

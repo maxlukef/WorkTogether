@@ -411,7 +411,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   height: 45,
                   width: 45,
                   child: FloatingActionButton(
-                    onPressed: () {
+                    onPressed: () async {
                       User updatedUser = User(
                         id: widget.user.id,
                         name: widget.user.name,
@@ -422,8 +422,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         interests: widget.user.interests,
                         major: widget.user.major,
                       );
-                      HttpService().putUser(updatedUser);
-                      Navigator.pop(context, updatedUser);
+                      await HttpService().putUser(updatedUser);
+                      if (context.mounted) {
+                        Navigator.pop(context, updatedUser);
+                      }
                     },
                     child: const Icon(
                       Icons.check,
