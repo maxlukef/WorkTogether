@@ -39,6 +39,7 @@ class _SignupFormState extends State<SignupForm> {
   }
 
   bool isButtonActive = false;
+  bool showErrorMessage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +123,14 @@ class _SignupFormState extends State<SignupForm> {
                         color: Color(0xFF1192DC), width: 5.0))),
           ),
         ),
+        if (showErrorMessage)
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              "Email already in use, try logging in normally.",
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
         ElevatedButton(
             onPressed: !isButtonActive
                 ? null
@@ -144,6 +153,9 @@ class _SignupFormState extends State<SignupForm> {
                           },
                         ));
                       }
+                    } else {
+                      showErrorMessage = true;
+                      setState(() {});
                     }
                   },
             child: const Text(
