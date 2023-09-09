@@ -6,7 +6,7 @@ void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-int loggedUserId = 2;
+int loggedUserId = 0;
 String authToken = "";
 
 class MyApp extends StatelessWidget {
