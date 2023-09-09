@@ -51,6 +51,15 @@ namespace WorkTogether.Models
         public DbSet<StudentClass> StudentClasses { get; set; } = null!;
 
 
+
+        public async Task<User> GetCurrentUser(HttpContext httpContext)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            User u1 = await Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
+            return u1;
+        }
+
+
         /// <summary>
         /// Seeds dummy users and dummy classes if your database is empty.
         /// </summary>
