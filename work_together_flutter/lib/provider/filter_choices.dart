@@ -7,6 +7,7 @@ class FilterChoices {
   String expectedHours;
   String studentStatus;
   String employmentStatus;
+  bool filterIsActive;
 
   FilterChoices(
       this.skillsSet,
@@ -14,7 +15,8 @@ class FilterChoices {
       this.isOverlappingMeetingTime,
       this.expectedHours,
       this.studentStatus,
-      this.employmentStatus);
+      this.employmentStatus,
+      this.filterIsActive);
 
   addToSkillsSet(String skill) {
     skillsSet.add(skill);
@@ -55,6 +57,10 @@ class FilterChoices {
   setEmploymentStatus(String employmentStatus) {
     this.employmentStatus = employmentStatus;
   }
+
+  setfilterIsActive(bool filterIsActive) {
+    this.filterIsActive = filterIsActive;
+  }
 }
 
 class FilterChoicesNotifier extends Notifier<FilterChoices> {
@@ -64,11 +70,12 @@ class FilterChoicesNotifier extends Notifier<FilterChoices> {
     Set<String> interestsSet = <String>{};
     bool isOverlappingMeetingTime = false;
     String expectedHours = "";
-    String studentStatus = "";
-    String employmentStatus = "";
+    String studentStatus = "N/A";
+    String employmentStatus = "N/A";
+    bool filterIsActive = false;
 
     return FilterChoices(skillsSet, interestsSet, isOverlappingMeetingTime,
-        expectedHours, studentStatus, employmentStatus);
+        expectedHours, studentStatus, employmentStatus, filterIsActive);
   }
 }
 

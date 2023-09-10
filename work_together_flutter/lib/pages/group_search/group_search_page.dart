@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/pages/group_search/components/student_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -38,6 +39,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
 
     List<CardInfo>? teamMates = [];
     List<CardInfo>? users = [];
+    List<CardInfo>? filteredUsers = [];
 
     FilterChoices filterChoices = ref.watch(filterChoicesNotifierProvider);
 
@@ -129,31 +131,69 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
               future: httpService.getUsers(widget.classId, widget.userId),
               builder: (BuildContext context,
                   AsyncSnapshot<List<CardInfo>> snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.done) {
                   users = snapshot.data;
                 }
 
-                return MasonryGridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 15,
-                    crossAxisSpacing: 10,
-                    itemCount: users?.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return StudentCard(
-                        id: users![index].id,
-                        fullName: users![index].name,
-                        major: users![index].major,
-                        availableMornings: users![index].availableMornings,
-                        availableAfternoons: users![index].availableAfternoons,
-                        availableEvenings: users![index].availableEvenings,
-                        skills: users![index].skills,
-                        expectedGrade: users![index].expectedGrade,
-                        weeklyHours: users![index].weeklyHours,
-                        interests: users![index].interests,
-                        notifyParent: refresh,
-                      );
-                    });
+                for (CardInfo user in users!) {
+                  for (String skill
+                      in ref.read(filterChoicesNotifierProvider).skillsSet) {
+                    if (user.skills.contains(skill)) {
+                      filteredUsers.add(user);
+                    }
+                  }
+                }
+
+                if (ref.read(filterChoicesNotifierProvider).filterIsActive ==
+                    true) {
+                  return MasonryGridView.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 10,
+                      itemCount: filteredUsers.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return StudentCard(
+                          id: filteredUsers[index].id,
+                          fullName: filteredUsers[index].name,
+                          major: filteredUsers[index].major,
+                          availableMornings:
+                              filteredUsers[index].availableMornings,
+                          availableAfternoons:
+                              filteredUsers[index].availableAfternoons,
+                          availableEvenings:
+                              filteredUsers[index].availableEvenings,
+                          skills: filteredUsers[index].skills,
+                          expectedGrade: filteredUsers[index].expectedGrade,
+                          weeklyHours: filteredUsers[index].weeklyHours,
+                          interests: filteredUsers[index].interests,
+                          notifyParent: refresh,
+                        );
+                      });
+                } else {
+                  return MasonryGridView.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 10,
+                      itemCount: users?.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return StudentCard(
+                          id: users![index].id,
+                          fullName: users![index].name,
+                          major: users![index].major,
+                          availableMornings: users![index].availableMornings,
+                          availableAfternoons:
+                              users![index].availableAfternoons,
+                          availableEvenings: users![index].availableEvenings,
+                          skills: users![index].skills,
+                          expectedGrade: users![index].expectedGrade,
+                          weeklyHours: users![index].weeklyHours,
+                          interests: users![index].interests,
+                          notifyParent: refresh,
+                        );
+                      });
+                }
               })
         ])));
   }
@@ -230,9 +270,47 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
   Widget build(BuildContext context) {
     FilterChoices filterChoices = ref.watch(filterChoicesNotifierProvider);
 
+    if (ref.read(filterChoicesNotifierProvider).studentStatus == "N/A") {
+      _studentStatus = StudentStatus.notApplicable;
+    } else if (ref.read(filterChoicesNotifierProvider).studentStatus ==
+        "Full Time Student") {
+      _studentStatus = StudentStatus.fullTime;
+    } else {
+      _studentStatus = StudentStatus.partTime;
+    }
+
+    if (ref.read(filterChoicesNotifierProvider).employmentStatus == "N/A") {
+      _employmentStatus = EmploymentStatus.notApplicable;
+    } else if (ref.read(filterChoicesNotifierProvider).employmentStatus ==
+        "Employed") {
+      _employmentStatus = EmploymentStatus.employed;
+    } else {
+      _employmentStatus = EmploymentStatus.unemployed;
+    }
+
+    isFilterByMeetingTimeChecked =
+        ref.read(filterChoicesNotifierProvider).isOverlappingMeetingTime;
+
+    numberHoursFilterTextFieldController.text =
+        ref.read(filterChoicesNotifierProvider).expectedHours;
+
     return SingleChildScrollView(
       child: Column(
         children: [
+          Row(
+            children: [
+              IconButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
           Row(
             children: const [
               Padding(
@@ -524,6 +602,7 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (expectedHours) {
+                      numberHoursFilterTextFieldController.text = expectedHours;
                       ref
                           .read(filterChoicesNotifierProvider)
                           .setExpectedHours(expectedHours);
@@ -753,19 +832,18 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                 padding: const EdgeInsets.fromLTRB(0, 32.0, 0, 32.0),
                 child: ElevatedButton(
                   onPressed: () => {
-                    print(ref
+                    ref
                         .read(filterChoicesNotifierProvider)
-                        .isOverlappingMeetingTime),
-                    print(ref.read(filterChoicesNotifierProvider).skillsSet),
-                    print(ref.read(filterChoicesNotifierProvider).interestsSet),
-                    print(
-                        ref.read(filterChoicesNotifierProvider).expectedHours),
-                    print(
-                        ref.read(filterChoicesNotifierProvider).studentStatus),
-                    print(ref
-                        .read(filterChoicesNotifierProvider)
-                        .employmentStatus),
-                    Navigator.pop(context)
+                        .setfilterIsActive(true),
+                    setState(() {}),
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => GroupSearchPage(
+                                classId: 1,
+                                userId: loggedUserId,
+                              )),
+                    ),
                   },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 50),
