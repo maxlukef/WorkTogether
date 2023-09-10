@@ -72,6 +72,56 @@ namespace WorkTogether.Controllers
             return answerList;
         }
 
+        [HttpPost("{classID}/{StudentID}")]
+        public async Task<IActionResult> PostAnswersForStudentProject(int classID, int StudentID, List<AnswerDTO> answers)
+        {
+            var user = _context.Users.Where(x => x.UserId == StudentID).Single();
+            var curProject = _context.Projects.Where(x => x.Class.Id == classID).Single();
+            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == curProject.Id).Single();
+
+            for (int i = 0; i < answers.Count; i++)
+            {
+                var curQuestion = curQuestionnaire.Questions.Where(x => x.Id == answers[i].qNum).Single();
+
+                Answer answer = new Answer
+                {
+                    AnswerStr = answers[i].answerText,
+                    Question = curQuestion,
+                    Answerer = user
+                };
+                _context.Answers.Add(answer);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{classID}/{StudentID}")]
+        public async Task<IActionResult> PutAnswersForStudentProject(int classID, int StudentID, List<AnswerDTO> answers)
+        {
+            var user = _context.Users.Where(x => x.UserId == StudentID).Single();
+            var curProject = _context.Projects.Where(x => x.Class.Id == classID).Single();
+            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == curProject.Id).Single();
+
+            for (int i = 0; i < answers.Count; i++)
+            {
+                var curQuestion = curQuestionnaire.Questions.Where(x => x.Id == answers[i].qNum).Single();
+
+                Answer answer = new Answer
+                {
+                    AnswerStr = answers[i].answerText,
+                    Question = curQuestion,
+                    Answerer = user
+                };
+                _context.Entry(answer).State = EntityState.Modified;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // PUT: api/Answers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
