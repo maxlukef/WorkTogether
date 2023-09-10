@@ -223,6 +223,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
   var interestsFilterTextFieldController = TextEditingController();
   var numberHoursFilterTextFieldController = TextEditingController();
 
+  FocusNode interestsFocusNode = FocusNode();
+  FocusNode skillsFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     FilterChoices filterChoices = ref.watch(filterChoicesNotifierProvider);
@@ -290,9 +293,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(40.0, 2.0, 32.0, 4.0),
+                padding: const EdgeInsets.fromLTRB(40.0, 2.0, 2.0, 4.0),
                 child: SizedBox(
-                  width: 330,
+                  width: 280,
                   height: 50,
                   child: TextFormField(
                     controller: skillsFilterTextFieldController,
@@ -302,12 +305,14 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                         fontWeight: FontWeight.w400,
                         fontFamily: 'SourceSansPro'),
                     keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
+                    focusNode: skillsFocusNode,
                     onFieldSubmitted: (skill) {
                       setState(() {
                         ref
                             .read(filterChoicesNotifierProvider)
                             .addToSkillsSet(skill);
+                        skillsFilterTextFieldController.clear();
+                        skillsFocusNode.requestFocus();
                       });
                     },
                     decoration: const InputDecoration(
@@ -317,6 +322,29 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Color(0xFFD9D9D9), width: 2.0))),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: IconButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    onPressed: () {
+                      setState(() {
+                        ref.read(filterChoicesNotifierProvider).addToSkillsSet(
+                            skillsFilterTextFieldController.text);
+                        skillsFilterTextFieldController.clear();
+                        skillsFocusNode.requestFocus();
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
               ),
@@ -371,9 +399,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(40.0, 2.0, 32.0, 4.0),
+                padding: const EdgeInsets.fromLTRB(40.0, 2.0, 2.0, 4.0),
                 child: SizedBox(
-                  width: 330,
+                  width: 280,
                   height: 50,
                   child: TextFormField(
                     controller: interestsFilterTextFieldController,
@@ -383,12 +411,14 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                         fontWeight: FontWeight.w400,
                         fontFamily: 'SourceSansPro'),
                     keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
+                    focusNode: interestsFocusNode,
                     onFieldSubmitted: (interest) {
                       setState(() {
                         ref
                             .read(filterChoicesNotifierProvider)
                             .addToInterestsSet(interest);
+                        interestsFilterTextFieldController.clear();
+                        interestsFocusNode.requestFocus();
                       });
                     },
                     decoration: const InputDecoration(
@@ -398,6 +428,31 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Color(0xFFD9D9D9), width: 2.0))),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: IconButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    onPressed: () {
+                      setState(() {
+                        ref
+                            .read(filterChoicesNotifierProvider)
+                            .addToInterestsSet(
+                                interestsFilterTextFieldController.text);
+                        interestsFilterTextFieldController.clear();
+                        interestsFocusNode.requestFocus();
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
               ),
@@ -471,7 +526,7 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                     onFieldSubmitted: (expectedHours) {
                       ref
                           .read(filterChoicesNotifierProvider)
-                          .setExpectedHours(expectedHours!);
+                          .setExpectedHours(expectedHours);
                     },
                     decoration: const InputDecoration(
                         filled: true,
