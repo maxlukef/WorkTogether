@@ -39,6 +39,8 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
 
   late List<MeetingTime> meetingTimeList;
 
+  FocusNode skillsFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -78,11 +80,6 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
               });
       setState(() {});
     });
-  }
-
-  onSkillSubmitted(skill) {
-    ref.read(skillListNotifierProvider.notifier).addSkill(skill);
-    skillsTextFieldController.clear();
   }
 
   @override
@@ -174,7 +171,8 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
-                                  child: const Icon(Icons.delete_outline),
+                                  child:
+                                      const Icon(Icons.remove_circle_outline),
                                   onTap: () {
                                     ref
                                         .read(meetingTimeListNotifierProvider
@@ -221,83 +219,86 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       ),
                     ),
                   ),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                Radio(
-                                  value: ExpectedQuality.A,
-                                  groupValue: _quality,
-                                  onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
-                                  },
-                                ),
-                                const Expanded(
-                                    child: Text(
-                                  'A',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'SourceSansPro'),
-                                ))
-                              ],
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: ExpectedQuality.A,
+                                    groupValue: _quality,
+                                    onChanged: (ExpectedQuality? value) {
+                                      setState(() {
+                                        _quality = value;
+                                      });
+                                    },
+                                  ),
+                                  const Expanded(
+                                      child: Text(
+                                    'A',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'SourceSansPro'),
+                                  ))
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                Radio(
-                                  value: ExpectedQuality.B,
-                                  groupValue: _quality,
-                                  onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
-                                  },
-                                ),
-                                const Expanded(
-                                    child: Text(
-                                  'B',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'SourceSansPro'),
-                                ))
-                              ],
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: ExpectedQuality.B,
+                                    groupValue: _quality,
+                                    onChanged: (ExpectedQuality? value) {
+                                      setState(() {
+                                        _quality = value;
+                                      });
+                                    },
+                                  ),
+                                  const Expanded(
+                                      child: Text(
+                                    'B',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'SourceSansPro'),
+                                  ))
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                Radio(
-                                  value: ExpectedQuality.C,
-                                  groupValue: _quality,
-                                  onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
-                                  },
-                                ),
-                                const Expanded(
-                                    child: Text(
-                                  'C',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'SourceSansPro'),
-                                ))
-                              ],
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: ExpectedQuality.C,
+                                    groupValue: _quality,
+                                    onChanged: (ExpectedQuality? value) {
+                                      setState(() {
+                                        _quality = value;
+                                      });
+                                    },
+                                  ),
+                                  const Expanded(
+                                      child: Text(
+                                    'C',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'SourceSansPro'),
+                                  ))
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   const Align(
                     alignment: Alignment.centerLeft,
@@ -312,86 +313,95 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: 330,
-                      height: 50,
-                      child: TextFormField(
-                        controller: skillsTextFieldController,
-                        style: const TextStyle(
-                            color: Color(0xFF000000),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (e) {
-                          ref
-                              .read(skillListNotifierProvider.notifier)
-                              .addSkill(e);
-                          skillsTextFieldController.clear();
-                        },
-                        decoration: const InputDecoration(
-                            filled: true,
-                            fillColor: Color(0xFFFAFAFA),
-                            hintText: "Type to Add a Skill",
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xFFD9D9D9), width: 2.0))),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue),
-                        onPressed: () {
-                          onSkillSubmitted(skillsTextFieldController.text);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Text(
-                                "Add Interest",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 4.0),
-                                child: Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                ),
-                              )
-                            ],
-                          ),
-                        )),
-                  ),
-                  Wrap(runSpacing: 12, children: [
-                    ...skillList.map(
-                      (e) => Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Tag(text: e.toString()),
-                          GestureDetector(
-                            child: const Icon(Icons.remove_circle_outline),
-                            onTap: () {
-                              int index = skillList.indexOf(e);
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(40.0, 2.0, 2.0, 4.0),
+                        child: SizedBox(
+                          width: 280,
+                          height: 50,
+                          child: TextFormField(
+                            controller: skillsTextFieldController,
+                            style: const TextStyle(
+                                color: Color(0xFF000000),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'SourceSansPro'),
+                            keyboardType: TextInputType.emailAddress,
+                            focusNode: skillsFocusNode,
+                            onFieldSubmitted: (e) {
                               ref
                                   .read(skillListNotifierProvider.notifier)
-                                  .removeSkill(index);
+                                  .addSkill(e);
+                              skillsTextFieldController.clear();
+                              skillsFocusNode.requestFocus();
+                            },
+                            decoration: const InputDecoration(
+                                filled: true,
+                                fillColor: Color(0xFFFAFAFA),
+                                hintText: "Type to Add a Skill",
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Color(0xFFD9D9D9), width: 2.0))),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: IconButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue),
+                            onPressed: () {
+                              setState(() {
+                                ref
+                                    .read(skillListNotifierProvider.notifier)
+                                    .addSkill(skillsTextFieldController.text);
+                                skillsTextFieldController.clear();
+                                skillsFocusNode.requestFocus();
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.add,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                      child: Wrap(
+                        children: [
+                          ...skillList.map(
+                            (skill) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
+                                child: Wrap(
+                                  children: [
+                                    Tag(text: skill.toString()),
+                                    GestureDetector(
+                                      child: const Icon(
+                                          Icons.remove_circle_outline),
+                                      onTap: () {
+                                        setState(() {
+                                          ref
+                                              .read(skillListNotifierProvider)
+                                              .remove(skill);
+                                        });
+                                      },
+                                    )
+                                  ],
+                                ),
+                              );
                             },
                           )
                         ],
-                      ),
-                    ),
-                  ]),
+                      )),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
@@ -418,7 +428,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                             fontWeight: FontWeight.w400,
                             fontFamily: 'SourceSansPro'),
                         keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
+                        textInputAction: TextInputAction.done,
                         onSaved: (hours) {},
                         decoration: const InputDecoration(
                             filled: true,
@@ -431,7 +441,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                     ),
                   ),
                   Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                       child: ElevatedButton(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/pages/group_search/components/student_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -81,14 +82,20 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                   teamMates = snapshot.data;
                 }
 
+                String loggedUserOrTeam = "My Questionnaire";
+
+                if (teamMates?.length != 1) {
+                  loggedUserOrTeam = "My Team";
+                }
+
                 if (teamMates!.isNotEmpty) {
                   return Column(children: [
-                    const Align(
+                    Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.only(left: 5),
-                          child: Text("My Team",
-                              style: TextStyle(
+                          child: Text(loggedUserOrTeam,
+                              style: const TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.w700)),
                         )),
                     MasonryGridView.count(
@@ -551,28 +558,24 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                 children: [
                   ...ref.read(filterChoicesNotifierProvider).getSkillsSet().map(
                     (skill) {
-                      if (skill.toString().trim() != "") {
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
-                          child: Wrap(
-                            children: [
-                              Tag(text: skill.toString()),
-                              GestureDetector(
-                                child: const Icon(Icons.remove_circle_outline),
-                                onTap: () {
-                                  setState(() {
-                                    ref
-                                        .read(filterChoicesNotifierProvider)
-                                        .removeSkillFromSet(skill);
-                                  });
-                                },
-                              )
-                            ],
-                          ),
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
+                        child: Wrap(
+                          children: [
+                            Tag(text: skill.toString()),
+                            GestureDetector(
+                              child: const Icon(Icons.remove_circle_outline),
+                              onTap: () {
+                                setState(() {
+                                  ref
+                                      .read(filterChoicesNotifierProvider)
+                                      .removeSkillFromSet(skill);
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                      );
                     },
                   )
                 ],
@@ -662,28 +665,24 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                       .getInterestsSet()
                       .map(
                     (interest) {
-                      if (interest.toString().trim() != "") {
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
-                          child: Wrap(
-                            children: [
-                              Tag(text: interest.toString()),
-                              GestureDetector(
-                                child: const Icon(Icons.remove_circle_outline),
-                                onTap: () {
-                                  setState(() {
-                                    ref
-                                        .read(filterChoicesNotifierProvider)
-                                        .removeInterestFromSet(interest);
-                                  });
-                                },
-                              )
-                            ],
-                          ),
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
+                        child: Wrap(
+                          children: [
+                            Tag(text: interest.toString()),
+                            GestureDetector(
+                              child: const Icon(Icons.remove_circle_outline),
+                              onTap: () {
+                                setState(() {
+                                  ref
+                                      .read(filterChoicesNotifierProvider)
+                                      .removeInterestFromSet(interest);
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                      );
                     },
                   )
                 ],

@@ -18,7 +18,11 @@ class FilterChoices {
       this.filterIsActive);
 
   addToSkillsSet(String skill) {
-    skillsSet.add(skill);
+    if (skill.trim() == "") {
+      return;
+    } else {
+      skillsSet.add(skill);
+    }
   }
 
   getSkillsSet() {
@@ -34,7 +38,11 @@ class FilterChoices {
   }
 
   addToInterestsSet(String interest) {
-    interestsSet.add(interest);
+    if (interest.trim() == "") {
+      return;
+    } else {
+      interestsSet.add(interest);
+    }
   }
 
   removeInterestFromSet(String interest) {
