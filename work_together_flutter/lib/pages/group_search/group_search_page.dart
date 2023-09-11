@@ -69,16 +69,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                       showModalBottomSheet(
                         context: context,
                         builder: (context) => const GroupSearchFilter(),
-                      ).then((value) => setState(() {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GroupSearchPage(
-                                        classId: 1,
-                                        userId: loggedUserId,
-                                      )),
-                            );
-                          }));
+                      ).then((value) => setState(() {}));
                     },
                   ),
                 ),
@@ -335,6 +326,9 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               IconButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 onPressed: () {
+                  ref
+                      .read(filterChoicesNotifierProvider)
+                      .setfilterIsActive(false);
                   Navigator.pop(context);
                 },
                 icon: const Icon(
