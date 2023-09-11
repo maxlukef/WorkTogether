@@ -69,7 +69,16 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                       showModalBottomSheet(
                         context: context,
                         builder: (context) => const GroupSearchFilter(),
-                      );
+                      ).then((value) => setState(() {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GroupSearchPage(
+                                        classId: 1,
+                                        userId: loggedUserId,
+                                      )),
+                            );
+                          }));
                     },
                   ),
                 ),
@@ -131,15 +140,39 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
               future: httpService.getUsers(widget.classId, widget.userId),
               builder: (BuildContext context,
                   AsyncSnapshot<List<CardInfo>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
                   users = snapshot.data;
                 }
 
-                for (CardInfo user in users!) {
-                  for (String skill
-                      in ref.read(filterChoicesNotifierProvider).skillsSet) {
-                    if (user.skills.contains(skill)) {
-                      filteredUsers.add(user);
+                filteredUsers.clear();
+
+                if (ref.read(filterChoicesNotifierProvider).filterIsActive ==
+                    true) {
+                  for (CardInfo user in users!) {
+                    if (!filteredUsers.contains(user)) {
+                      // Filter for skills
+                      for (String skill in ref
+                          .read(filterChoicesNotifierProvider)
+                          .skillsSet) {
+                        if (user.skills.contains(skill)) {
+                          filteredUsers.add(user);
+                        }
+                      }
+                      // Filter for interests
+                      for (String interest in ref
+                          .read(filterChoicesNotifierProvider)
+                          .interestsSet) {
+                        if (user.interests.contains(interest)) {
+                          filteredUsers.add(user);
+                        }
+                      }
+                      // Filter for weekly hours
+                      if (user.weeklyHours ==
+                          ref
+                              .read(filterChoicesNotifierProvider)
+                              .expectedHours) {
+                        filteredUsers.add(user);
+                      }
                     }
                   }
                 }
@@ -835,15 +868,7 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                     ref
                         .read(filterChoicesNotifierProvider)
                         .setfilterIsActive(true),
-                    setState(() {}),
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GroupSearchPage(
-                                classId: 1,
-                                userId: loggedUserId,
-                              )),
-                    ),
+                    Navigator.pop(context)
                   },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 50),
