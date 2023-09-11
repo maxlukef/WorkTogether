@@ -14,6 +14,8 @@ enum StudentStatus { fullTime, partTime, notApplicable }
 
 enum EmploymentStatus { employed, unemployed, notApplicable }
 
+enum ExpectedGrade { A, B, C, notApplicable }
+
 class GroupSearchPage extends ConsumerStatefulWidget {
   const GroupSearchPage({
     Key? key,
@@ -157,11 +159,25 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                           filteredUsers.add(user);
                         }
                       }
-                      // Filter for weekly hours
-                      if (user.weeklyHours ==
-                          ref
+                      // TODO Filter for expected grade
+                      if (ref
                               .read(filterChoicesNotifierProvider)
-                              .expectedHours) {
+                              .expectedGrade ==
+                          user.expectedGrade) {
+                        filteredUsers.add(user);
+                      }
+
+                      // Filter for expected hours b/w start and end
+                      if (ref
+                                  .read(filterChoicesNotifierProvider)
+                                  .expectedHours
+                                  .start <=
+                              int.parse(user.weeklyHours) &&
+                          ref
+                                  .read(filterChoicesNotifierProvider)
+                                  .expectedHours
+                                  .end >=
+                              int.parse(user.weeklyHours)) {
                         filteredUsers.add(user);
                       }
                     }
@@ -279,8 +295,7 @@ class GroupSearchFilter extends ConsumerStatefulWidget {
 }
 
 class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
-  StudentStatus? _studentStatus = StudentStatus.notApplicable;
-  EmploymentStatus? _employmentStatus = EmploymentStatus.notApplicable;
+  ExpectedGrade? _expectedGrade = ExpectedGrade.notApplicable;
   bool isFilterByMeetingTimeChecked = false;
 
   var skillsFilterTextFieldController = TextEditingController();
@@ -294,29 +309,18 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
   Widget build(BuildContext context) {
     FilterChoices filterChoices = ref.watch(filterChoicesNotifierProvider);
 
-    if (ref.read(filterChoicesNotifierProvider).studentStatus == "N/A") {
-      _studentStatus = StudentStatus.notApplicable;
-    } else if (ref.read(filterChoicesNotifierProvider).studentStatus ==
-        "Full Time Student") {
-      _studentStatus = StudentStatus.fullTime;
+    if (ref.read(filterChoicesNotifierProvider).expectedGrade == "N/A") {
+      _expectedGrade = ExpectedGrade.notApplicable;
+    } else if (ref.read(filterChoicesNotifierProvider).expectedGrade == "A") {
+      _expectedGrade = ExpectedGrade.A;
+    } else if (ref.read(filterChoicesNotifierProvider).expectedGrade == "B") {
+      _expectedGrade = ExpectedGrade.B;
     } else {
-      _studentStatus = StudentStatus.partTime;
-    }
-
-    if (ref.read(filterChoicesNotifierProvider).employmentStatus == "N/A") {
-      _employmentStatus = EmploymentStatus.notApplicable;
-    } else if (ref.read(filterChoicesNotifierProvider).employmentStatus ==
-        "Employed") {
-      _employmentStatus = EmploymentStatus.employed;
-    } else {
-      _employmentStatus = EmploymentStatus.unemployed;
+      _expectedGrade = ExpectedGrade.C;
     }
 
     isFilterByMeetingTimeChecked =
         ref.read(filterChoicesNotifierProvider).isOverlappingMeetingTime;
-
-    numberHoursFilterTextFieldController.text =
-        ref.read(filterChoicesNotifierProvider).expectedHours;
 
     return SingleChildScrollView(
       child: Column(
@@ -326,9 +330,6 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               IconButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 onPressed: () {
-                  ref
-                      .read(filterChoicesNotifierProvider)
-                      .setfilterIsActive(false);
                   Navigator.pop(context);
                 },
                 icon: const Icon(
@@ -336,7 +337,59 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                   color: Colors.blue,
                 ),
               ),
+              const Spacer(),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0.0, 0.0, 40.0, 0.0),
+                child: Text(
+                  "Filter List",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                ),
+              ),
+              const Spacer(),
             ],
+          ),
+          Row(
+            children: const [
+              Padding(
+                padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                child: Text(
+                  "Filter By Expected Hours:",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
+                ),
+              ),
+            ],
+          ),
+          RangeSlider(
+            values: ref.watch(filterChoicesNotifierProvider).expectedHours,
+            max: 15,
+            divisions: 15,
+            labels: RangeLabels(
+              ref
+                  .watch(filterChoicesNotifierProvider)
+                  .expectedHours
+                  .start
+                  .round()
+                  .toString(),
+              ref
+                  .watch(filterChoicesNotifierProvider)
+                  .expectedHours
+                  .end
+                  .round()
+                  .toString(),
+            ),
+            onChanged: (RangeValues values) {
+              setState(() {
+                ref
+                    .read(filterChoicesNotifierProvider)
+                    .setExpectedHours(values);
+              });
+            },
           ),
           Row(
             children: const [
@@ -603,55 +656,7 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               Padding(
                 padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                 child: Text(
-                  "Filter By Expected Hours:",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'SourceSansPro'),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(40.0, 2.0, 32.0, 4.0),
-                child: SizedBox(
-                  width: 330,
-                  height: 50,
-                  child: TextFormField(
-                    controller: numberHoursFilterTextFieldController,
-                    style: const TextStyle(
-                        color: Color(0xFF000000),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'SourceSansPro'),
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (expectedHours) {
-                      numberHoursFilterTextFieldController.text = expectedHours;
-                      ref
-                          .read(filterChoicesNotifierProvider)
-                          .setExpectedHours(expectedHours);
-                    },
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Color(0xFFFAFAFA),
-                        hintText: "Type to filter by number of hours",
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color(0xFFD9D9D9), width: 2.0))),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: const [
-              Padding(
-                padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                child: Text(
-                  "Filter By Student Status:",
+                  "Filter By Expected Grade:",
                   style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w400,
@@ -673,15 +678,15 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                       child: Row(
                         children: [
                           Radio(
-                            value: StudentStatus.notApplicable,
-                            groupValue: _studentStatus,
-                            onChanged: (StudentStatus? value) {
+                            value: ExpectedGrade.notApplicable,
+                            groupValue: _expectedGrade,
+                            onChanged: (ExpectedGrade? value) {
                               setState(() {
-                                _studentStatus = value;
+                                _expectedGrade = value;
                               });
                               ref
                                   .read(filterChoicesNotifierProvider)
-                                  .setStudentStatus("N/A");
+                                  .setExpectedGrade("N/A");
                             },
                           ),
                           const Expanded(
@@ -698,20 +703,20 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                       child: Row(
                         children: [
                           Radio(
-                            value: StudentStatus.fullTime,
-                            groupValue: _studentStatus,
-                            onChanged: (StudentStatus? value) {
+                            value: ExpectedGrade.A,
+                            groupValue: _expectedGrade,
+                            onChanged: (ExpectedGrade? value) {
                               setState(() {
-                                _studentStatus = value;
+                                _expectedGrade = value;
                               });
                               ref
                                   .read(filterChoicesNotifierProvider)
-                                  .setStudentStatus("Full Time Student");
+                                  .setExpectedGrade("A");
                             },
                           ),
                           const Expanded(
                             child: Text(
-                              'Full Time Student',
+                              'A',
                               style: TextStyle(
                                   fontSize: 14, fontFamily: 'SourceSansPro'),
                             ),
@@ -724,72 +729,20 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                       child: Row(
                         children: [
                           Radio(
-                            value: StudentStatus.partTime,
-                            groupValue: _studentStatus,
-                            onChanged: (StudentStatus? value) {
+                            value: ExpectedGrade.B,
+                            groupValue: _expectedGrade,
+                            onChanged: (ExpectedGrade? value) {
                               setState(() {
-                                _studentStatus = value;
+                                _expectedGrade = value;
                               });
                               ref
                                   .read(filterChoicesNotifierProvider)
-                                  .setStudentStatus("Part Time Student");
+                                  .setExpectedGrade("B");
                             },
                           ),
                           const Expanded(
                               child: Text(
-                            'Part Time Student',
-                            style: TextStyle(
-                                fontSize: 14, fontFamily: 'SourceSansPro'),
-                          ))
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Row(
-            children: const [
-              Padding(
-                padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                child: Text(
-                  "Filter By Employment Status:",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'SourceSansPro'),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        children: [
-                          Radio(
-                            value: EmploymentStatus.notApplicable,
-                            groupValue: _employmentStatus,
-                            onChanged: (EmploymentStatus? value) {
-                              setState(() {
-                                _employmentStatus = value;
-                              });
-                              ref
-                                  .read(filterChoicesNotifierProvider)
-                                  .setEmploymentStatus("N/A");
-                            },
-                          ),
-                          const Expanded(
-                              child: Text(
-                            'N/A',
+                            'B',
                             style: TextStyle(
                                 fontSize: 14, fontFamily: 'SourceSansPro'),
                           ))
@@ -801,46 +754,20 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                       child: Row(
                         children: [
                           Radio(
-                            value: EmploymentStatus.employed,
-                            groupValue: _employmentStatus,
-                            onChanged: (EmploymentStatus? value) {
+                            value: ExpectedGrade.C,
+                            groupValue: _expectedGrade,
+                            onChanged: (ExpectedGrade? value) {
                               setState(() {
-                                _employmentStatus = value;
+                                _expectedGrade = value;
                               });
                               ref
                                   .read(filterChoicesNotifierProvider)
-                                  .setEmploymentStatus("Employed");
-                            },
-                          ),
-                          const Expanded(
-                            child: Text(
-                              'Employed',
-                              style: TextStyle(
-                                  fontSize: 14, fontFamily: 'SourceSansPro'),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        children: [
-                          Radio(
-                            value: EmploymentStatus.unemployed,
-                            groupValue: _employmentStatus,
-                            onChanged: (EmploymentStatus? value) {
-                              setState(() {
-                                _employmentStatus = value;
-                              });
-                              ref
-                                  .read(filterChoicesNotifierProvider)
-                                  .setEmploymentStatus("Unemployed");
+                                  .setExpectedGrade("C");
                             },
                           ),
                           const Expanded(
                               child: Text(
-                            'Unemployed',
+                            'C',
                             style: TextStyle(
                                 fontSize: 14, fontFamily: 'SourceSansPro'),
                           ))
@@ -856,7 +783,31 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
             children: [
               const Spacer(),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 32.0, 0, 32.0),
+                padding: const EdgeInsets.fromLTRB(0, 32.0, 2, 32.0),
+                child: ElevatedButton(
+                  onPressed: () => {
+                    setState(() {
+                      ref
+                          .watch(filterChoicesNotifierProvider)
+                          .resetFilterFields();
+                      Navigator.pop(context);
+                    })
+                  },
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(150, 50),
+                      backgroundColor: const Color(0xFF7AC8F5)),
+                  child: const Text(
+                    "Reset",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'SourceSansPro',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(2.0, 32.0, 0, 32.0),
                 child: ElevatedButton(
                   onPressed: () => {
                     ref

@@ -1,12 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 
 class FilterChoices {
   Set<String> skillsSet;
   Set<String> interestsSet;
   bool isOverlappingMeetingTime;
-  String expectedHours;
-  String studentStatus;
-  String employmentStatus;
+  RangeValues expectedHours;
+  String expectedGrade;
   bool filterIsActive;
 
   FilterChoices(
@@ -14,8 +14,7 @@ class FilterChoices {
       this.interestsSet,
       this.isOverlappingMeetingTime,
       this.expectedHours,
-      this.studentStatus,
-      this.employmentStatus,
+      this.expectedGrade,
       this.filterIsActive);
 
   addToSkillsSet(String skill) {
@@ -46,20 +45,25 @@ class FilterChoices {
     this.isOverlappingMeetingTime = isOverlappingMeetingTime;
   }
 
-  setExpectedHours(String expectedHours) {
+  setExpectedHours(RangeValues expectedHours) {
     this.expectedHours = expectedHours;
   }
 
-  setStudentStatus(String studentStatus) {
-    this.studentStatus = studentStatus;
-  }
-
-  setEmploymentStatus(String employmentStatus) {
-    this.employmentStatus = employmentStatus;
+  setExpectedGrade(String expectedGrade) {
+    this.expectedGrade = expectedGrade;
   }
 
   setfilterIsActive(bool filterIsActive) {
     this.filterIsActive = filterIsActive;
+  }
+
+  resetFilterFields() {
+    skillsSet = <String>{};
+    interestsSet = <String>{};
+    isOverlappingMeetingTime = false;
+    expectedHours = const RangeValues(0, 0);
+    expectedGrade = "N/A";
+    filterIsActive = false;
   }
 }
 
@@ -69,13 +73,12 @@ class FilterChoicesNotifier extends Notifier<FilterChoices> {
     Set<String> skillsSet = <String>{};
     Set<String> interestsSet = <String>{};
     bool isOverlappingMeetingTime = false;
-    String expectedHours = "";
-    String studentStatus = "N/A";
-    String employmentStatus = "N/A";
+    RangeValues expectedHours = const RangeValues(0, 0);
+    String expectedGrade = "N/A";
     bool filterIsActive = false;
 
     return FilterChoices(skillsSet, interestsSet, isOverlappingMeetingTime,
-        expectedHours, studentStatus, employmentStatus, filterIsActive);
+        expectedHours, expectedGrade, filterIsActive);
   }
 }
 
