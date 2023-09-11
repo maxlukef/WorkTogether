@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/pages/group_search/components/student_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -9,10 +8,6 @@ import '../../global_components/tag.dart';
 import '../../http_request.dart';
 import '../../models/card_info.dart';
 import '../../provider/filter_choices.dart';
-
-enum StudentStatus { fullTime, partTime, notApplicable }
-
-enum EmploymentStatus { employed, unemployed, notApplicable }
 
 enum ExpectedGrade { A, B, C, notApplicable }
 
@@ -139,47 +134,89 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
 
                 filteredUsers.clear();
 
+                /*
+                List<String> loggedUserAvailableMornings = [];
+                List<String> loggedUserAvailableAfternoons = [];
+                List<String> loggedUserAvailableEvenings = [];
+
+                for (CardInfo user in users!) {
+                  if (user.id == loggedUserId) {
+                    loggedUserAvailableMornings = user.availableMornings;
+                    loggedUserAvailableAfternoons = user.availableAfternoons;
+                    loggedUserAvailableEvenings = user.availableEvenings;
+                    users!.remove(user);
+                    break;
+                  }
+                }
+                */
+
                 if (ref.read(filterChoicesNotifierProvider).filterIsActive ==
                     true) {
                   for (CardInfo user in users!) {
-                    if (!filteredUsers.contains(user)) {
-                      // Filter for skills
-                      for (String skill in ref
-                          .read(filterChoicesNotifierProvider)
-                          .skillsSet) {
-                        if (user.skills.contains(skill)) {
-                          filteredUsers.add(user);
-                        }
-                      }
-                      // Filter for interests
-                      for (String interest in ref
-                          .read(filterChoicesNotifierProvider)
-                          .interestsSet) {
-                        if (user.interests.contains(interest)) {
-                          filteredUsers.add(user);
-                        }
-                      }
-                      // TODO Filter for expected grade
-                      if (ref
-                              .read(filterChoicesNotifierProvider)
-                              .expectedGrade ==
-                          user.expectedGrade) {
+                    /* 
+                    // Filter by overlapping morning days
+                    for (String morning in loggedUserAvailableMornings) {
+                      if (user.availableMornings.contains(morning) &&
+                          !filteredUsers.contains(user)) {
                         filteredUsers.add(user);
                       }
+                    }
 
-                      // Filter for expected hours b/w start and end
-                      if (ref
-                                  .read(filterChoicesNotifierProvider)
-                                  .expectedHours
-                                  .start <=
-                              int.parse(user.weeklyHours) &&
-                          ref
-                                  .read(filterChoicesNotifierProvider)
-                                  .expectedHours
-                                  .end >=
-                              int.parse(user.weeklyHours)) {
+                    // Filer by overlapping afternoon days
+                    for (String afternoon in loggedUserAvailableAfternoons) {
+                      if (user.availableAfternoons.contains(afternoon) &&
+                          !filteredUsers.contains(user)) {
                         filteredUsers.add(user);
                       }
+                    }
+
+                    // Filer by overlapping evening days
+                    for (String evening in loggedUserAvailableEvenings) {
+                      if (user.availableEvenings.contains(evening) &&
+                          !filteredUsers.contains(user)) {
+                        filteredUsers.add(user);
+                      }
+                    }
+                    */
+
+                    // Filter for skills
+                    for (String skill
+                        in ref.read(filterChoicesNotifierProvider).skillsSet) {
+                      if (user.skills.contains(skill) &&
+                          !filteredUsers.contains(user)) {
+                        filteredUsers.add(user);
+                      }
+                    }
+                    // Filter for interests
+                    for (String interest in ref
+                        .read(filterChoicesNotifierProvider)
+                        .interestsSet) {
+                      if (user.interests.contains(interest) &&
+                          !filteredUsers.contains(user)) {
+                        filteredUsers.add(user);
+                      }
+                    }
+
+                    // Filter for expected grade
+                    if (ref.read(filterChoicesNotifierProvider).expectedGrade ==
+                            user.expectedGrade &&
+                        !filteredUsers.contains(user)) {
+                      filteredUsers.add(user);
+                    }
+
+                    // Filter for expected hours b/w start and end
+                    if (ref
+                                .read(filterChoicesNotifierProvider)
+                                .expectedHours
+                                .start <=
+                            int.parse(user.weeklyHours) &&
+                        ref
+                                .read(filterChoicesNotifierProvider)
+                                .expectedHours
+                                .end >=
+                            int.parse(user.weeklyHours) &&
+                        !filteredUsers.contains(user)) {
+                      filteredUsers.add(user);
                     }
                   }
                 }
@@ -296,7 +333,7 @@ class GroupSearchFilter extends ConsumerStatefulWidget {
 
 class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
   ExpectedGrade? _expectedGrade = ExpectedGrade.notApplicable;
-  bool isFilterByMeetingTimeChecked = false;
+  // bool isFilterByMeetingTimeChecked = false;
 
   var skillsFilterTextFieldController = TextEditingController();
   var interestsFilterTextFieldController = TextEditingController();
@@ -319,8 +356,8 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
       _expectedGrade = ExpectedGrade.C;
     }
 
-    isFilterByMeetingTimeChecked =
-        ref.read(filterChoicesNotifierProvider).isOverlappingMeetingTime;
+    // isFilterByMeetingTimeChecked =
+    //     ref.read(filterChoicesNotifierProvider).isOverlappingMeetingTime;
 
     return SingleChildScrollView(
       child: Column(
@@ -391,49 +428,49 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               });
             },
           ),
-          Row(
-            children: const [
-              Padding(
-                padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                child: Text(
-                  "Filter By Meeting Times:",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'SourceSansPro'),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(40.0, 16.0, 2.0, 16.0),
-                child: Checkbox(
-                  checkColor: Colors.white,
-                  value: isFilterByMeetingTimeChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isFilterByMeetingTimeChecked = value!;
-                      ref
-                          .read(filterChoicesNotifierProvider)
-                          .setIsOverlappingMeetingTime(value);
-                    });
-                  },
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(2.0, 16.0, 32.0, 16.0),
-                child: Text(
-                  "Filter by students with overlapping meeting times",
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'SourceSansPro'),
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   children: const [
+          //     Padding(
+          //       padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+          //       child: Text(
+          //         "Filter By Meeting Times:",
+          //         style: TextStyle(
+          //             fontSize: 24,
+          //             fontWeight: FontWeight.w400,
+          //             fontFamily: 'SourceSansPro'),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // Row(
+          //   children: [
+          //     Padding(
+          //       padding: const EdgeInsets.fromLTRB(40.0, 16.0, 2.0, 16.0),
+          //       child: Checkbox(
+          //         checkColor: Colors.white,
+          //         value: isFilterByMeetingTimeChecked,
+          //         onChanged: (bool? value) {
+          //           setState(() {
+          //             isFilterByMeetingTimeChecked = value!;
+          //             ref
+          //                 .read(filterChoicesNotifierProvider)
+          //                 .setIsOverlappingMeetingTime(value);
+          //           });
+          //         },
+          //       ),
+          //     ),
+          //     const Padding(
+          //       padding: EdgeInsets.fromLTRB(2.0, 16.0, 32.0, 16.0),
+          //       child: Text(
+          //         "Filter by students with overlapping meeting times",
+          //         style: TextStyle(
+          //             fontSize: 14,
+          //             fontWeight: FontWeight.w400,
+          //             fontFamily: 'SourceSansPro'),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           Row(
             children: const [
               Padding(
