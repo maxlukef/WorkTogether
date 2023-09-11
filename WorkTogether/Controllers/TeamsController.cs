@@ -245,8 +245,8 @@ namespace WorkTogether.Controllers
                 return Problem("Entity set 'WT_DBContext.Projects' is null.");
             }
 
-            var inviter = await _context.Users.FindAsync(inviterId);
-            var invitee = await _context.Users.FindAsync(inviteeId);
+            var inviter = await _context.Users.Where(u => u.UserId == inviterId).FirstOrDefaultAsync();
+            var invitee = await _context.Users.Where(u => u.UserId == inviteeId).FirstOrDefaultAsync();
             var project = await _context.Projects.Include(p => p.Class).Where(Project => Project.Id == projectId).ToListAsync();
             if (project.Count == 0) {
                 return BadRequest("No such project");
