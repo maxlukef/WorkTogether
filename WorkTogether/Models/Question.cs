@@ -21,4 +21,12 @@
         /// </summary>
         public Questionnaire Questionnaire { get; set; }
     }
+
+    public class QuestionDTO
+    {
+        public int Id { get; set; }
+        public string Prompt { get; set; }
+        public string Type { get; set; }
+        public int QuestionnaireID { get; set; }
+    }
 }

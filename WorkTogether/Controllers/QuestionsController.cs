@@ -28,25 +28,33 @@ namespace WorkTogether.Controllers
           {
               return NotFound();
           }
-            return await _context.Questions.ToListAsync();
+            List<Question> questions = await _context.Questions.ToListAsync();
+            List<QuestionDTO> questionDTOs = new List<QuestionDTO>();
+            foreach(Question q in questions)
+            {
+                questionDTOs.Add(QuestionToDTO(q));   
+            }
+
+            return Ok(questionDTOs);
         }
 
         // GET: api/Questions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Question>> GetQuestion(int id)
+        public async Task<ActionResult<QuestionDTO>> GetQuestion(int id)
         {
           if (_context.Questions == null)
           {
               return NotFound();
           }
             var question = await _context.Questions.FindAsync(id);
+            QuestionDTO questionDTO = QuestionToDTO(question);
 
             if (question == null)
             {
                 return NotFound();
             }
 
-            return question;
+            return questionDTO;
         }
 
         // PUT: api/Questions/5
@@ -83,16 +91,24 @@ namespace WorkTogether.Controllers
         // POST: api/Questions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Question>> PostQuestion(Question question)
+        public async Task<ActionResult<Question>> PostQuestion(QuestionDTO questionDTO)
         {
           if (_context.Questions == null)
           {
               return Problem("Entity set 'WT_DBContext.Questions'  is null.");
           }
+            Questionnaire questionnaire = await _context.Questionnaires.FindAsync(questionDTO.QuestionnaireID);
+            Question question = new Question
+            {
+                Id = questionDTO.Id,
+                Prompt = questionDTO.Prompt,
+                Type = questionDTO.Type,
+                Questionnaire = questionnaire,
+            };
             _context.Questions.Add(question);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
+            return CreatedAtAction("GetQuestion", new { id = question.Id }, questionDTO);
         }
 
         // DELETE: api/Questions/5
@@ -118,6 +134,31 @@ namespace WorkTogether.Controllers
         private bool QuestionExists(int id)
         {
             return (_context.Questions?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        //private async Question DTOToQuestion(QuestionDTO questionDTO)
+        //{
+        //    Questionnaire questionnaire = await _context.Questionnaires.FindAsync(questionDTO.QuestionnaireID);
+        //    Question question = new Question
+        //    {
+        //        Id = questionDTO.Id,
+        //        Prompt = questionDTO.Prompt,
+        //        Type = questionDTO.Type,
+        //        Questionnaire = questionnaire,
+        //    };
+
+        //    return question;
+        //}
+        
+        private QuestionDTO QuestionToDTO(Question question)
+        {
+            return new QuestionDTO
+            {
+                Id = question.Id,
+                Prompt = question.Prompt,
+                Type = question.Type,
+                QuestionnaireID = question.Questionnaire.Id
+            };
         }
     }
 }
