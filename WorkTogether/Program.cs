@@ -105,8 +105,9 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    UserManager<User> um = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var DB = scope.ServiceProvider.GetRequiredService<WT_DBContext>();
-    //await DB.Seed(); //comment this out to start WorkTogether without seeding
+    await DB.Seed(um); //comment this out to start WorkTogether without seeding
 
 }
 
