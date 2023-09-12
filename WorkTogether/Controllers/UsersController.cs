@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkTogether.Models;
@@ -16,10 +17,12 @@ namespace WorkTogether.Controllers
     public class UsersController : ControllerBase
     {
         private readonly WT_DBContext _context;
+        private readonly UserManager<User> _um;
 
-        public UsersController(WT_DBContext context)
+        public UsersController(WT_DBContext context, UserManager<User> um)
         {
             _context = context;
+            _um = um;
         }
 
         // GET: api/Users
@@ -61,7 +64,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.Where(u => u.UserId == id).FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
@@ -186,24 +189,38 @@ namespace WorkTogether.Controllers
 
         //Post :api/Users/profile
         [HttpPost("profile")]
+        [Authorize]
         public async Task<ActionResult<UserProfileDTO>> PostUserProfile(UserProfileDTO userDTO)
         {
-            var user = new User
+            User u2;
+            try
             {
-                UserId = userDTO.Id,
-                Name = userDTO.Name,
-                Email = userDTO.Email,
-                Bio = userDTO.Bio,
-                Major = userDTO.Major,
-                EmploymentStatus = userDTO.EmploymentStatus,
-                StudentStatus = userDTO.StudentStatus,
-                Interests = userDTO.Interests
-            };
+                u2 = await _context.Users.Where(u => u.UserId == userDTO.Id).FirstOrDefaultAsync();
+            } catch
+            {
+                return BadRequest("User ID does not exist");
+            }
+            string userEmail = HttpContext.User.Identity.Name;
+            User u1 = await _context.Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
+            if(u1.UserId != u2.UserId)
+            {
+                return Unauthorized();
+            }
+            u2.Name = userDTO.Name;
+            u2.Bio = userDTO.Bio;
+            u2.Major = userDTO.Major;
+            u2.StudentStatus = userDTO.StudentStatus;
+            u2.EmploymentStatus = userDTO.EmploymentStatus;
+            u2.Interests = userDTO.Interests;
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            var result = _um.UpdateAsync(u2);
+            if(result.IsCompletedSuccessfully)
+            {
+                return Ok();
+            } else
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE: api/Users/5

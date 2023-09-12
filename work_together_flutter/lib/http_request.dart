@@ -1,12 +1,26 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:work_together_flutter/models/login_request.dart';
+import 'package:work_together_flutter/models/login_results.dart';
+import 'package:work_together_flutter/models/new_user.dart';
 
 import 'main.dart';
 import 'models/card_info.dart';
 import 'models/user.dart';
 
 class HttpService {
+  var authHeader = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $authToken'
+  };
+
+  var nonAuthHeader = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+
   Future<User> getUser(userId) async {
     Uri uri = Uri.https('localhost:7277', 'api/Users/profile/$userId');
 
@@ -22,10 +36,10 @@ class HttpService {
   }
 
   putUser(User user) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Users/profile/${user.id}');
+    Uri uri = Uri.https('localhost:7277', 'api/Users/profile');
     var body = user.toJson();
     try {
-      await put(uri, body: body, headers: {"Content-Type": "application/json"});
+      await post(uri, body: body, headers: authHeader);
     } catch (e) {
       print(e);
     }
@@ -117,7 +131,7 @@ class HttpService {
   Future<List<CardInfo>> getTeam(classId, userId) async {
     Uri uri = Uri.https(
         'localhost:7277', 'api/Teams/ByStudentAndProject/$classId/$userId');
-    var res;
+    Response res;
     List<CardInfo> teamMates = [];
     try {
       res = await get(uri);
@@ -182,20 +196,42 @@ class HttpService {
   inviteToTeam(int projectId, int inviterId, int inviteeId) async {
     Uri uri = Uri.https(
         "localhost:7277", "api/Teams/invite/$projectId/$inviterId/$inviteeId");
-    Response res = await post(uri);
+    await post(uri);
   }
 
-  Future<int> getUserByEmail(String email) async {
-    Uri uri = Uri.https("localhost:7277", "api/Users/email/$email");
-    Response res = await get(uri);
+  Future<bool> login(String email, String password) async {
+    LoginRequest requestData =
+        LoginRequest(username: email, password: password);
+    String body = jsonEncode(requestData);
+    Uri uri = Uri.https("localhost:7277", "login");
+    Response res = await post(uri, body: body, headers: nonAuthHeader);
 
     if (res.statusCode == 200) {
-      dynamic body = jsonDecode(res.body);
-      User profile = User.fromJson(body);
-      loggedUserId = profile.id;
-      return profile.id;
+      Map<String, dynamic> temp = jsonDecode(res.body);
+      LoginResults result = LoginResults.fromJson(temp);
+
+      authToken = result.authToken;
+      loggedUserId = result.id;
+      return true;
     } else {
-      throw "unable to get user with email $email";
+      return false;
+    }
+  }
+
+  Future<bool> registerUser(NewUser newUser) async {
+    String body = newUser.toJson();
+    Uri uri = Uri.https("localhost:7277", "register");
+    Response res = await post(uri, body: body, headers: nonAuthHeader);
+
+    if (res.statusCode == 200) {
+      Map<String, dynamic> temp = jsonDecode(res.body);
+      LoginResults result = LoginResults.fromJson(temp);
+
+      authToken = result.authToken;
+      loggedUserId = result.id;
+      return true;
+    } else {
+      return false;
     }
   }
 }

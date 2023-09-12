@@ -58,7 +58,7 @@ namespace WorkTogether.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    id = user.UserId
                 });
             }
             return Unauthorized();
@@ -90,7 +90,7 @@ namespace WorkTogether.Controllers
                 Major = model.Major,
                 EmploymentStatus = model.EmploymentStatus,
                 Interests = model.Interests,
-                StudentStatus = model.EmploymentStatus,
+                StudentStatus = model.StudentStatus,
                 UserId = max_userID + 1
             };
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -99,7 +99,26 @@ namespace WorkTogether.Controllers
             if (!await _roleManager.RoleExistsAsync(UserRoles.User))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
             await _userManager.AddToRoleAsync(user, UserRoles.User);
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+
+
+
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+            var token = GetToken(authClaims);//here
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                id = user.UserId
+            });
         }
 
         /// <summary>
