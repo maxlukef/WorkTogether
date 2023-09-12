@@ -182,7 +182,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var user = await _context.Users.FindAsync(studentId);
+            var user = await _context.Users.Where(u => u.UserId == studentId).FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
