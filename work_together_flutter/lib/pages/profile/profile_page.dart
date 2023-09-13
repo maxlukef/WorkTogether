@@ -177,6 +177,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               .pushReplacement(MaterialPageRoute(
                                   builder: (context) => const LoginPage()));
                         },
+                        heroTag: "Edit Page",
                         child: const Icon(
                           Icons.logout_outlined,
                         ),
