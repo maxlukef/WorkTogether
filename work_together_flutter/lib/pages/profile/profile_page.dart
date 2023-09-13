@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
+import 'package:work_together_flutter/main.dart';
+import 'package:work_together_flutter/pages/login/login_page.dart';
 import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
 
 import '../../http_request.dart';
 import '../../models/user.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({Key? key, required this.userId}) : super(key: key);
-
-  final int userId;
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
@@ -22,7 +22,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final HttpService httpService = HttpService();
 
     return FutureBuilder(
-        future: httpService.getUser(widget.userId),
+        future: httpService.getUser(loggedUserId),
         builder: (context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasError) {
             return Column(
@@ -167,7 +167,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 32, 16),
+                    padding: const EdgeInsets.fromLTRB(8, 16, 16, 16),
+                    child: SizedBox(
+                      height: 45,
+                      width: 45,
+                      child: FloatingActionButton(
+                        onPressed: () async {
+                          Navigator.of(context, rootNavigator: true)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => const LoginPage()));
+                        },
+                        child: const Icon(
+                          Icons.logout_outlined,
+                        ),
+                      ),
+                    )),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 16, 32, 16),
                     child: SizedBox(
                       height: 45,
                       width: 45,
@@ -183,7 +199,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           Icons.edit,
                         ),
                       ),
-                    ))
+                    )),
               ]),
             ],
           ),
