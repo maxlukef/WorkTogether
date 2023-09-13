@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -103,10 +104,13 @@ namespace WorkTogether.Controllers
             var user = _context.Users.Where(x => x.UserId == StudentID).Single();
             var curProject = _context.Projects.Where(x => x.Class.Id == classID).Single();
             var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == curProject.Id).Single();
-
+            var questions = _context.Questions.Where(x => x.Questionnaire.Id == curQuestionnaire.Id).ToList();
+            Debug.WriteLine("Questions: " + curQuestionnaire.Questions);
             for (int i = 0; i < answers.Count; i++)
             {
-                var curQuestion = curQuestionnaire.Questions.Where(x => x.Id == answers[i].qNum).Single();
+                Debug.WriteLine("Answer Qnum: " + answers[i].qNum);
+                Debug.WriteLine("CurQuestionnaire ID: " + curQuestionnaire.Id);
+                var curQuestion = curQuestionnaire.Questions.Where(x => x.Id == answers[i].qNum).First();
 
                 Answer answer = new Answer
                 {

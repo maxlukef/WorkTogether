@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -64,12 +65,14 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var @classes = await _context.StudentClasses.Where<StudentClass>(row => row.Student.UserId == id).ToListAsync();
+            var student = _context.Users.Where(row => row.UserId == id).FirstOrDefault();
+            Console.WriteLine(student.Id);
+            var classes = _context.StudentClasses.Where<StudentClass>(row => row.Student.Id == student.Id).ToList();
 
             var classList = new List<ClassDTO>();
             for (int x = 0; x < classes.Count; x++)
             {
-                classList.Add(ClassToDTO(await _context.Classes.FindAsync(classes[x])));
+                classList.Add(ClassToDTO(_context.Classes.Where(row => row.Id == classes[x].Class.Id).FirstOrDefault()));
             }
 
             return classList;
