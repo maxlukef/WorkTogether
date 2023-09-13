@@ -370,7 +370,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     children: [
                       ...widget.user.interests.map(
                         (e) {
-                          if (e.toString() != "") {
+                          if (e.toString().trim() != "") {
                             return Padding(
                               padding:
                                   const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),

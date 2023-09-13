@@ -140,53 +140,108 @@ class HttpService {
       return teamMates;
     }
 
+    // Occurs if no teammates exist
     if (res.statusCode == 404) {
+      Uri uri = Uri.https('localhost:7277', 'api/Users/profile/$userId');
+
+      Response res = await get(uri);
+
+      int loggedInUserId;
+      User loggedInUser;
+
+      if (res.statusCode == 200) {
+        dynamic body = jsonDecode(res.body);
+        loggedInUser = User.fromJson(body);
+        loggedInUserId = loggedInUser.id;
+      } else {
+        throw "Unable to retrieve user.";
+      }
+
+      Uri cardUri =
+          Uri.https('localhost:7277', 'api/Answers/$classId/$loggedInUserId');
+
+      var cardRes = await get(cardUri);
+      if (cardRes.statusCode == 200) {
+        List<dynamic> cardBody = jsonDecode(cardRes.body);
+
+        List<String> mornings = [];
+        List<String> afternoons = [];
+        List<String> evenings = [];
+        List<String> skillsList = cardBody[2]["answerText"].split(',');
+        String grade = cardBody[1]["answerText"];
+        String hours = cardBody[3]["answerText"];
+
+        var times = cardBody[0]["answerText"].split('`');
+
+        for (var j = 0; j < times.length; j++) {
+          var cur = times[j].split(':');
+          if (cur[0] == 'Morning') {
+            mornings = cur[1].split(',');
+          } else if (cur[0] == 'Afternoon') {
+            afternoons = cur[1].split(',');
+          } else if (cur[0] == 'Evening') {
+            evenings = cur[1].split(',');
+          }
+        }
+
+        teamMates.add(CardInfo(
+            id: loggedInUser.id,
+            name: loggedInUser.name,
+            major: loggedInUser.major,
+            availableMornings: mornings,
+            availableAfternoons: afternoons,
+            availableEvenings: evenings,
+            skills: skillsList,
+            interests: loggedInUser.interests,
+            expectedGrade: grade,
+            weeklyHours: hours));
+      }
+
       return teamMates;
     }
+
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode("[${res.body}]");
 
       for (var i = 0; i < body[0]["members"].length; i++) {
         var curMember = body[0]["members"][i];
-        if (curMember["id"] != userId) {
-          Uri cardUri = Uri.https(
-              'localhost:7277', 'api/Answers/$classId/${curMember["id"]}');
-          var cardRes = await get(cardUri);
-          if (cardRes.statusCode == 200) {
-            List<dynamic> cardBody = jsonDecode(cardRes.body);
+        Uri cardUri = Uri.https(
+            'localhost:7277', 'api/Answers/$classId/${curMember["id"]}');
+        var cardRes = await get(cardUri);
+        if (cardRes.statusCode == 200) {
+          List<dynamic> cardBody = jsonDecode(cardRes.body);
 
-            List<String> mornings = [];
-            List<String> afternoons = [];
-            List<String> evenings = [];
-            List<String> skillsList = cardBody[2]["answerText"].split(',');
-            String grade = cardBody[1]["answerText"];
-            String hours = cardBody[3]["answerText"];
+          List<String> mornings = [];
+          List<String> afternoons = [];
+          List<String> evenings = [];
+          List<String> skillsList = cardBody[2]["answerText"].split(',');
+          String grade = cardBody[1]["answerText"];
+          String hours = cardBody[3]["answerText"];
 
-            var times = cardBody[0]["answerText"].split('`');
+          var times = cardBody[0]["answerText"].split('`');
 
-            for (var j = 0; j < times.length; j++) {
-              var cur = times[j].split(':');
-              if (cur[0] == 'Morning') {
-                mornings = cur[1].split(',');
-              } else if (cur[0] == 'Afternoon') {
-                afternoons = cur[1].split(',');
-              } else if (cur[0] == 'Evening') {
-                evenings = cur[1].split(',');
-              }
+          for (var j = 0; j < times.length; j++) {
+            var cur = times[j].split(':');
+            if (cur[0] == 'Morning') {
+              mornings = cur[1].split(',');
+            } else if (cur[0] == 'Afternoon') {
+              afternoons = cur[1].split(',');
+            } else if (cur[0] == 'Evening') {
+              evenings = cur[1].split(',');
             }
-
-            teamMates.add(CardInfo(
-                id: curMember["id"],
-                name: curMember["name"],
-                major: curMember["major"],
-                availableMornings: mornings,
-                availableAfternoons: afternoons,
-                availableEvenings: evenings,
-                skills: skillsList,
-                interests: curMember["interests"].split(","),
-                expectedGrade: grade,
-                weeklyHours: hours));
           }
+
+          teamMates.add(CardInfo(
+              id: curMember["id"],
+              name: curMember["name"],
+              major: curMember["major"],
+              availableMornings: mornings,
+              availableAfternoons: afternoons,
+              availableEvenings: evenings,
+              skills: skillsList,
+              interests: curMember["interests"].split(","),
+              expectedGrade: grade,
+              weeklyHours: hours));
         }
       }
     }
@@ -232,6 +287,66 @@ class HttpService {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<CardInfo> getQuestionnaireAnswersByClassIdAndUserId(
+      classId, userId) async {
+    Uri uri = Uri.https('localhost:7277', 'api/Users/profile/$userId');
+
+    Response res = await get(uri);
+
+    int loggedInUserId;
+    User loggedInUser;
+
+    if (res.statusCode == 200) {
+      dynamic body = jsonDecode(res.body);
+      loggedInUser = User.fromJson(body);
+      loggedInUserId = loggedInUser.id;
+    } else {
+      throw "Unable to retrieve user.";
+    }
+
+    Uri cardUri =
+        Uri.https('localhost:7277', 'api/Answers/$classId/$loggedInUserId');
+
+    var cardRes = await get(cardUri);
+    if (cardRes.statusCode == 200) {
+      List<dynamic> cardBody = jsonDecode(cardRes.body);
+
+      List<String> mornings = [];
+      List<String> afternoons = [];
+      List<String> evenings = [];
+      List<String> skillsList = cardBody[2]["answerText"].split(',');
+      String grade = cardBody[1]["answerText"];
+      String hours = cardBody[3]["answerText"];
+
+      var times = cardBody[0]["answerText"].split('`');
+
+      for (var j = 0; j < times.length; j++) {
+        var cur = times[j].split(':');
+        if (cur[0] == 'Morning') {
+          mornings = cur[1].split(',');
+        } else if (cur[0] == 'Afternoon') {
+          afternoons = cur[1].split(',');
+        } else if (cur[0] == 'Evening') {
+          evenings = cur[1].split(',');
+        }
+      }
+
+      return (CardInfo(
+          id: loggedInUser.id,
+          name: loggedInUser.name,
+          major: loggedInUser.major,
+          availableMornings: mornings,
+          availableAfternoons: afternoons,
+          availableEvenings: evenings,
+          skills: skillsList,
+          interests: loggedInUser.interests,
+          expectedGrade: grade,
+          weeklyHours: hours));
+    } else {
+      throw "unable to get user questionnaire answers with $classId and $userId";
     }
   }
 }
