@@ -5,9 +5,13 @@ import 'package:work_together_flutter/global_components/tag.dart';
 import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/pages/login/login_page.dart';
 import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
+import 'package:work_together_flutter/provider/interest_list.dart';
 
 import '../../http_request.dart';
 import '../../models/user.dart';
+import '../../provider/filter_choices.dart';
+import '../../provider/meeting_time_list.dart';
+import '../../provider/skill_list.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -17,6 +21,12 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
+  late List<String> skillList = ref.watch(skillListNotifierProvider);
+  late List<String> interestsList = ref.watch(interestListNotifierProvider);
+  late List<MeetingTime> meetingTimeList =
+      ref.watch(meetingTimeListNotifierProvider);
+  late FilterChoices filterChoices = ref.watch(filterChoicesNotifierProvider);
+
   @override
   Widget build(BuildContext context) {
     final HttpService httpService = HttpService();
@@ -173,6 +183,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       width: 45,
                       child: FloatingActionButton(
                         onPressed: () async {
+                          skillList.clear();
+                          interestsList.clear();
+                          meetingTimeList.clear();
+                          filterChoices.resetFilterFields();
                           Navigator.of(context, rootNavigator: true)
                               .pushReplacement(MaterialPageRoute(
                                   builder: (context) => const LoginPage()));
