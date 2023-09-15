@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -58,8 +59,17 @@ namespace WorkTogether.Controllers
 
         //GET: api/Classes/getbystudentid/10
         [HttpGet("getbystudentID/{id}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClassesByStudentID(int id)
         {
+            string userEmail = HttpContext.User.Identity.Name;
+            User u1 = await _context.Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
+
+            if (u1.UserId != id)
+            {
+                return Unauthorized();
+            }
+
             var result = await (from studentClass in _context.StudentClasses
                                 join course in _context.Classes on studentClass.Class.Id equals course.Id
                                 where studentClass.Student.UserId == id
