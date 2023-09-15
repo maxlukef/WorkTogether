@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -58,18 +59,26 @@ namespace WorkTogether.Controllers
 
         //GET: api/Classes/getbystudentid/10
         [HttpGet("getbystudentID/{id}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClassesByStudentID(int id)
         {
-            if (_context.StudentClasses == null)
-            {
-                return NotFound();
-            }
-            var @classes = await _context.StudentClasses.Where<StudentClass>(row => row.Student.UserId == id).ToListAsync();
+            string userEmail = HttpContext.User.Identity.Name;
+            User u1 = await _context.Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
 
-            var classList = new List<ClassDTO>();
-            for (int x = 0; x < classes.Count; x++)
+            if (u1.UserId != id)
             {
-                classList.Add(ClassToDTO(await _context.Classes.FindAsync(classes[x])));
+                return Unauthorized();
+            }
+
+            var result = await (from studentClass in _context.StudentClasses
+                                join course in _context.Classes on studentClass.Class.Id equals course.Id
+                                where studentClass.Student.UserId == id
+                                select new { Id = course.Id, ProfessorID = course.ProfessorUserID, Name = course.Name, Description = course.Description }).ToListAsync();
+
+            List<ClassDTO> classList = new List<ClassDTO>();
+
+            foreach (var c in result) {
+                classList.Add(ClassToDTO(new Class { Id = c.Id, ProfessorUserID = c.ProfessorID, Name = c.Name,  Description = c.Description}));
             }
 
             return classList;
