@@ -60,16 +60,15 @@ namespace WorkTogether.Controllers
         [HttpGet("getbystudentID/{id}")]
         public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClassesByStudentID(int id)
         {
-            if (_context.StudentClasses == null)
-            {
-                return NotFound();
-            }
-            var @classes = await _context.StudentClasses.Where<StudentClass>(row => row.Student.UserId == id).ToListAsync();
+            var result = await (from studentClass in _context.StudentClasses
+                                join course in _context.Classes on studentClass.Class.Id equals course.Id
+                                where studentClass.Student.UserId == id
+                                select new { Id = course.Id, ProfessorID = course.ProfessorUserID, Name = course.Name, Description = course.Description }).ToListAsync();
 
-            var classList = new List<ClassDTO>();
-            for (int x = 0; x < classes.Count; x++)
-            {
-                classList.Add(ClassToDTO(await _context.Classes.FindAsync(classes[x])));
+            List<ClassDTO> classList = new List<ClassDTO>();
+
+            foreach (var c in result) {
+                classList.Add(ClassToDTO(new Class { Id = c.Id, ProfessorUserID = c.ProfessorID, Name = c.Name,  Description = c.Description}));
             }
 
             return classList;
