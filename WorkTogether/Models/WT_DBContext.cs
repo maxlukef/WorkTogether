@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Permissions;
 
 namespace WorkTogether.Models
 {
@@ -46,11 +47,18 @@ namespace WorkTogether.Models
 
         public DbSet<Answer> Answers { get; set; } = null!;
 
+        public DbSet<Chat> Chats { get; set; }
+
+        public DbSet<Message> Messages { get; set; }
+
 
         //These exist to make the multiple many to many relationships between Users and Classes work.
         public DbSet<TAClass> TAClasses { get; set; } = null!;
         public DbSet<StudentClass> StudentClasses { get; set; } = null!;
 
+        //And this exists for the many to many relationship between Users and Chats
+
+        public DbSet<UserChat> UsersChats { get; set; }
 
 
 
