@@ -24,16 +24,24 @@ namespace WorkTogether.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
-          if (_context.Projects == null)
-          {
-              return NotFound();
-          }
-            return await _context.Projects.ToListAsync();
+            if (_context.Projects == null)
+            {
+                return NotFound();
+            }
+
+            var projects = await _context.Projects.ToListAsync();
+            var projectDTOs = new List<ProjectDTO>();
+            foreach(Project p in projects)
+            {
+                projectDTOs.Append(projectToDTO(p));
+            }
+
+            return Ok(projectDTOs);
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
           if (_context.Projects == null)
           {
@@ -46,14 +54,38 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
 
-            return project;
+            return projectToDTO(project);
+        }
+
+        // GET: api/Projects/GetOpenTeamSearchForClass/5
+        [HttpGet("GetOpenTeamSearchForClass/{ClassID}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOpenTeamSearch(int ClassID)
+        {
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).ToListAsync();
+
+            return Ok(projects);
+        }
+
+        // GET: api/Projects/GetOpenProjectsForClass/5
+        [HttpGet("GetOpenProjectsForClass/{ClassID")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOpenProjects(int ClassID)
+        {
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).Where(x => x.Deadline > DateTime.Now).ToListAsync();
+
+            return Ok(projects);
         }
 
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(int id, Project project)
+        public async Task<IActionResult> PutProject(int id, ProjectDTO projectDTO)
         {
+            Project project = DTOtoProject(projectDTO);
+            if(project == null)
+            {
+                return BadRequest();
+            }
+
             if (id != project.Id)
             {
                 return BadRequest();
@@ -83,12 +115,20 @@ namespace WorkTogether.Controllers
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
+        public async Task<ActionResult<Project>> PostProject(ProjectDTO projectDTO)
         {
-          if (_context.Projects == null)
-          {
-              return Problem("Entity set 'WT_DBContext.Projects'  is null.");
-          }
+            Project project = DTOtoProject(projectDTO);
+
+            if (project == null) 
+            {
+                return BadRequest();
+            }
+            
+            if (_context.Projects == null)
+            {
+                return Problem("Entity set 'WT_DBContext.Projects'  is null.");
+            }
+            
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
@@ -118,6 +158,46 @@ namespace WorkTogether.Controllers
         private bool ProjectExists(int id)
         {
             return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private ProjectDTO projectToDTO(Project p)
+        {
+            return new ProjectDTO
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                ClassId = p.Class.Id,
+                MinTeamSize = p.MinTeamSize,
+                MaxTeamSize = p.MaxTeamSize,
+                Deadline = p.Deadline,
+                TeamFormationDeadline = p.TeamFormationDeadline,
+                QuestionnaireId = p.Questionnaire.Id,
+            };
+        }
+
+        private Project DTOtoProject(ProjectDTO p)
+        {
+            Class c = _context.Classes.Find(p.ClassId);
+            Questionnaire q = _context.Questionnaires.Find(p.QuestionnaireId);
+
+            if(c == null || q == null)
+            {
+                return null;
+            }
+
+            return new Project
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Class = c,
+                MinTeamSize = p.MinTeamSize,
+                MaxTeamSize = p.MaxTeamSize,
+                Deadline = p.Deadline,
+                TeamFormationDeadline = p.TeamFormationDeadline,
+                Questionnaire = q,
+            };
         }
     }
 }
