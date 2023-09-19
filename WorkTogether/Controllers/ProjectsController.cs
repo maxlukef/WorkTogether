@@ -61,13 +61,13 @@ namespace WorkTogether.Controllers
         [HttpGet("GetOpenTeamSearchForClass/{ClassID}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOpenTeamSearch(int ClassID)
         {
-            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).ToListAsync();
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline > DateTime.Now).ToListAsync();
 
             return Ok(projects);
         }
 
         // GET: api/Projects/GetOpenProjectsForClass/5
-        [HttpGet("GetOpenProjectsForClass/{ClassID")]
+        [HttpGet("GetOpenProjectsForClass/{ClassID}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOpenProjects(int ClassID)
         {
             var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).Where(x => x.Deadline > DateTime.Now).ToListAsync();
