@@ -70,12 +70,7 @@ namespace WorkTogether.Controllers
             {
                 Debug.WriteLine("####USER#####: " + curUser.UserName);
             }
-
-            Debug.WriteLine(curUser != default);
-            Debug.WriteLine("#################HELLOOOO######################");
-
-                        
-            
+        
             var questionnaire = await _context.Questionnaires.Where(x => x.ProjectID == projectID).FirstOrDefaultAsync();
             
             if (questionnaire == null)

@@ -6,6 +6,8 @@
     public class Question
     {
         public int Id { get; set; }
+
+        public int QNum { get; set; }
         /// <summary>
         /// The string representation of a question.
         /// </summary>
