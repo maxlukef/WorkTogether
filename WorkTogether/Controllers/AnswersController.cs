@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -72,16 +74,16 @@ namespace WorkTogether.Controllers
             return answerList;
         }
 
-        [HttpPost("{classID}/{StudentID}")]
-        public async Task<IActionResult> PostAnswersForStudentProject(int classID, int StudentID, List<AnswerDTO> answers)
+        [HttpPost("{projectID}/{StudentID}")]
+        public async Task<IActionResult> PostAnswersForStudentProject(int projectID, int StudentID, List<AnswerDTO> answers)
         {
             var user = _context.Users.Where(x => x.UserId == StudentID).Single();
-            var curProject = _context.Projects.Where(x => x.Class.Id == classID).Single();
-            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == curProject.Id).Single();
+            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == projectID).Single();
+            var curQuestions = _context.Questions.Where(x => x.Questionnaire == curQuestionnaire);
 
             for (int i = 0; i < answers.Count; i++)
             {
-                var curQuestion = curQuestionnaire.Questions.Where(x => x.Id == answers[i].qNum).Single();
+                var curQuestion = curQuestions.Where(x => x.QNum == answers[i].qNum).Single();
 
                 Answer answer = new Answer
                 {
@@ -89,7 +91,12 @@ namespace WorkTogether.Controllers
                     Question = curQuestion,
                     Answerer = user
                 };
-                _context.Answers.Add(answer);
+
+                var answerCheck = _context.Answers.Where(x => x.Question == answer.Question).Where(x => x.Answerer != user);
+                if(answerCheck.ToList().Count == 1)
+                {
+                    _context.Answers.Add(answer);
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -97,23 +104,20 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
-        [HttpPut("{classID}/{StudentID}")]
-        public async Task<IActionResult> PutAnswersForStudentProject(int classID, int StudentID, List<AnswerDTO> answers)
+        [HttpPut("{ProjectID}/{StudentID}")]
+        public async Task<IActionResult> PutAnswersForStudentProject(int ProjectID, int StudentID, List<AnswerDTO> answers)
         {
             var user = _context.Users.Where(x => x.UserId == StudentID).Single();
-            var curProject = _context.Projects.Where(x => x.Class.Id == classID).Single();
-            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == curProject.Id).Single();
+            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == ProjectID).Single();
+            var curQuestions = _context.Questions.Where(x => x.Questionnaire == curQuestionnaire);
 
             for (int i = 0; i < answers.Count; i++)
             {
-                var curQuestion = curQuestionnaire.Questions.Where(x => x.Id == answers[i].qNum).Single();
+                var curQuestion = curQuestions.Where(x => x.QNum == answers[i].qNum).Where(x => x.Questionnaire == curQuestionnaire).Single();
+                var answer = _context.Answers.Where(x => x.Question == curQuestion).Where(x => x.Answerer == user).First();
 
-                Answer answer = new Answer
-                {
-                    AnswerStr = answers[i].answerText,
-                    Question = curQuestion,
-                    Answerer = user
-                };
+                answer.AnswerStr = answers[i].answerText;
+
                 _context.Entry(answer).State = EntityState.Modified;
             }
 

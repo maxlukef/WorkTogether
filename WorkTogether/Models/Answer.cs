@@ -21,8 +21,6 @@
         /// The User who's Answer this is.
         /// </summary>
         public User Answerer { get; set; }
-
-
     }
 
     public class AnswerDTO
