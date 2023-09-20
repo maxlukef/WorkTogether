@@ -64,6 +64,20 @@ namespace WorkTogether.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Chats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chats", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -197,6 +211,59 @@ namespace WorkTogether.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ChatUser",
+                columns: table => new
+                {
+                    ChatsId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<string>(type: "varchar(255)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatUser", x => new { x.ChatsId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_ChatUser_AspNetUsers_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChatUser_Chats_ChatsId",
+                        column: x => x.ChatsId,
+                        principalTable: "Chats",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Content = table.Column<string>(type: "longtext", nullable: false),
+                    SenderId = table.Column<string>(type: "varchar(255)", nullable: true),
+                    Sent = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    chatId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Messages_Chats_chatId",
+                        column: x => x.chatId,
+                        principalTable: "Chats",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
@@ -323,11 +390,17 @@ namespace WorkTogether.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false),
                     Complete = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    ProjectId = table.Column<int>(type: "int", nullable: false)
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    TeamChatId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Teams_Chats_TeamChatId",
+                        column: x => x.TeamChatId,
+                        principalTable: "Chats",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Teams_Projects_ProjectId",
                         column: x => x.ProjectId,
@@ -369,7 +442,10 @@ namespace WorkTogether.Migrations
                     TeamId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: false),
                     ParentTaskId = table.Column<int>(type: "int", nullable: true),
-                    ParentMilestoneId = table.Column<int>(type: "int", nullable: false)
+                    ParentMilestoneId = table.Column<int>(type: "int", nullable: true),
+                    DueDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Completed = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -378,8 +454,7 @@ namespace WorkTogether.Migrations
                         name: "FK_Tasks_Milestones_ParentMilestoneId",
                         column: x => x.ParentMilestoneId,
                         principalTable: "Milestones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Tasks_Tasks_ParentTaskId",
                         column: x => x.ParentTaskId,
@@ -525,9 +600,24 @@ namespace WorkTogether.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ChatUser_UsersId",
+                table: "ChatUser",
+                column: "UsersId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Classes_ProfessorId",
                 table: "Classes",
                 column: "ProfessorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_chatId",
+                table: "Messages",
+                column: "chatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderId",
+                table: "Messages",
+                column: "SenderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Milestones_ProjectId",
@@ -596,6 +686,11 @@ namespace WorkTogether.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Teams_TeamChatId",
+                table: "Teams",
+                column: "TeamChatId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TeamUser_TeamsId",
                 table: "TeamUser",
                 column: "TeamsId");
@@ -621,6 +716,12 @@ namespace WorkTogether.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ChatUser");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "StudentClasses");
@@ -651,6 +752,9 @@ namespace WorkTogether.Migrations
 
             migrationBuilder.DropTable(
                 name: "Teams");
+
+            migrationBuilder.DropTable(
+                name: "Chats");
 
             migrationBuilder.DropTable(
                 name: "Projects");
