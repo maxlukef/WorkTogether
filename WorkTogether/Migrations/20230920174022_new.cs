@@ -244,7 +244,7 @@ namespace WorkTogether.Migrations
                     Content = table.Column<string>(type: "longtext", nullable: false),
                     SenderId = table.Column<string>(type: "varchar(255)", nullable: true),
                     Sent = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ChatId = table.Column<int>(type: "int", nullable: true)
+                    chatId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -255,10 +255,11 @@ namespace WorkTogether.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Messages_Chats_ChatId",
-                        column: x => x.ChatId,
+                        name: "FK_Messages_Chats_chatId",
+                        column: x => x.chatId,
                         principalTable: "Chats",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -609,9 +610,9 @@ namespace WorkTogether.Migrations
                 column: "ProfessorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_ChatId",
+                name: "IX_Messages_chatId",
                 table: "Messages",
-                column: "ChatId");
+                column: "chatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_SenderId",

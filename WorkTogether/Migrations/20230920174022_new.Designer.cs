@@ -11,7 +11,7 @@ using WorkTogether.Models;
 namespace WorkTogether.Migrations
 {
     [DbContext(typeof(WT_DBContext))]
-    [Migration("20230918201405_new")]
+    [Migration("20230920174022_new")]
     partial class @new
     {
         /// <inheritdoc />
@@ -267,9 +267,6 @@ namespace WorkTogether.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("ChatId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -280,11 +277,14 @@ namespace WorkTogether.Migrations
                     b.Property<DateTime>("Sent")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("chatId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ChatId");
-
                     b.HasIndex("SenderId");
+
+                    b.HasIndex("chatId");
 
                     b.ToTable("Messages");
                 });
@@ -721,15 +721,19 @@ namespace WorkTogether.Migrations
 
             modelBuilder.Entity("WorkTogether.Models.Message", b =>
                 {
-                    b.HasOne("WorkTogether.Models.Chat", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId");
-
                     b.HasOne("WorkTogether.Models.User", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId");
 
+                    b.HasOne("WorkTogether.Models.Chat", "chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("chatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Sender");
+
+                    b.Navigation("chat");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
