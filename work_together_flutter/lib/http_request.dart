@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
+import 'package:work_together_flutter/models/chat_models/chat_message_dto.dart';
 import 'package:work_together_flutter/models/login_request.dart';
 import 'package:work_together_flutter/models/login_results.dart';
 import 'package:work_together_flutter/models/new_user.dart';
@@ -287,6 +289,38 @@ class HttpService {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<List<ChatInfo>?> getConversationInfo() async {
+    Uri uri = Uri.https("localhost:7277", "currentuserchats");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ChatInfo> conversations;
+
+      conversations = (json.decode(res.body) as List)
+          .map((i) => ChatInfo.fromJson(i))
+          .toList();
+      return conversations;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ChatMessage>?> getMessages() async {
+    Uri uri = Uri.https("localhost:7277", "messages");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ChatMessage> conversations;
+
+      conversations = (json.decode(res.body) as List)
+          .map((i) => ChatMessage.fromJson(i))
+          .toList();
+      return conversations;
+    } else {
+      return null;
     }
   }
 
