@@ -17,6 +17,8 @@ namespace WorkTogether.Models
         public bool Complete { get; set; }
 
         public Project Project { get; set; }
+
+        public Chat? TeamChat { get; set; }
     }
 
     public class TeamDTO

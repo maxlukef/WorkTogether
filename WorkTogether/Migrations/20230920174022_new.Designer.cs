@@ -11,7 +11,7 @@ using WorkTogether.Models;
 namespace WorkTogether.Migrations
 {
     [DbContext(typeof(WT_DBContext))]
-    [Migration("20230828145900_new")]
+    [Migration("20230920174022_new")]
     partial class @new
     {
         /// <inheritdoc />
@@ -21,6 +21,21 @@ namespace WorkTogether.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.Property<int>("ChatsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("ChatsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ChatUser");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -205,6 +220,21 @@ namespace WorkTogether.Migrations
                     b.ToTable("Answers");
                 });
 
+            modelBuilder.Entity("WorkTogether.Models.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Chats");
+                });
+
             modelBuilder.Entity("WorkTogether.Models.Class", b =>
                 {
                     b.Property<int>("Id")
@@ -229,6 +259,34 @@ namespace WorkTogether.Migrations
                     b.HasIndex("ProfessorId");
 
                     b.ToTable("Classes");
+                });
+
+            modelBuilder.Entity("WorkTogether.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SenderId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("Sent")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("chatId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("chatId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
@@ -380,15 +438,24 @@ namespace WorkTogether.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<bool>("Completed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ParentMilestoneId")
+                    b.Property<int?>("ParentMilestoneId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ParentTaskId")
@@ -424,9 +491,14 @@ namespace WorkTogether.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TeamChatId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("TeamChatId");
 
                     b.ToTable("Teams");
                 });
@@ -523,6 +595,21 @@ namespace WorkTogether.Migrations
                         .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.HasOne("WorkTogether.Models.Chat", null)
+                        .WithMany()
+                        .HasForeignKey("ChatsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkTogether.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -632,6 +719,23 @@ namespace WorkTogether.Migrations
                     b.Navigation("Professor");
                 });
 
+            modelBuilder.Entity("WorkTogether.Models.Message", b =>
+                {
+                    b.HasOne("WorkTogether.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId");
+
+                    b.HasOne("WorkTogether.Models.Chat", "chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("chatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
+
+                    b.Navigation("chat");
+                });
+
             modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
                 {
                     b.HasOne("WorkTogether.Models.Project", "Project")
@@ -707,10 +811,8 @@ namespace WorkTogether.Migrations
             modelBuilder.Entity("WorkTogether.Models.TaskItem", b =>
                 {
                     b.HasOne("WorkTogether.Models.Milestone", "ParentMilestone")
-                        .WithMany()
-                        .HasForeignKey("ParentMilestoneId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("tasks")
+                        .HasForeignKey("ParentMilestoneId");
 
                     b.HasOne("WorkTogether.Models.TaskItem", "ParentTask")
                         .WithMany()
@@ -737,7 +839,18 @@ namespace WorkTogether.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WorkTogether.Models.Chat", "TeamChat")
+                        .WithMany()
+                        .HasForeignKey("TeamChatId");
+
                     b.Navigation("Project");
+
+                    b.Navigation("TeamChat");
+                });
+
+            modelBuilder.Entity("WorkTogether.Models.Chat", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Class", b =>
@@ -745,6 +858,11 @@ namespace WorkTogether.Migrations
                     b.Navigation("StudentClasses");
 
                     b.Navigation("TAClasses");
+                });
+
+            modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
+                {
+                    b.Navigation("tasks");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Project", b =>

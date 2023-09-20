@@ -60,7 +60,7 @@ namespace WorkTogether.Controllers
 
         //GET: api/Classes/getbystudentid/10
         [HttpGet("getbystudentID/{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClassesByStudentID(int id)
         {
             string userEmail = HttpContext.User.Identity.Name;
@@ -83,6 +83,64 @@ namespace WorkTogether.Controllers
             }
 
             return classList;
+        }
+
+
+        /// <summary>
+        /// This gets all the students in the given class.
+        /// </summary>
+        /// <param name="id">The ID of the class</param>
+        /// <returns>A list of UserProfiles of the students</returns>
+        //GET: api/Classes/getstudentsinclass/10
+        [HttpGet("getstudentsinclass/{id}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<UserProfileDTO>>> GetStudentsInClass(int id)
+        {
+            User u = GetCurrentUser(HttpContext);
+
+            Class c = await _context.Classes.Where(c => c.Id == id).Include(c => c.Professor).FirstOrDefaultAsync();
+            if (c == null)
+            {
+                return NotFound();
+            }
+
+            List<StudentClass> c_u = await _context.StudentClasses.Include(sc => sc.Student).Include(sc=>sc.Class).Where(sc => sc.Student == u && sc.Class.Id == id).ToListAsync();
+
+
+
+            if(c_u.Count == 0 && c.Professor.Id != u.Id) {
+                return Unauthorized();
+            }
+
+
+            List<StudentClass> sc = await _context.StudentClasses.Include(s=> s.Class).Include(s=>s.Student).Where(s => s.Class.Id == id).ToListAsync();
+            List<UserProfileDTO> students = new List<UserProfileDTO>();
+            foreach (var s in sc)
+            {
+                students.Add(UsertoProfileDTO(s.Student));
+            }
+            return students;
+
+        }
+
+
+        /// <summary>
+        /// Gets the classes that the authenticated user is part of
+        /// </summary>
+        /// <returns>A list of classDTOs</returns>
+        //GET /api/classes/currentuserclasses
+        [Authorize]
+        [HttpGet("currentuserclasses")]
+        public async Task<ActionResult<IEnumerable<ClassDTO>>> GetCurrentUserClasses()
+        {
+            User u = GetCurrentUser(HttpContext);
+            var studentClasses = await _context.StudentClasses.Where(r => r.Student.UserId == u.UserId).Include(r=> r.Class).ToListAsync();
+            List<ClassDTO> classes = new List<ClassDTO>();
+            foreach (var studentClass in studentClasses)
+            {
+                classes.Add(ClassToDTO(studentClass.Class));
+            }
+            return classes;
         }
 
         // PUT: api/Classes/5
@@ -165,6 +223,12 @@ namespace WorkTogether.Controllers
             return (_context.Classes?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+        private User GetCurrentUser(HttpContext httpContext)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
+            return u1;
+        }
 
         private static ClassDTO ClassToDTO(Class curClass) =>
             new ClassDTO
@@ -174,6 +238,19 @@ namespace WorkTogether.Controllers
                 ProfessorID = curClass.ProfessorUserID,
                 Description = curClass.Description
             };
+
+        private static UserProfileDTO UsertoProfileDTO(User user) =>
+    new UserProfileDTO
+    {
+        Id = user.UserId,
+        Name = user.Name,
+        Email = user.Email,
+        Bio = user.Bio,
+        Major = user.Major,
+        EmploymentStatus = user.EmploymentStatus,
+        StudentStatus = user.StudentStatus,
+        Interests = user.Interests
+    };
 
 
     }
