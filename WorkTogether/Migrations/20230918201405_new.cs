@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace WorkTogether.Migrations
 {
     /// <inheritdoc />
-    public partial class yetanothernew : Migration
+    public partial class @new : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -211,6 +211,31 @@ namespace WorkTogether.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ChatUser",
+                columns: table => new
+                {
+                    ChatsId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<string>(type: "varchar(255)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatUser", x => new { x.ChatsId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_ChatUser_AspNetUsers_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChatUser_Chats_ChatsId",
+                        column: x => x.ChatsId,
+                        principalTable: "Chats",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -234,32 +259,6 @@ namespace WorkTogether.Migrations
                         column: x => x.ChatId,
                         principalTable: "Chats",
                         principalColumn: "Id");
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "UsersChats",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<string>(type: "varchar(255)", nullable: true),
-                    ChatId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UsersChats", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UsersChats_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_UsersChats_Chats_ChatId",
-                        column: x => x.ChatId,
-                        principalTable: "Chats",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -600,6 +599,11 @@ namespace WorkTogether.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ChatUser_UsersId",
+                table: "ChatUser",
+                column: "UsersId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Classes_ProfessorId",
                 table: "Classes",
                 column: "ProfessorId");
@@ -689,16 +693,6 @@ namespace WorkTogether.Migrations
                 name: "IX_TeamUser_TeamsId",
                 table: "TeamUser",
                 column: "TeamsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsersChats_ChatId",
-                table: "UsersChats",
-                column: "ChatId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsersChats_UserId",
-                table: "UsersChats",
-                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -723,6 +717,9 @@ namespace WorkTogether.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ChatUser");
+
+            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
@@ -736,9 +733,6 @@ namespace WorkTogether.Migrations
 
             migrationBuilder.DropTable(
                 name: "TeamUser");
-
-            migrationBuilder.DropTable(
-                name: "UsersChats");
 
             migrationBuilder.DropTable(
                 name: "Questions");

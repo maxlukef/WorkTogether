@@ -19,6 +19,21 @@ namespace WorkTogether.Migrations
                 .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.Property<int>("ChatsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("ChatsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ChatUser", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -159,7 +174,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TasksId");
 
-                    b.ToTable("TaskItemUser");
+                    b.ToTable("TaskItemUser", (string)null);
                 });
 
             modelBuilder.Entity("TeamUser", b =>
@@ -174,7 +189,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TeamsId");
 
-                    b.ToTable("TeamUser");
+                    b.ToTable("TeamUser", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Answer", b =>
@@ -199,7 +214,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Chat", b =>
@@ -214,7 +229,7 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Chats");
+                    b.ToTable("Chats", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Class", b =>
@@ -240,7 +255,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProfessorId");
 
-                    b.ToTable("Classes");
+                    b.ToTable("Classes", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Message", b =>
@@ -268,7 +283,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
@@ -295,7 +310,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Milestones");
+                    b.ToTable("Milestones", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Project", b =>
@@ -328,7 +343,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Question", b =>
@@ -352,7 +367,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("QuestionnaireId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Questionnaire", b =>
@@ -369,7 +384,7 @@ namespace WorkTogether.Migrations
                     b.HasIndex("ProjectID")
                         .IsUnique();
 
-                    b.ToTable("Questionnaires");
+                    b.ToTable("Questionnaires", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.StudentClass", b =>
@@ -390,7 +405,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentClasses");
+                    b.ToTable("StudentClasses", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TAClass", b =>
@@ -411,7 +426,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TAClasses");
+                    b.ToTable("TAClasses", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.TaskItem", b =>
@@ -454,7 +469,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Team", b =>
@@ -482,7 +497,7 @@ namespace WorkTogether.Migrations
 
                     b.HasIndex("TeamChatId");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("WorkTogether.Models.User", b =>
@@ -579,25 +594,19 @@ namespace WorkTogether.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("WorkTogether.Models.UserChat", b =>
+            modelBuilder.Entity("ChatUser", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("WorkTogether.Models.Chat", null)
+                        .WithMany()
+                        .HasForeignKey("ChatsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("ChatId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UsersChats");
+                    b.HasOne("WorkTogether.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -832,28 +841,9 @@ namespace WorkTogether.Migrations
                     b.Navigation("TeamChat");
                 });
 
-            modelBuilder.Entity("WorkTogether.Models.UserChat", b =>
-                {
-                    b.HasOne("WorkTogether.Models.Chat", "Chat")
-                        .WithMany("UserChats")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkTogether.Models.User", "User")
-                        .WithMany("UserChats")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Chat");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("WorkTogether.Models.Chat", b =>
                 {
                     b.Navigation("Messages");
-
-                    b.Navigation("UserChats");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Class", b =>
@@ -883,8 +873,6 @@ namespace WorkTogether.Migrations
                     b.Navigation("StudentClasses");
 
                     b.Navigation("TAClasses");
-
-                    b.Navigation("UserChats");
                 });
 #pragma warning restore 612, 618
         }

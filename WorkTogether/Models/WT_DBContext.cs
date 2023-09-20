@@ -58,7 +58,6 @@ namespace WorkTogether.Models
 
         //And this exists for the many to many relationship between Users and Chats
 
-        public DbSet<UserChat> UsersChats { get; set; }
 
 
 

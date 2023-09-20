@@ -20,7 +20,7 @@ namespace WorkTogether.Models
         public ICollection<StudentClass>? StudentClasses { get; set; }
         public ICollection<TAClass>? TAClasses { get; set; }
 
-        public ICollection<UserChat> UserChats { get; set; }
+        public ICollection<Chat> Chats { get; set; }
         public ICollection<Team>? Teams { get; set; }
         public ICollection<TaskItem>? Tasks { get; set; }
         public string EmploymentStatus { get; set; }

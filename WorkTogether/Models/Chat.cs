@@ -9,6 +9,14 @@
 
         public ICollection<Message> Messages { get; set;}
 
-        public ICollection<UserChat> UserChats { get; set;}
+        public ICollection<User> Users { get; set;}
+    }
+
+    public class ChatInfoDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public List<UserProfileDTO> Users { get; set; }
     }
 }
