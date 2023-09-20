@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using WorkTogether.Models;
 
 namespace WorkTogether.Controllers
@@ -9,10 +10,11 @@ namespace WorkTogether.Controllers
     {
 
         private readonly WT_DBContext _context;
-
-        public GeneralController(WT_DBContext context)
+        private readonly UserManager<User> _um;
+        public GeneralController(WT_DBContext context, UserManager<User> um)
         {
             _context = context;
+            _um = um;
         }
 
         [HttpPost("ResetDemo")]
@@ -20,7 +22,7 @@ namespace WorkTogether.Controllers
         {
             await _context.Database.EnsureDeletedAsync();
             await _context.Database.EnsureCreatedAsync();
-            _context.Seed();
+            await _context.Seed(_um);
             return Ok();
         }
     }

@@ -85,6 +85,17 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"]))
     };
 });
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Default Password settings.
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 1;
+    options.Password.RequiredUniqueChars = 1;
+});
 builder.Services.AddControllers();
 
 
@@ -94,8 +105,9 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    UserManager<User> um = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var DB = scope.ServiceProvider.GetRequiredService<WT_DBContext>();
-    //await DB.Seed(); //comment this out to start WorkTogether without seeding
+    await DB.Seed(um); //comment this out to start WorkTogether without seeding
 
 }
 

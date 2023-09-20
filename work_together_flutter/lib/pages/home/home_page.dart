@@ -3,9 +3,15 @@ import 'package:work_together_flutter/pages/group_home/group_home.dart';
 import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../main.dart';
 
 class HomePage extends StatefulWidget {
+  final int userId;
+  final int classId;
+
   const HomePage({
+    required this.userId,
+    required this.classId,
     Key? key,
   }) : super(key: key);
 
@@ -103,7 +109,8 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
-                        return const QuestionnairePage();
+                        return QuestionnairePage(
+                            classId: 1, userId: loggedUserId);
                       },
                     ));
                   },

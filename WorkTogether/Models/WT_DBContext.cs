@@ -14,8 +14,9 @@ namespace WorkTogether.Models
         public WT_DBContext(DbContextOptions<WT_DBContext> options)
             : base(options)
         {
+           
         }
-
+        private readonly UserManager<User> _um;
         protected readonly IConfiguration Configuration;
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
@@ -51,10 +52,14 @@ namespace WorkTogether.Models
         public DbSet<StudentClass> StudentClasses { get; set; } = null!;
 
 
+
+
+
+
         /// <summary>
         /// Seeds dummy users and dummy classes if your database is empty.
         /// </summary>
-        public async Task Seed()
+        public async Task Seed(UserManager<User> _um)
         {
             if (Users.Count<User>() == 0)
             {
@@ -68,8 +73,10 @@ namespace WorkTogether.Models
                 newUser2.Email = "u0000001@utah.edu";
                 newUser2.EmploymentStatus = "Full Time";
                 newUser2.Major = "Computer Science";
+                newUser2.UserName = newUser2.Email;
+                await _um.CreateAsync(newUser2, "pw");
+
                 
-                Users.Add(newUser2);
 
                 Class newClass = new Class();
                 newClass.Name = "CS 2420: Data Structures and Algs";
@@ -113,12 +120,23 @@ namespace WorkTogether.Models
                 newUser.EmploymentStatus = "Unemployed";
                 newUser.Major = "Computer Science";
                 newUser.UserId = 0;
-                Users.Add(newUser);
+                newUser.UserName = newUser.Email;
+                await _um.CreateAsync(newUser, "pw");
 
                 StudentClass studentClass1 = new StudentClass();
                 studentClass1.Class = newClass;
                 studentClass1.Student = newUser;
                 StudentClasses.Add(studentClass1);
+
+                Project p1 = new Project();
+                p1.Class = newClass;
+                p1.MaxTeamSize = 4;
+                p1.MinTeamSize = 2;
+                p1.Deadline= DateTime.MaxValue;
+                p1.Name = "Time Travel";
+                p1.Description = "Build a time machine";
+                Projects.Add(p1);
+                this.SaveChanges();
 
                 User newUser3 = new User();
                 newUser3.Name = "Jim Roberts";
@@ -130,7 +148,8 @@ namespace WorkTogether.Models
                 newUser3.EmploymentStatus = "Unemployed";
                 newUser3.Major = "Computer Science";
                 newUser3.UserId = 2;
-                Users.Add(newUser3);
+                newUser3.UserName = newUser3.Email;
+                await _um.CreateAsync(newUser3, "pw");
 
 
                 StudentClass studentClass2 = new StudentClass();
@@ -148,7 +167,8 @@ namespace WorkTogether.Models
                 newUser4.EmploymentStatus = "Part Time";
                 newUser4.Major = "Computer Science";
                 newUser4.UserId = 3;
-                Users.Add(newUser4);
+                newUser4.UserName = newUser4.Email;
+                await _um.CreateAsync(newUser4, "pw");
 
                 StudentClass studentClass3 = new StudentClass();
                 studentClass3.Class = newClass;
@@ -165,7 +185,8 @@ namespace WorkTogether.Models
                 newUser5.EmploymentStatus = "Part Time";
                 newUser5.Major = "Computer Science";
                 newUser5.UserId = 4;
-                Users.Add(newUser5);
+                newUser5.UserName = newUser5.Email;
+                await _um.CreateAsync(newUser5, "pw");
 
                 StudentClass studentClass4 = new StudentClass();
                 studentClass4.Class = newClass;
@@ -182,7 +203,8 @@ namespace WorkTogether.Models
                 newUser6.EmploymentStatus = "Unemployed";
                 newUser6.Major = "Computer Science";
                 newUser6.UserId = 5;
-                Users.Add(newUser6);
+                newUser6.UserName= newUser6.Email;
+                await _um.CreateAsync(newUser6, "pw");
 
                 StudentClass studentClass5 = new StudentClass();
                 studentClass5.Class = newClass;
@@ -200,7 +222,8 @@ namespace WorkTogether.Models
                 newUser7.EmploymentStatus = "Unemployed";
                 newUser7.Major = "Computer Science";
                 newUser7.UserId = 6;
-                Users.Add(newUser7);
+                newUser7.UserName = newUser7.Email;
+                await _um.CreateAsync(newUser7, "pw");
 
                 StudentClass studentClass6 = new StudentClass();
                 studentClass6.Class = newClass;
@@ -222,7 +245,8 @@ namespace WorkTogether.Models
                 newUser8.EmploymentStatus = "Unemployed";
                 newUser8.Major = "Computer Science";
                 newUser8.UserId = 7;
-                Users.Add(newUser8);
+                newUser8.UserName = newUser8.Email;
+                _um.CreateAsync(newUser8, "pw");
 
                 StudentClass studentClass7 = new StudentClass();
                 studentClass7.Class = newClass;
@@ -244,7 +268,8 @@ namespace WorkTogether.Models
                 newUser9.EmploymentStatus = "Unemployed";
                 newUser9.Major = "Computer Science";
                 newUser9.UserId = 8;
-                Users.Add(newUser9);
+                newUser9.UserName = newUser9.Email;
+                await _um.CreateAsync(newUser9, "pw");
 
                 StudentClass studentClass8 = new StudentClass();
                 studentClass8.Class = newClass;
@@ -266,7 +291,8 @@ namespace WorkTogether.Models
                 newUser10.EmploymentStatus = "Part Time";
                 newUser10.Major = "Computer Science";
                 newUser10.UserId = 9;
-                Users.Add(newUser10);
+                newUser10.UserName = newUser10.Email;
+                await _um.CreateAsync(newUser10, "pw");
 
                 StudentClass studentClass9 = new StudentClass();
                 studentClass9.Class = newClass;
@@ -288,7 +314,9 @@ namespace WorkTogether.Models
                 newUser11.EmploymentStatus = "Part Time";
                 newUser11.Major = "Computer Science";
                 newUser11.UserId = 10;
-                Users.Add(newUser11);
+                newUser11.UserName = newUser11.Email;
+                await _um.CreateAsync(newUser11, "pw");
+
                 StudentClass studentClass10 = new StudentClass();
                 studentClass10.Class = newClass;
                 studentClass10.Student = newUser11;
@@ -309,7 +337,9 @@ namespace WorkTogether.Models
                 newUser12.EmploymentStatus = "Part Time";
                 newUser12.Major = "Computer Science";
                 newUser12.UserId = 11;
-                Users.Add(newUser12);
+                newUser12.UserName = newUser12.Email;
+                await _um.CreateAsync(newUser12, "pw");
+                
 
                 StudentClass studentClass2_12 = new StudentClass();
                 studentClass2_12.Class = newClass2;
@@ -326,7 +356,8 @@ namespace WorkTogether.Models
                 newUser13.EmploymentStatus = "Part Time";
                 newUser13.Major = "Computer Science";
                 newUser13.UserId = 12;
-                Users.Add(newUser13);
+                newUser13.UserName = newUser13.Email;
+                await _um.CreateAsync(newUser13, "pw");
 
                 StudentClass studentClass2_13 = new StudentClass();
                 studentClass2_13.Class = newClass2;
@@ -343,7 +374,9 @@ namespace WorkTogether.Models
                 newUser14.EmploymentStatus = "Part Time";
                 newUser14.Major = "Computer Science";
                 newUser14.UserId = 13;
-                Users.Add(newUser14);
+                newUser14.UserName = newUser14.Email;
+                await _um.CreateAsync(newUser14, "pw");
+                
 
                 StudentClass studentClass2_14 = new StudentClass();
                 studentClass2_14.Class = newClass2;
@@ -360,7 +393,8 @@ namespace WorkTogether.Models
                 newUser15.EmploymentStatus = "Part Time";
                 newUser15.Major = "Computer Science";
                 newUser15.UserId = 14;
-                Users.Add(newUser15);
+                newUser15.UserName = newUser15.Email;
+                await _um.CreateAsync(newUser15, "pw");
 
                 StudentClass studentClass2_15 = new StudentClass();
                 studentClass2_15.Class = newClass2;
@@ -377,7 +411,8 @@ namespace WorkTogether.Models
                 newUser16.EmploymentStatus = "Part Time";
                 newUser16.Major = "Computer Science";
                 newUser16.UserId = 15;
-                Users.Add(newUser16);
+                newUser16.UserName = newUser16.Email;
+                await _um.CreateAsync(newUser16, "pw");
 
                 StudentClass studentClass2_16 = new StudentClass();
                 studentClass2_16.Class = newClass2;
@@ -394,6 +429,15 @@ namespace WorkTogether.Models
                 project1.MaxTeamSize = 5;
                 project1.Deadline = new DateTime(2023, 5, 30);
                 Projects.Add(project1);
+                this.SaveChanges();
+
+                Team t1 = new Team();
+                t1.Name = "John Coder's Capstone Crew";
+                t1.Project = project1;
+                t1.Id = 1;
+                t1.Complete = true;
+                t1.Members = new List<User>{newUser, newUser16, newUser15, newUser14};
+                Teams.Add(t1);
                 this.SaveChanges();
 
                 Questionnaire default_questionnaire = new Questionnaire();

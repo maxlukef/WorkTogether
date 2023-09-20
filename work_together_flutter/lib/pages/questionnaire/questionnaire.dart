@@ -5,30 +5,87 @@ import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/provider/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
+import '../../http_request.dart';
+import '../../models/card_info.dart';
 import '../../provider/skill_list.dart';
 import '../group_search/group_search_page.dart';
 
-enum ExpectedQuality { top1, A, B, C }
+enum ExpectedQuality { A, B, C }
 
 class QuestionnairePage extends ConsumerStatefulWidget {
   const QuestionnairePage({
     Key? key,
+    required this.userId,
+    required this.classId,
   }) : super(key: key);
+
+  final int userId;
+  final int classId;
 
   @override
   ConsumerState<QuestionnairePage> createState() => _QuestionnairePageState();
 }
 
 class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
-  ExpectedQuality? _quality = ExpectedQuality.top1;
+  ExpectedQuality? _quality;
+  CardInfo? loggedUser;
+
+  var skillsTextFieldController = TextEditingController();
+  var numberHoursTextFieldController = TextEditingController();
+
+  final HttpService httpService = HttpService();
+
+  late List<String> skillList;
+
+  late List<MeetingTime> meetingTimeList;
+
+  FocusNode skillsFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await httpService
+          .getQuestionnaireAnswersByClassIdAndUserId(
+              widget.classId, widget.userId)
+          .then((loggedUserAnswers) => {
+                loggedUser = loggedUserAnswers,
+                if (loggedUserAnswers.expectedGrade == "A")
+                  {_quality = ExpectedQuality.A}
+                else if (loggedUserAnswers.expectedGrade == "B")
+                  {_quality = ExpectedQuality.B}
+                else
+                  {_quality = ExpectedQuality.C},
+                numberHoursTextFieldController.text =
+                    loggedUserAnswers.weeklyHours,
+                skillList.clear(),
+                skillList.addAll(loggedUserAnswers.skills),
+                meetingTimeList.clear(),
+                if (loggedUserAnswers.availableAfternoons.isNotEmpty)
+                  {
+                    meetingTimeList.add(MeetingTime("Afternoon",
+                        loggedUserAnswers.availableAfternoons, "NA"))
+                  },
+                if (loggedUserAnswers.availableMornings.isNotEmpty)
+                  {
+                    meetingTimeList.add(MeetingTime(
+                        "Morning", loggedUserAnswers.availableMornings, "NA")),
+                  },
+                if (loggedUserAnswers.availableEvenings.isNotEmpty)
+                  {
+                    meetingTimeList.add(MeetingTime(
+                        "Evening", loggedUserAnswers.availableEvenings, "NA"))
+                  }
+              });
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var formController = TextEditingController();
-
-    List<String> skillList = ref.watch(skillListNotifierProvider);
-    List<MeetingTime> meetingTimeList =
-        ref.watch(meetingTimeListNotifierProvider);
+    skillList = ref.watch(skillListNotifierProvider);
+    meetingTimeList = ref.watch(meetingTimeListNotifierProvider);
 
     return Scaffold(
       appBar: const CustomAppBar(title: "Questionnaire"),
@@ -114,7 +171,8 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
-                                  child: const Icon(Icons.delete_outline),
+                                  child:
+                                      const Icon(Icons.remove_circle_outline),
                                   onTap: () {
                                     ref
                                         .read(meetingTimeListNotifierProvider
@@ -161,107 +219,86 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       ),
                     ),
                   ),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                Radio(
-                                  value: ExpectedQuality.top1,
-                                  groupValue: _quality,
-                                  onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
-                                  },
-                                ),
-                                const Expanded(
-                                  child: Text(
-                                    'Top 1%',
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: ExpectedQuality.A,
+                                    groupValue: _quality,
+                                    onChanged: (ExpectedQuality? value) {
+                                      setState(() {
+                                        _quality = value;
+                                      });
+                                    },
+                                  ),
+                                  const Expanded(
+                                      child: Text(
+                                    'A',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'SourceSansPro'),
+                                  ))
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: ExpectedQuality.B,
+                                    groupValue: _quality,
+                                    onChanged: (ExpectedQuality? value) {
+                                      setState(() {
+                                        _quality = value;
+                                      });
+                                    },
                                   ),
-                                )
-                              ],
+                                  const Expanded(
+                                      child: Text(
+                                    'B',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'SourceSansPro'),
+                                  ))
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                Radio(
-                                  value: ExpectedQuality.A,
-                                  groupValue: _quality,
-                                  onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
-                                  },
-                                ),
-                                const Expanded(
-                                    child: Text(
-                                  'A',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'SourceSansPro'),
-                                ))
-                              ],
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                    value: ExpectedQuality.C,
+                                    groupValue: _quality,
+                                    onChanged: (ExpectedQuality? value) {
+                                      setState(() {
+                                        _quality = value;
+                                      });
+                                    },
+                                  ),
+                                  const Expanded(
+                                      child: Text(
+                                    'C',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'SourceSansPro'),
+                                  ))
+                                ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                Radio(
-                                  value: ExpectedQuality.B,
-                                  groupValue: _quality,
-                                  onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
-                                  },
-                                ),
-                                const Expanded(
-                                    child: Text(
-                                  'B',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'SourceSansPro'),
-                                ))
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                Radio(
-                                  value: ExpectedQuality.C,
-                                  groupValue: _quality,
-                                  onChanged: (ExpectedQuality? value) {
-                                    setState(() {
-                                      _quality = value;
-                                    });
-                                  },
-                                ),
-                                const Expanded(
-                                    child: Text(
-                                  'C',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'SourceSansPro'),
-                                ))
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   const Align(
                     alignment: Alignment.centerLeft,
@@ -276,55 +313,95 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: 330,
-                      height: 50,
-                      child: TextFormField(
-                        controller: formController,
-                        style: const TextStyle(
-                            color: Color(0xFF000000),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (e) {
-                          ref
-                              .read(skillListNotifierProvider.notifier)
-                              .addSkill(e);
-                          formController.clear();
-                        },
-                        decoration: const InputDecoration(
-                            filled: true,
-                            fillColor: Color(0xFFFAFAFA),
-                            hintText: "Type to Add a Skill",
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xFFD9D9D9), width: 2.0))),
-                      ),
-                    ),
-                  ),
-                  Wrap(runSpacing: 12, children: [
-                    ...skillList.map(
-                      (e) => Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Tag(text: e.toString()),
-                          GestureDetector(
-                            child: const Icon(Icons.remove_circle_outline),
-                            onTap: () {
-                              int index = skillList.indexOf(e);
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(40.0, 2.0, 2.0, 4.0),
+                        child: SizedBox(
+                          width: 280,
+                          height: 50,
+                          child: TextFormField(
+                            controller: skillsTextFieldController,
+                            style: const TextStyle(
+                                color: Color(0xFF000000),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'SourceSansPro'),
+                            keyboardType: TextInputType.emailAddress,
+                            focusNode: skillsFocusNode,
+                            onFieldSubmitted: (e) {
                               ref
                                   .read(skillListNotifierProvider.notifier)
-                                  .removeSkill(index);
+                                  .addSkill(e);
+                              skillsTextFieldController.clear();
+                              skillsFocusNode.requestFocus();
+                            },
+                            decoration: const InputDecoration(
+                                filled: true,
+                                fillColor: Color(0xFFFAFAFA),
+                                hintText: "Type to Add a Skill",
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Color(0xFFD9D9D9), width: 2.0))),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: IconButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue),
+                            onPressed: () {
+                              setState(() {
+                                ref
+                                    .read(skillListNotifierProvider.notifier)
+                                    .addSkill(skillsTextFieldController.text);
+                                skillsTextFieldController.clear();
+                                skillsFocusNode.requestFocus();
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.add,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                      child: Wrap(
+                        children: [
+                          ...skillList.map(
+                            (skill) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
+                                child: Wrap(
+                                  children: [
+                                    Tag(text: skill.toString()),
+                                    GestureDetector(
+                                      child: const Icon(
+                                          Icons.remove_circle_outline),
+                                      onTap: () {
+                                        setState(() {
+                                          ref
+                                              .read(skillListNotifierProvider)
+                                              .remove(skill);
+                                        });
+                                      },
+                                    )
+                                  ],
+                                ),
+                              );
                             },
                           )
                         ],
-                      ),
-                    ),
-                  ]),
+                      )),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
@@ -344,14 +421,15 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       width: 330,
                       height: 50,
                       child: TextFormField(
+                        controller: numberHoursTextFieldController,
                         style: const TextStyle(
                             color: Color(0xFF000000),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             fontFamily: 'SourceSansPro'),
                         keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        onSaved: (email) {},
+                        textInputAction: TextInputAction.done,
+                        onSaved: (hours) {},
                         decoration: const InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFFAFAFA),
@@ -362,46 +440,8 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                       ),
                     ),
                   ),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                      child: Text(
-                        "Additional Notes",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: 330,
-                      height: 50,
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: Color(0xFF000000),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        onSaved: (email) {},
-                        decoration: const InputDecoration(
-                            filled: true,
-                            fillColor: Color(0xFFFAFAFA),
-                            hintText:
-                                "Roadblocks, circumstances, or other notes",
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xFFD9D9D9), width: 2.0))),
-                      ),
-                    ),
-                  ),
                   Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                       child: ElevatedButton(
@@ -429,7 +469,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -447,7 +487,7 @@ class QuestionnairePopup extends ConsumerStatefulWidget {
 }
 
 class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
-  final List<String> daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+  final List<String> daysOfWeek = ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'];
 
   String? _timeOfDay = "Morning";
   List<String>? _selectedDaysOfWeek = [];

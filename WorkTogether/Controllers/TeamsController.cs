@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,14 @@ namespace WorkTogether.Controllers
         public TeamsController(WT_DBContext context)
         {
             _context = context;
+        }
+
+        
+        private User GetCurrentUser(HttpContext httpContext)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
+            return u1;
         }
 
         // GET: api/Teams
@@ -60,8 +69,67 @@ namespace WorkTogether.Controllers
             return toReturn;
         }
 
-        // GET: api/Teams/5
-        [HttpGet("{id}")]
+        // GET: api/Teams/StudentTeams
+        [HttpGet("StudentTeams")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TeamDTO>>> GetUserTeams()
+        {
+            User u = GetCurrentUser(HttpContext);
+            List<Team> teams = await _context.Teams.Include(t => t.Members).Include(t=> t.Project).Where(t=> t.Members.Contains(u)).ToListAsync();
+            //User u2 = await _context.Users.Where(v => v.Email == u.Email).Include(v => v.Teams).FirstOrDefaultAsync();
+            List<TeamDTO> toReturn = new List<TeamDTO>();
+            foreach(Team t in teams){
+                
+                    TeamDTO toAdd = new TeamDTO();
+                    toAdd.Complete = t.Complete;
+                    toAdd.projectId = t.Project.Id;
+                    toAdd.Id = t.Id;
+                    toAdd.Members = new List<UserProfileDTO>();
+                    toAdd.Name = t.Name;
+
+                    foreach (User i in t.Members)
+                    {
+                        //var userToAdd = await _context.Users.FindAsync(i);
+                        if (i != null)
+                        {
+                            toAdd.Members.Add(UsertoProfileDTO(i));
+                        }
+
+                    }
+                    toReturn.Add(toAdd);
+                
+                
+            }
+            return toReturn;
+        }
+
+        // GET: api/Teams/StudentGroupSearches
+        [HttpGet("StudentGroupSearches")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetUserGroupSearches()
+        {
+            User u = GetCurrentUser(HttpContext);
+            List<Project> teamprojects = await _context.Teams.Include(t => t.Members).Include(t=>t.Project).Where(t => t.Members.Contains(u)).Select(t=>t.Project).ToListAsync();
+            var userclasses = await _context.StudentClasses.Include(s => s.Class).Where(s => s.Student == u).Select(s => s.Class).ToListAsync();
+            var userprojects = await _context.Projects.Include(p=> p.Class).Where(p => userclasses.Contains(p.Class) && !teamprojects.Contains(p)).ToListAsync();
+            List<ProjectDTO> toReturn = new List<ProjectDTO>();
+            foreach(Project x in userprojects)
+            {
+                ProjectDTO projectDTO = new ProjectDTO();
+                projectDTO.Id = x.Id;
+                projectDTO.Name = x.Name;
+                projectDTO.Description = x.Description;
+                projectDTO.ClassId = x.Class.Id;
+                projectDTO.Deadline = x.Deadline;
+                projectDTO.MaxTeamSize = x.MaxTeamSize;
+                projectDTO.MinTeamSize = x.MinTeamSize;
+                toReturn.Add(projectDTO);
+            }
+            return toReturn;
+        }
+
+            // GET: api/Teams/5
+            [HttpGet("{id}")]
         public async Task<ActionResult<TeamDTO>> GetTeam(int id)
         {
           if (_context.Teams == null)
@@ -114,7 +182,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var user = await _context.Users.FindAsync(studentId);
+            var user = await _context.Users.Where(u => u.UserId == studentId).FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
@@ -177,8 +245,8 @@ namespace WorkTogether.Controllers
                 return Problem("Entity set 'WT_DBContext.Projects' is null.");
             }
 
-            var inviter = await _context.Users.FindAsync(inviterId);
-            var invitee = await _context.Users.FindAsync(inviteeId);
+            var inviter = await _context.Users.Where(u => u.UserId == inviterId).FirstOrDefaultAsync();
+            var invitee = await _context.Users.Where(u => u.UserId == inviteeId).FirstOrDefaultAsync();
             var project = await _context.Projects.Include(p => p.Class).Where(Project => Project.Id == projectId).ToListAsync();
             if (project.Count == 0) {
                 return BadRequest("No such project");

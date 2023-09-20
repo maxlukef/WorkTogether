@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
+import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
 import '../../http_request.dart';
 import '../../main.dart';
@@ -60,6 +61,13 @@ class _GroupProfileProfilePageState
 
   Widget buildPage(BuildContext context, User userdata) {
     List<Widget> interestTags = [];
+    String inviteToGroupOrEdit;
+
+    if (userdata.id == loggedUserId) {
+      inviteToGroupOrEdit = "Edit My Questionnaire";
+    } else {
+      inviteToGroupOrEdit = "Invite to Group";
+    }
 
     for (String interest in userdata.interests) {
       interestTags.add(Padding(
@@ -71,13 +79,18 @@ class _GroupProfileProfilePageState
     }
 
     return Scaffold(
-        appBar: CustomAppBar(title: "User Profile"),
+        appBar: const CustomAppBar(title: "User Profile"),
         backgroundColor: const Color(0xFFFFFFFF),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const Icon(
+                Icons.account_circle,
+                color: Colors.blue,
+                size: 110.0,
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                 child: Text(
@@ -86,24 +99,28 @@ class _GroupProfileProfilePageState
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              const Icon(
-                Icons.account_circle,
-                color: Colors.blue,
-                size: 110.0,
-              ),
               Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      HttpService().inviteToTeam(1, loggedUserId, widget.id);
-                      Navigator.pop(context);
+                      if (userdata.id == loggedUserId) {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return QuestionnairePage(
+                                classId: 1, userId: loggedUserId);
+                          },
+                        ));
+                      } else {
+                        HttpService().inviteToTeam(1, loggedUserId, widget.id);
+                        Navigator.pop(context);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(125, 35),
                         backgroundColor: const Color(0xFF1192dc)),
-                    child: const Text(
-                      "Invite to Group",
-                      style: TextStyle(
+                    child: Text(
+                      inviteToGroupOrEdit,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w400,
                       ),
@@ -187,7 +204,7 @@ class _GroupProfileProfilePageState
                   ),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      child: Row(
+                      child: Wrap(
                         children: interestTags,
                       )),
                   const Padding(
@@ -199,7 +216,7 @@ class _GroupProfileProfilePageState
                   ),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      child: Row(
+                      child: Wrap(
                         children: _skillsList(),
                       )),
                   const Padding(

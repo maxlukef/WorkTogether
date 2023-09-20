@@ -2,27 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
+import 'package:work_together_flutter/main.dart';
+import 'package:work_together_flutter/pages/login/login_page.dart';
 import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
+import 'package:work_together_flutter/provider/interest_list.dart';
 
 import '../../http_request.dart';
 import '../../models/user.dart';
+import '../../provider/filter_choices.dart';
+import '../../provider/meeting_time_list.dart';
+import '../../provider/skill_list.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({Key? key, required this.userId}) : super(key: key);
-
-  final int userId;
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
+  late List<String> skillList = ref.watch(skillListNotifierProvider);
+  late List<String> interestsList = ref.watch(interestListNotifierProvider);
+  late List<MeetingTime> meetingTimeList =
+      ref.watch(meetingTimeListNotifierProvider);
+  late FilterChoices filterChoices = ref.watch(filterChoicesNotifierProvider);
+
   @override
   Widget build(BuildContext context) {
     final HttpService httpService = HttpService();
 
     return FutureBuilder(
-        future: httpService.getUser(widget.userId),
+        future: httpService.getUser(loggedUserId),
         builder: (context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasError) {
             return Column(
@@ -167,7 +177,28 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 32, 16),
+                    padding: const EdgeInsets.fromLTRB(8, 16, 16, 16),
+                    child: SizedBox(
+                      height: 45,
+                      width: 45,
+                      child: FloatingActionButton(
+                        onPressed: () async {
+                          skillList.clear();
+                          interestsList.clear();
+                          meetingTimeList.clear();
+                          filterChoices.resetFilterFields();
+                          Navigator.of(context, rootNavigator: true)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => const LoginPage()));
+                        },
+                        heroTag: "Edit Page",
+                        child: const Icon(
+                          Icons.logout_outlined,
+                        ),
+                      ),
+                    )),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 16, 32, 16),
                     child: SizedBox(
                       height: 45,
                       width: 45,
@@ -183,7 +214,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           Icons.edit,
                         ),
                       ),
-                    ))
+                    )),
               ]),
             ],
           ),
