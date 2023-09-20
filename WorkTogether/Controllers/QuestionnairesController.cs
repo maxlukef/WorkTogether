@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +20,15 @@ namespace WorkTogether.Controllers
         public QuestionnairesController(WT_DBContext context)
         {
             _context = context;
+        }
+
+        private User GetCurrentUser(HttpContext httpContext)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            Debug.WriteLine("User Email: " + userEmail);
+            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
+
+            return u1;
         }
 
         // GET: api/Questionnaires
@@ -47,6 +58,42 @@ namespace WorkTogether.Controllers
             }
 
             return questionnaire;
+        }
+
+        //GET: api/QuestionnaireComplete/1
+        [HttpGet("QuestionnaireComplete/{projectID}")]
+        [Authorize]
+        public async Task<ActionResult<Boolean>> GetQuestionnaireCompleteForProject(int projectID)
+        {
+            User curUser = GetCurrentUser(HttpContext);
+            if (curUser != default)
+            {
+                Debug.WriteLine("####USER#####: " + curUser.UserName);
+            }
+        
+            var questionnaire = await _context.Questionnaires.Where(x => x.ProjectID == projectID).FirstOrDefaultAsync();
+            
+            if (questionnaire == null)
+            {
+                return NotFound();
+            }
+
+            var questions = await _context.Questions.Where(x => x.Questionnaire.Id == questionnaire.Id).ToListAsync();
+
+            var questionnaireCompleted = false;
+
+            foreach(Question q in questions)
+            {
+                var answer = await _context.Answers.Where(x => x.Question.Id == q.Id).FirstAsync();
+
+                if (answer != null)
+                {
+                    questionnaireCompleted = true;
+                    break;
+                }
+            }
+
+            return Ok(questionnaireCompleted);
         }
 
         // PUT: api/Questionnaires/5

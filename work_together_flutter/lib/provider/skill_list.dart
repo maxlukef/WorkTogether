@@ -7,7 +7,11 @@ class SkillList extends Notifier<List<String>> {
   }
 
   void addSkill(String skillContent) {
-    state = [...state, skillContent];
+    if (skillContent.trim() == "") {
+      return;
+    } else {
+      state = [...state, skillContent];
+    }
   }
 
   void removeSkill(int index) {
