@@ -11,7 +11,7 @@ using WorkTogether.Models;
 namespace WorkTogether.Migrations
 {
     [DbContext(typeof(WT_DBContext))]
-    [Migration("20230920174022_new")]
+    [Migration("20230921002218_new")]
     partial class @new
     {
         /// <inheritdoc />
@@ -342,6 +342,9 @@ namespace WorkTogether.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("TeamFormationDeadline")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
@@ -358,6 +361,9 @@ namespace WorkTogether.Migrations
                     b.Property<string>("Prompt")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("QNum")
+                        .HasColumnType("int");
 
                     b.Property<int>("QuestionnaireId")
                         .HasColumnType("int");

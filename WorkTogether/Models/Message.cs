@@ -25,6 +25,8 @@
 
         public int SenderID { get; set; }
 
-        public DateTime Sent { get; set; }
+        public string SenderName { get; set; }
+
+        public string Sent { get; set; }
     }
 }

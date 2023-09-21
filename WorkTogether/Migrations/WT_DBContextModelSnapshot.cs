@@ -339,6 +339,9 @@ namespace WorkTogether.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("TeamFormationDeadline")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
@@ -355,6 +358,9 @@ namespace WorkTogether.Migrations
                     b.Property<string>("Prompt")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("QNum")
+                        .HasColumnType("int");
 
                     b.Property<int>("QuestionnaireId")
                         .HasColumnType("int");

@@ -250,13 +250,19 @@ namespace WorkTogether.Controllers
     };
 
 
-        private static MessageDTO MessageToDTO(Message msg) =>
-        new MessageDTO
+        private static MessageDTO MessageToDTO(Message msg)
         {
-            Content = msg.Content,
-            Sent = msg.Sent,
-            SenderID = msg.Sender.UserId
-        };
+            MessageDTO toret = new MessageDTO();
+            toret.Content = msg.Content;
+            toret.SenderID = msg.Sender.UserId;
+            toret.SenderName = msg.Sender.Name;
+            string dt = msg.Sent.Date.ToString().Split(" ")[0] + ", " + msg.Sent.Hour.ToString() + ", " + msg.Sent.Minute.ToString();
+            toret.Sent = dt;
+            return toret;
+
+
+        }
+       
     }
 
 
