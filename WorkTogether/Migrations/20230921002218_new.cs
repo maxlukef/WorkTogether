@@ -274,7 +274,8 @@ namespace WorkTogether.Migrations
                     ClassId = table.Column<int>(type: "int", nullable: false),
                     MinTeamSize = table.Column<int>(type: "int", nullable: false),
                     MaxTeamSize = table.Column<int>(type: "int", nullable: false),
-                    Deadline = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    Deadline = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    TeamFormationDeadline = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -416,6 +417,7 @@ namespace WorkTogether.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    QNum = table.Column<int>(type: "int", nullable: false),
                     Prompt = table.Column<string>(type: "longtext", nullable: false),
                     Type = table.Column<string>(type: "longtext", nullable: false),
                     QuestionnaireId = table.Column<int>(type: "int", nullable: false)
