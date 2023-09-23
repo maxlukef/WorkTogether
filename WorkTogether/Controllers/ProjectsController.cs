@@ -57,20 +57,22 @@ namespace WorkTogether.Controllers
             return projectToDTO(project);
         }
 
-        // GET: api/Projects/GetOpenTeamSearchForClass/5
-        [HttpGet("GetOpenTeamSearchForClass/{ClassID}")]
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOpenTeamSearch(int ClassID)
+        // GET: api/Projects/GetProjectsInGroupSearchPhase/5
+        // Team search deadline has NOT passed
+        [HttpGet("GetProjectsInGroupSearchPhase/{ClassID}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsInGroupSearchPhase(int ClassID)
         {
-            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline > DateTime.Now).ToListAsync();
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline > DateTime.Now).Where(x => x.Class.Id == ClassID).ToListAsync();
 
             return Ok(projects);
         }
 
-        // GET: api/Projects/GetOpenProjectsForClass/5
-        [HttpGet("GetOpenProjectsForClass/{ClassID}")]
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOpenProjects(int ClassID)
+        // GET: api/Projects/GetProjectsNotInGroupSearchPhase/5
+        // Team search deadline has passed && Project deadline is not current time
+        [HttpGet("GetProjectsNotInGroupSearchPhase/{ClassID}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsNotInGroupSearchPhase(int ClassID)
         {
-            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).Where(x => x.Deadline > DateTime.Now).ToListAsync();
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).Where(x => x.Class.Id == ClassID).ToListAsync();
 
             return Ok(projects);
         }
