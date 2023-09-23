@@ -330,13 +330,12 @@ class HttpService {
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
-      List<ClassesDTO> conversations;
-      var test = json.decode(res.body);
+      List<ClassesDTO> classes;
 
-      conversations = (json.decode(res.body) as List)
+      classes = (json.decode(res.body) as List)
           .map((i) => ClassesDTO.fromJson(i))
           .toList();
-      return conversations;
+      return classes;
     } else {
       return null;
     }
@@ -347,11 +346,11 @@ class HttpService {
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
-      List<User> conversations;
+      List<User> students;
 
-      conversations =
+      students =
           (json.decode(res.body) as List).map((i) => User.fromJson(i)).toList();
-      return conversations;
+      return students;
     } else {
       return null;
     }
