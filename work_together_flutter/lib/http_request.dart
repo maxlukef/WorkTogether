@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
+import 'package:work_together_flutter/models/chat_models/chat_message_dto.dart';
+import 'package:work_together_flutter/models/classes_models/classes_dto.dart';
 import 'package:work_together_flutter/models/login_request.dart';
 import 'package:work_together_flutter/models/login_results.dart';
 import 'package:work_together_flutter/models/new_user.dart';
@@ -287,6 +290,69 @@ class HttpService {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<List<ChatInfo>?> getConversationInfo() async {
+    Uri uri = Uri.https("localhost:7277", "currentuserchats");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ChatInfo> conversations;
+
+      conversations = (json.decode(res.body) as List)
+          .map((i) => ChatInfo.fromJson(i))
+          .toList();
+      return conversations;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ChatMessage>?> getMessages(int chatID) async {
+    Uri uri = Uri.https("localhost:7277", "messages/$chatID");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ChatMessage> conversations;
+
+      conversations = (json.decode(res.body) as List)
+          .map((i) => ChatMessage.fromJson(i))
+          .toList();
+      return conversations;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ClassesDTO>?> getCurrentUsersClasses() async {
+    Uri uri = Uri.https("localhost:7277", "api/Classes/currentuserclasses");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ClassesDTO> classes;
+
+      classes = (json.decode(res.body) as List)
+          .map((i) => ClassesDTO.fromJson(i))
+          .toList();
+      return classes;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<User>?> getStudentsInClass(int id) async {
+    Uri uri = Uri.https("localhost:7277", "api/Classes/getstudentsinclass/$id");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<User> students;
+
+      students =
+          (json.decode(res.body) as List).map((i) => User.fromJson(i)).toList();
+      return students;
+    } else {
+      return null;
     }
   }
 
