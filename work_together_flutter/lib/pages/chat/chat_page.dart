@@ -27,7 +27,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> getConversationsApiCall() async {
-    messages = await HttpService().getMessages();
+    messages = await HttpService().getMessages(widget.chatInfo.id);
     setState(() {});
   }
 

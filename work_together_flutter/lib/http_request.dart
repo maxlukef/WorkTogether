@@ -308,8 +308,8 @@ class HttpService {
     }
   }
 
-  Future<List<ChatMessage>?> getMessages() async {
-    Uri uri = Uri.https("localhost:7277", "messages");
+  Future<List<ChatMessage>?> getMessages(int chatID) async {
+    Uri uri = Uri.https("localhost:7277", "messages/$chatID");
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
