@@ -1,159 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/pages/group_home/group_home.dart';
 import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../http_request.dart';
 import '../../main.dart';
+import '../../models/classes_models/classes_dto.dart';
+import '../../models/project_models/project_in_class.dart';
 
-class HomePage extends StatefulWidget {
-  final int userId;
-  final int classId;
-
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({
-    required this.userId,
-    required this.classId,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
+  final HttpService httpService = HttpService();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(title: "Home"),
-      backgroundColor: const Color(0xFFFFFFFF),
-      body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-              child: Text(
-                "Teams",
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'SourceSansPro-SemiBold'),
-              ),
-            ),
-            Center(
-              child: Card(
-                clipBehavior: Clip.hardEdge,
-                child: InkWell(
-                  splashColor: Colors.blue.withAlpha(30),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return const GroupHome(
-                          groupName: 'Task Force 141',
-                        );
-                      },
-                    ));
-                  },
-                  child: SizedBox(
-                    width: 330,
-                    height: 65,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(15.0, 0, 15.0, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 0.0),
-                            child: Text(
-                              "CS-5530",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'SourceSansPro',
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 0.0),
-                            child: Text(
-                              "Task Force 141",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'SourceSansPro-SemiBold',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-              child: Text(
-                "Group Search",
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'SourceSansPro-SemiBold'),
-              ),
-            ),
-            Center(
-              child: Card(
-                clipBehavior: Clip.hardEdge,
-                child: InkWell(
-                  splashColor: Colors.blue.withAlpha(30),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return QuestionnairePage(
-                            classId: 1, userId: loggedUserId);
-                      },
-                    ));
-                  },
-                  child: SizedBox(
-                    width: 330,
-                    height: 65,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(15.0, 0, 15.0, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 0.0),
-                            child: Text(
-                              "CS-4400",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'SourceSansPro',
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 0.0),
-                            child: Text(
-                              "Computer Systems",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'SourceSansPro-SemiBold',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ]),
-    );
+    return FutureBuilder(
+        future: httpService.getCurrentUserProjectsAndClasses(),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasError) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Text("An error has occurred while loading page."),
+              ],
+            );
+          } else if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData &&
+              snapshot.data != null) {
+            List<ProjectInClass> classesAndProjects = snapshot.data!;
+
+            return buildPage(context, classesAndProjects);
+          }
+          return const CircularProgressIndicator();
+        });
+
+    // return Scaffold(
+    //     appBar: const CustomAppBar(title: "Home"),
+    //     backgroundColor: const Color(0xFFFFFFFF),
+    //     body: FutureBuilder<List<ClassesDTO>?>(
+    //         future: httpService.getCurrentUsersClasses(),
+    //         builder: (BuildContext context,
+    //             AsyncSnapshot<List<ClassesDTO>?> snapshot) {
+    //           return Column();
+    //         }));
+  }
+
+  Widget buildPage(
+      BuildContext context, List<ProjectInClass> classesAndProjects) {
+    return Scaffold();
   }
 }

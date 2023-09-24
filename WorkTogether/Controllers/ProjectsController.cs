@@ -57,6 +57,16 @@ namespace WorkTogether.Controllers
             return projectToDTO(project);
         }
 
+        // GET: api/Projects/GetProjectsByClassId/5
+        // Get All projects in a class
+        [HttpGet("GetProjectsByClassId/{ClassID}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsByClassId(int ClassID)
+        {
+            var projects = await _context.Projects.Where(x => x.Class.Id == ClassID).ToListAsync();
+
+            return Ok(projects);
+        }
+
         // GET: api/Projects/GetProjectsInGroupSearchPhase/5
         // Team search deadline has NOT passed
         [HttpGet("GetProjectsInGroupSearchPhase/{ClassID}")]

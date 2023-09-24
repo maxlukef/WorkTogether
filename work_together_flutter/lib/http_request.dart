@@ -10,6 +10,7 @@ import 'package:work_together_flutter/models/new_user.dart';
 
 import 'main.dart';
 import 'models/card_info.dart';
+import 'models/project_models/project_in_class.dart';
 import 'models/user.dart';
 
 class HttpService {
@@ -336,6 +337,68 @@ class HttpService {
           .map((i) => ClassesDTO.fromJson(i))
           .toList();
       return classes;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ProjectInClass>?> getCurrentUserProjectsAndClasses() async {
+    Uri uri = Uri.https("localhost:7277", "api/Classes/currentuserclasses");
+    Response classesRes = await get(uri, headers: authHeader);
+
+    if (classesRes.statusCode == 200) {
+      print("200 on classes");
+      List<ClassesDTO> classes;
+      List<ProjectInClass>? projectsInClass;
+
+      classes = (json.decode(classesRes.body) as List)
+          .map((i) => ClassesDTO.fromJson(i))
+          .toList();
+
+      for (ClassesDTO classDto in classes) {
+        int classId = classDto.classID;
+
+        Uri uri = Uri.https(
+            'localhost:7277', 'api/Projects/GetProjectsByClassId/$classId');
+        var projectsRes = await get(uri);
+
+        if (projectsRes.statusCode == 200) {
+          List<dynamic> projectBody = jsonDecode(projectsRes.body);
+
+          for (dynamic project in projectBody) {
+            print(project);
+
+            int projectId = project["id"];
+            String projectName = project["name"];
+            String projectDesc = project["description"];
+            String projectClassName = classDto.name;
+            int projectClassId = classDto.classID;
+            int projectMinTeamSize = project["minTeamSize"];
+            int projectMaxTeamSize = project["maxTeamSize"];
+            DateTime projectDeadline = project["deadline"];
+            DateTime projectTeamFormationDeadline =
+                project["teamFormationDeadline"];
+
+            ProjectInClass projectInClass = ProjectInClass(
+                id: projectId,
+                name: projectName,
+                description: projectDesc,
+                className: projectClassName,
+                classId: projectClassId,
+                minTeamSize: projectMinTeamSize,
+                maxTeamSize: projectMaxTeamSize,
+                deadline: projectDeadline,
+                teamFormationDeadline: projectTeamFormationDeadline);
+
+            projectsInClass!.add(projectInClass);
+          }
+
+          return projectsInClass;
+        } else {
+          print("404 on projects");
+        }
+      }
+      return projectsInClass;
     } else {
       return null;
     }
