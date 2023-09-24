@@ -347,9 +347,8 @@ class HttpService {
     Response classesRes = await get(uri, headers: authHeader);
 
     if (classesRes.statusCode == 200) {
-      print("200 on classes");
       List<ClassesDTO> classes;
-      List<ProjectInClass>? projectsInClass;
+      List<ProjectInClass> projectsInClass = [];
 
       classes = (json.decode(classesRes.body) as List)
           .map((i) => ClassesDTO.fromJson(i))
@@ -366,38 +365,25 @@ class HttpService {
           List<dynamic> projectBody = jsonDecode(projectsRes.body);
 
           for (dynamic project in projectBody) {
-            print(project);
-
-            int projectId = project["id"];
-            String projectName = project["name"];
-            String projectDesc = project["description"];
-            String projectClassName = classDto.name;
-            int projectClassId = classDto.classID;
-            int projectMinTeamSize = project["minTeamSize"];
-            int projectMaxTeamSize = project["maxTeamSize"];
-            DateTime projectDeadline = project["deadline"];
-            DateTime projectTeamFormationDeadline =
-                project["teamFormationDeadline"];
-
             ProjectInClass projectInClass = ProjectInClass(
-                id: projectId,
-                name: projectName,
-                description: projectDesc,
-                className: projectClassName,
-                classId: projectClassId,
-                minTeamSize: projectMinTeamSize,
-                maxTeamSize: projectMaxTeamSize,
-                deadline: projectDeadline,
-                teamFormationDeadline: projectTeamFormationDeadline);
+                id: project["id"],
+                name: project["name"],
+                description: project["description"],
+                className: classDto.name,
+                classId: classDto.classID,
+                minTeamSize: project["minTeamSize"],
+                maxTeamSize: project["maxTeamSize"],
+                deadline: DateTime.parse((project["deadline"])),
+                teamFormationDeadline:
+                    DateTime.parse((project["teamFormationDeadline"])));
 
-            projectsInClass!.add(projectInClass);
+            projectsInClass.add(projectInClass);
           }
-
-          return projectsInClass;
         } else {
-          print("404 on projects");
+          return null;
         }
       }
+      print(projectsInClass.length);
       return projectsInClass;
     } else {
       return null;
