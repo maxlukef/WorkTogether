@@ -135,8 +135,8 @@ namespace WorkTogether.Models
                 Project newProject2 = new Project();
                 newProject2.Deadline = new DateTime(2023, 4, 26);
                 newProject2.TeamFormationDeadline = new DateTime(2023, 3, 1);
-                newProject2.Name = "Create a prototype of your project";
-                newProject2.Description = "Prepare for the prototype demo day on 4/26!";
+                newProject2.Name = "Create Facebook";
+                newProject2.Description = "Good luck";
                 newProject2.MaxTeamSize = 4;
                 newProject2.MinTeamSize = 4;
                 newProject2.Class = newClass2;
@@ -268,6 +268,7 @@ namespace WorkTogether.Models
                 studentClass2_7.Student = newUser7;
                 StudentClasses.Add(studentClass2_7);
 
+                // Memeber of 2 classes 
                 User newUser8 = new User();
                 newUser8.Name = "Donny Owen";
                 newUser8.Interests = "Urban Spelunking, Geocaching, Leetcoding";
