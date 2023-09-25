@@ -95,10 +95,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                           Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: Card(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.blue),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
+                              elevation: 10,
+                              color: const Color(0xFFf2f2f2),
                               clipBehavior: Clip.hardEdge,
                               child: LimitedBox(
                                 maxWidth: 360,
@@ -121,14 +119,21 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                       ...?classesToProjects[classNameKey]
                           ?.map((projectNameValue) {
+                        String projectPhase = "";
+
+                        if (projectNameValue.teamFormationDeadline
+                            .isAfter(DateTime.now())) {
+                          projectPhase = "Team Formation";
+                        } else {
+                          projectPhase = "Project In Progress";
+                        }
+
                         return Padding(
                           padding:
                               const EdgeInsets.fromLTRB(50.0, 0.0, 0.0, 0.0),
                           child: Card(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.blue),
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
+                            elevation: 10,
+                            color: const Color(0xFFf2f2f2),
                             clipBehavior: Clip.hardEdge,
                             child: InkWell(
                               splashColor: Colors.blue.withAlpha(30),
@@ -154,7 +159,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                               },
                               child: SizedBox(
                                 width: 300,
-                                height: 230,
+                                height: 260,
                                 child: Padding(
                                   padding: const EdgeInsets.fromLTRB(
                                       15.0, 0, 15.0, 0),
@@ -252,6 +257,35 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,
                                                 fontFamily: 'SourceSansPro'),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                4.0, 8.0, 4.0, 0.0),
+                                            child: Text(
+                                              "Phase:",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                fontFamily: 'SourceSansPro',
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                4.0, 8.0, 4.0, 0.0),
+                                            child: Text(
+                                              projectPhase,
+                                              style: const TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'SourceSansPro',
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
