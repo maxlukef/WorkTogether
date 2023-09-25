@@ -104,8 +104,8 @@ namespace WorkTogether.Models
 
                 // Project where Deadline has not passed and team formation deadline has not passed (Group Search Phase)
                 Project newProject3 = new Project();
-                newProject3.Deadline = DateTime.MaxValue;
-                newProject3.TeamFormationDeadline = DateTime.MaxValue;
+                newProject3.Deadline = new DateTime(2025, 5, 5);
+                newProject3.TeamFormationDeadline = new DateTime(2024, 4, 4);
                 newProject3.Name = "Time Travel";
                 newProject3.Description = "Build a time machine";
                 newProject3.MaxTeamSize = 4;

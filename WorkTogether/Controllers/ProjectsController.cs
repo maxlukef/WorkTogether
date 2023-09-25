@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +61,7 @@ namespace WorkTogether.Controllers
         // GET: api/Projects/GetProjectsByClassId/5
         // Get All projects in a class
         [HttpGet("GetProjectsByClassId/{ClassID}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsByClassId(int ClassID)
         {
             var projects = await _context.Projects.Where(x => x.Class.Id == ClassID).ToListAsync();

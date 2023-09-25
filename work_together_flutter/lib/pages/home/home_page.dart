@@ -112,8 +112,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                         String projectPhase = "";
 
                         if (projectNameValue.teamFormationDeadline
-                            .isAfter(DateTime.now())) {
+                                .isAfter(DateTime.now()) &&
+                            projectNameValue.deadline.isAfter(DateTime.now())) {
                           projectPhase = "Team Formation";
+                        } else if (projectNameValue.teamFormationDeadline
+                                .isBefore(DateTime.now()) &&
+                            projectNameValue.deadline
+                                .isBefore(DateTime.now())) {
+                          projectPhase = "Project Complete";
                         } else {
                           projectPhase = "Project In Progress";
                         }

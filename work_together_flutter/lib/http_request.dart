@@ -359,7 +359,7 @@ class HttpService {
 
         Uri uri = Uri.https(
             'localhost:7277', 'api/Projects/GetProjectsByClassId/$classId');
-        var projectsRes = await get(uri);
+        var projectsRes = await get(uri, headers: authHeader);
 
         if (projectsRes.statusCode == 200) {
           List<dynamic> projectBody = jsonDecode(projectsRes.body);
