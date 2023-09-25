@@ -63,16 +63,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           }
           return const CircularProgressIndicator();
         });
-
-    // return Scaffold(
-    //     appBar: const CustomAppBar(title: "Home"),
-    //     backgroundColor: const Color(0xFFFFFFFF),
-    //     body: FutureBuilder<List<ClassesDTO>?>(
-    //         future: httpService.getCurrentUsersClasses(),
-    //         builder: (BuildContext context,
-    //             AsyncSnapshot<List<ClassesDTO>?> snapshot) {
-    //           return Column();
-    //         }));
   }
 
   Widget buildPage(BuildContext context,

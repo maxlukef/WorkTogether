@@ -4,18 +4,12 @@ import 'package:riverpod/riverpod.dart';
 class FilterChoices {
   Set<String> skillsSet;
   Set<String> interestsSet;
-  // bool isOverlappingMeetingTime;
   RangeValues expectedHours;
   String expectedGrade;
   bool filterIsActive;
 
-  FilterChoices(
-      this.skillsSet,
-      this.interestsSet,
-      // this.isOverlappingMeetingTime,
-      this.expectedHours,
-      this.expectedGrade,
-      this.filterIsActive);
+  FilterChoices(this.skillsSet, this.interestsSet, this.expectedHours,
+      this.expectedGrade, this.filterIsActive);
 
   addToSkillsSet(String skill) {
     if (skill.trim() == "") {
@@ -49,10 +43,6 @@ class FilterChoices {
     interestsSet.remove(interest);
   }
 
-  // setIsOverlappingMeetingTime(bool isOverlappingMeetingTime) {
-  //   this.isOverlappingMeetingTime = isOverlappingMeetingTime;
-  // }
-
   setExpectedHours(RangeValues expectedHours) {
     this.expectedHours = expectedHours;
   }
@@ -68,7 +58,6 @@ class FilterChoices {
   resetFilterFields() {
     skillsSet = <String>{};
     interestsSet = <String>{};
-    // isOverlappingMeetingTime = false;
     expectedHours = const RangeValues(0, 0);
     expectedGrade = "N/A";
     filterIsActive = false;
@@ -80,13 +69,9 @@ class FilterChoicesNotifier extends Notifier<FilterChoices> {
   FilterChoices build() {
     Set<String> skillsSet = <String>{};
     Set<String> interestsSet = <String>{};
-    // bool isOverlappingMeetingTime = false;
     RangeValues expectedHours = const RangeValues(0, 0);
     String expectedGrade = "N/A";
     bool filterIsActive = false;
-
-    // return FilterChoices(skillsSet, interestsSet, isOverlappingMeetingTime,
-    //     expectedHours, expectedGrade, filterIsActive);
 
     return FilterChoices(
         skillsSet, interestsSet, expectedHours, expectedGrade, filterIsActive);
