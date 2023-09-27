@@ -94,7 +94,7 @@ namespace WorkTogether.Controllers
         /// </summary>
         /// <param name="id">The ID of the chat</param>
         /// <returns>A list of MessageDTOs, or NotFound if there is no such chat, or Unauthorized if the user is not authorized</returns>
-        [HttpGet("messages")]
+        [HttpGet("messages/{id}")]
         [Authorize]
         public async Task<ActionResult<List<MessageDTO>>> GetChatMessages(int id)
         {
