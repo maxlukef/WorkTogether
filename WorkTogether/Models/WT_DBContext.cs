@@ -7,6 +7,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Permissions;
+using WorkTogether.Models;
 
 namespace WorkTogether.Models
 {
@@ -50,6 +51,7 @@ namespace WorkTogether.Models
         public DbSet<Chat> Chats { get; set; }
 
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Notification> Notifications { get; set; } = null!;
 
 
         //These exist to make the multiple many to many relationships between Users and Classes work.
@@ -1024,5 +1026,17 @@ namespace WorkTogether.Models
                 this.SaveChanges();
             }
         }
+
+        //And this exists for the many to many relationship between Users and Chats
+
+
+
+
+
+
+        /// <summary>
+        /// Seeds dummy users and dummy classes if your database is empty.
+        /// </summary>
+        public DbSet<WorkTogether.Models.Notification>? Notification { get; set; }
     }
 }
