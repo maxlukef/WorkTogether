@@ -24,7 +24,8 @@
         public int? ParentTaskID { get; set; }
         public int? ParentMilestoneID { get; set; }
         public ICollection<int> Assignees { get; set; }
-        public DateTime DueDate { get; set; }
+        //Year-Month-Day
+        public string DueDate { get; set; }
         public Boolean Completed { get; set; }
     }
 }
