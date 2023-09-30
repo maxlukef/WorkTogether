@@ -383,8 +383,6 @@ namespace WorkTogether.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClassId");
-
                     b.ToTable("Projects");
                 });
 
@@ -787,17 +785,6 @@ namespace WorkTogether.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("WorkTogether.Models.Project", b =>
-                {
-                    b.HasOne("WorkTogether.Models.Class", "Class")
-                        .WithMany()
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Class");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Question", b =>

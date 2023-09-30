@@ -181,6 +181,7 @@ namespace WorkTogether.Controllers
         {
 
             Project proj = _context.Projects.Find(notification.AttachedProject);
+            Class c = _context.Classes.Find(proj.ClassId);
 
             return new NotificationDTO
             {
@@ -190,8 +191,8 @@ namespace WorkTogether.Controllers
                 IsInvite = notification.IsInvite,
                 ProjectID = notification.AttachedProject,
                 ProjectName = proj.Name,
-                ClassID = proj.Class.Id,
-                ClassName = proj.Class.Name,
+                ClassID = proj.ClassId,
+                ClassName = c.Name,
                 FromID = notification.FromID,
                 ToID = notification.ToID,
                 SentAt = notification.SentAt,

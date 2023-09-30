@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Permissions;
 using WorkTogether.Models;
+using System.Diagnostics;
 
 namespace WorkTogether.Models
 {
@@ -88,10 +89,13 @@ namespace WorkTogether.Models
                 
 
                 Class newClass = new Class();
+                newClass.Id = 1;
                 newClass.Name = "CS 2420: Data Structures and Algs";
                 newClass.Description = "The weed-out class.";
                 newClass.Professor = newUser2;
                 Classes.Add(newClass);
+                Debug.WriteLine("#########################");
+                Debug.WriteLine(newClass.Id);
 
                 // Project where deadline has passed and team formation deadline has passed (Project complete)
                 Project newProject = new Project();
@@ -101,7 +105,9 @@ namespace WorkTogether.Models
                 newProject.Description = "Implement a hashmap in Java. This will take some time, so make sure you start early!";
                 newProject.MaxTeamSize = 3;
                 newProject.MinTeamSize = 1;
-                newProject.Class = newClass;
+                newProject.ClassId = newClass.Id;
+                Debug.WriteLine("######################");
+                Debug.WriteLine(newProject.ClassId);
                 Projects.Add(newProject);
 
                 // Project where Deadline has not passed and team formation deadline has not passed (Group Search Phase)
@@ -112,12 +118,12 @@ namespace WorkTogether.Models
                 newProject3.Description = "Build a time machine";
                 newProject3.MaxTeamSize = 4;
                 newProject3.MinTeamSize = 2;
-                newProject3.Class = newClass;
+                newProject3.ClassId = newClass.Id;
                 Projects.Add(newProject3);
 
                 // Project where Deadline has not passed and team formation deadline has not passed (Project complete)
                 Project project1 = new Project();
-                project1.Class = newClass;
+                project1.ClassId = newClass.Id;
                 project1.Description = "Capstone Project";
                 project1.Name = "Capstone";
                 project1.MinTeamSize = 4;
@@ -128,6 +134,7 @@ namespace WorkTogether.Models
                 this.SaveChanges();
 
                 Class newClass2 = new Class();
+                newClass2.Id = 2;
                 newClass2.Name = "CS 4000: Capstone Design";
                 newClass2.Description = "The first phase of the capstone project.";
                 newClass2.Professor = newUser2;
@@ -141,7 +148,7 @@ namespace WorkTogether.Models
                 newProject2.Description = "Good luck";
                 newProject2.MaxTeamSize = 4;
                 newProject2.MinTeamSize = 4;
-                newProject2.Class = newClass2;
+                newProject2.ClassId = newClass2.Id;
                 Projects.Add(newProject2 );
 
                 // Project where deadline has NOT passed and team formation deadline has passed (Project In Progress)
@@ -152,7 +159,7 @@ namespace WorkTogether.Models
                 newProject4.Description = "Prepare for the prototype demo day on 4/26!";
                 newProject4.MaxTeamSize = 4;
                 newProject4.MinTeamSize = 4;
-                newProject4.Class = newClass2;
+                newProject4.ClassId = newClass2.Id;
                 Projects.Add(newProject4);
 
                 User newUser = new User();
