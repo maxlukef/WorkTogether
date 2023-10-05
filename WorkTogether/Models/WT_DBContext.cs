@@ -92,13 +92,23 @@ namespace WorkTogether.Models
                 Classes.Add(newClass);
 
                 Project newProject = new Project();
-                newProject.Deadline = new DateTime(2023, 5, 5);
+                newProject.Deadline = new DateTime(2023, 11, 5);
                 newProject.Name = "Implement a hash map";
                 newProject.Description = "Implement a hashmap in Java. This will take some time, so make sure you start early!";
                 newProject.MaxTeamSize = 3;
                 newProject.MinTeamSize = 1;
                 newProject.Class = newClass;
                 Projects.Add(newProject);
+
+
+                Milestone m = new Milestone();
+                m.Deadline = new DateTime(2023, 11, 1);
+                m.Description = "Implement your code before testing";
+                m.Title = "Implement";
+                m.Project = newProject;
+                Milestones.Add(m);
+
+
 
                 Class newClass2 = new Class();
                 newClass2.Name = "CS 4000: Capstone Design";
