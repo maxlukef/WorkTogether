@@ -64,7 +64,7 @@ namespace WorkTogether.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsByClassId(int ClassID)
         {
-            var projects = await _context.Projects.Where(x => x.Class.Id == ClassID).ToListAsync();
+            var projects = await _context.Projects.Where(x => x.ClassId == ClassID).ToListAsync();
 
             return Ok(projects);
         }
@@ -74,7 +74,7 @@ namespace WorkTogether.Controllers
         [HttpGet("GetProjectsInGroupSearchPhase/{ClassID}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsInGroupSearchPhase(int ClassID)
         {
-            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline > DateTime.Now).Where(x => x.Class.Id == ClassID).ToListAsync();
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline > DateTime.Now).Where(x => x.ClassId == ClassID).ToListAsync();
 
             return Ok(projects);
         }
@@ -84,7 +84,7 @@ namespace WorkTogether.Controllers
         [HttpGet("GetProjectsNotInGroupSearchPhase/{ClassID}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsNotInGroupSearchPhase(int ClassID)
         {
-            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).Where(x => x.Class.Id == ClassID).ToListAsync();
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).Where(x => x.ClassId == ClassID).ToListAsync();
 
             return Ok(projects);
         }
@@ -181,7 +181,7 @@ namespace WorkTogether.Controllers
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                ClassId = p.Class.Id,
+                ClassId = p.ClassId,
                 MinTeamSize = p.MinTeamSize,
                 MaxTeamSize = p.MaxTeamSize,
                 Deadline = p.Deadline,
@@ -205,7 +205,7 @@ namespace WorkTogether.Controllers
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                Class = c,
+                ClassId = p.ClassId,
                 MinTeamSize = p.MinTeamSize,
                 MaxTeamSize = p.MaxTeamSize,
                 Deadline = p.Deadline,
