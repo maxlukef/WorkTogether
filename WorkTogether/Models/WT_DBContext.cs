@@ -305,7 +305,9 @@ namespace WorkTogether.Models
                 notification1_newUser8.IsInvite = false;
                 notification1_newUser8.AttachedProject = newProject3.Id;
                 notification1_newUser8.FromID = newUser2.Id;
+                notification1_newUser8.FromName = newUser2.Name;
                 notification1_newUser8.ToID = newUser8.Id;
+                notification1_newUser8.ToName = newUser8.Name;
                 notification1_newUser8.SentAt = DateTime.Now;
                 notification1_newUser8.Read = false;
                 Notifications.Add(notification1_newUser8);
@@ -317,7 +319,9 @@ namespace WorkTogether.Models
                 notification2_newUser8.IsInvite = false;
                 notification2_newUser8.AttachedProject = newProject3.Id;
                 notification2_newUser8.FromID = newUser2.Id;
+                notification2_newUser8.FromName = newUser2.Name;
                 notification2_newUser8.ToID = newUser8.Id;
+                notification2_newUser8.ToName = newUser8.Name;
                 notification2_newUser8.SentAt = DateTime.Now;
                 notification2_newUser8.Read = false;
                 Notifications.Add(notification2_newUser8);
@@ -328,7 +332,9 @@ namespace WorkTogether.Models
                 notification3_newUser8.IsInvite = false;
                 notification3_newUser8.AttachedProject = newProject3.Id;
                 notification3_newUser8.FromID = newUser2.Id;
+                notification3_newUser8.FromName = newUser2.Name;
                 notification3_newUser8.ToID = newUser8.Id;
+                notification3_newUser8.ToName = newUser8.Name;
                 notification3_newUser8.SentAt = DateTime.Now;
                 notification3_newUser8.Read = false;
                 Notifications.Add(notification3_newUser8);

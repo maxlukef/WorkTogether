@@ -330,6 +330,10 @@ namespace WorkTogether.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("FromName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("IsInvite")
                         .HasColumnType("tinyint(1)");
 
@@ -344,6 +348,10 @@ namespace WorkTogether.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ToID")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ToName")
                         .IsRequired()
                         .HasColumnType("longtext");
 

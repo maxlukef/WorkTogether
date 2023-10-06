@@ -194,7 +194,9 @@ namespace WorkTogether.Controllers
                 ClassID = proj.ClassId,
                 ClassName = c.Name,
                 FromID = notification.FromID,
+                FromName = notification.FromName,
                 ToID = notification.ToID,
+                ToName = notification.ToName,
                 SentAt = notification.SentAt,
                 Read = notification.Read,
             };
@@ -210,7 +212,9 @@ namespace WorkTogether.Controllers
                 IsInvite = notification.IsInvite,
                 AttachedProject = notification.ProjectID,
                 FromID = notification.FromID,
+                FromName = notification.FromName,
                 ToID = notification.ToID,
+                ToName = notification.ToName,
                 SentAt = notification.SentAt,
                 Read = notification.Read,
 
