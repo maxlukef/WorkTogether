@@ -71,7 +71,7 @@ namespace WorkTogether.Controllers
             }
 
             var user = GetCurrentUser(HttpContext);
-            var notifications = await _context.Notification.Where(x => x.ToID == user.UserName).ToListAsync();
+            var notifications = await _context.Notification.Where(x => x.ToID == user.Id).ToListAsync();
             var notificationDTOs = new List<NotificationDTO>();
             foreach (var notification in notifications)
             {
