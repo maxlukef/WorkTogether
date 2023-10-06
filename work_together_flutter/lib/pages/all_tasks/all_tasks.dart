@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../global_components/custom_app_bar.dart';
 import '../../global_components/tag.dart';
-import '../../models/task.dart';
+import '../../models/task_models/task.dart';
 import '../create_tasks/create_tasks.dart';
 
 class AllTasksPage extends StatefulWidget {

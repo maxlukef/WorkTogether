@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:work_together_flutter/models/new_user.dart';
+import 'package:work_together_flutter/models/user_models/new_user.dart';
 
 import '../../../http_request.dart';
 import '../../../main_container.dart';
-import '../../../models/user.dart';
+import '../../../models/user_models/user.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({

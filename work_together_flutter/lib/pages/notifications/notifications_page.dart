@@ -1,43 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../http_request.dart';
+import '../../models/notification_models/notification_dto.dart';
 
-class NotificationsPage extends StatefulWidget {
+class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<NotificationsPage> createState() => _NotificationsPageState();
+  ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
 }
 
-class _NotificationsPageState extends State<NotificationsPage> {
+class _NotificationsPageState extends ConsumerState<NotificationsPage> {
+  final HttpService httpService = HttpService();
   @override
   Widget build(BuildContext context) {
-    List<Widget> notifications = [];
+    return FutureBuilder(
+        future: httpService.getCurrentUserNotifications(),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasError) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Text("An error has occurred while loading page."),
+              ],
+            );
+          } else if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData &&
+              snapshot.data != null) {
+            List<NotificationDTO> currentUserNotifications = snapshot.data!;
 
-    // Hardcoded notifcations.
-    notifications.add(
-        createNotification("CS 4400", "Complete Weekly Survey", "03/24/2023"));
-    notifications.add(
-        createNotification("CS 5530", "Complete Peer Review", "07/23/1994"));
-    notifications.add(
-        createNotification("CS 4400", "Complete Weekly Survey", "03/24/2023"));
-    notifications.add(
-        createNotification("CS 5530", "Complete Peer Review", "07/23/1994"));
-    notifications.add(
-        createNotification("CS 4400", "Complete Weekly Survey", "03/24/2023"));
-    notifications.add(
-        createNotification("CS 5530", "Complete Peer Review", "07/23/1994"));
-    notifications.add(
-        createNotification("CS 4400", "Complete Weekly Survey", "03/24/2023"));
-    notifications.add(
-        createNotification("CS 5530", "Complete Peer Review", "07/23/1994"));
-    notifications.add(
-        createNotification("CS 4400", "Complete Weekly Survey", "03/24/2023"));
-    notifications.add(
-        createNotification("CS 5530", "Complete Peer Review", "07/23/1994"));
+            List<Widget> notificationsWidgets = [];
 
+            for (NotificationDTO currentUserNotification
+                in currentUserNotifications) {
+              notificationsWidgets.add(createNotification(
+                  currentUserNotification.className,
+                  currentUserNotification.title,
+                  "${currentUserNotification.sentAt.year}/${currentUserNotification.sentAt.month}/${currentUserNotification.sentAt.day}"));
+            }
+
+            return buildPage(context, notificationsWidgets);
+          }
+          return const CircularProgressIndicator();
+        });
+  }
+
+  Widget buildPage(BuildContext context, List<Widget> notificationsWidgets) {
     return Scaffold(
         backgroundColor: const Color(0xFFFFFFFF),
         appBar: const CustomAppBar(title: "Notifications"),
@@ -45,7 +58,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           padding: const EdgeInsets.all(8.0),
           child: ListView.builder(
               padding: const EdgeInsets.all(8),
-              itemCount: notifications.length,
+              itemCount: notificationsWidgets.length,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -56,7 +69,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       onPressed: () {},
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: notifications[index],
+                        child: notificationsWidgets[index],
                       )),
                 );
               }),

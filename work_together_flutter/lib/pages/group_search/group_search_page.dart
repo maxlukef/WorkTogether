@@ -6,7 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../global_components/custom_app_bar.dart';
 import '../../global_components/tag.dart';
 import '../../http_request.dart';
-import '../../models/card_info.dart';
+import '../../models/card_info_models/card_info.dart';
 import '../../provider/filter_choices.dart';
 
 enum ExpectedGrade { A, B, C, notApplicable }

@@ -6,7 +6,7 @@ import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
 import '../../http_request.dart';
 import '../../main.dart';
-import '../../models/user.dart';
+import '../../models/user_models/user.dart';
 
 class GroupSearchProfilePage extends ConsumerStatefulWidget {
   const GroupSearchProfilePage({

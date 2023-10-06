@@ -4,14 +4,15 @@ import 'package:http/http.dart';
 import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
 import 'package:work_together_flutter/models/chat_models/chat_message_dto.dart';
 import 'package:work_together_flutter/models/classes_models/classes_dto.dart';
-import 'package:work_together_flutter/models/login_request.dart';
-import 'package:work_together_flutter/models/login_results.dart';
-import 'package:work_together_flutter/models/new_user.dart';
+import 'package:work_together_flutter/models/login_models/login_request.dart';
+import 'package:work_together_flutter/models/login_models/login_results.dart';
+import 'package:work_together_flutter/models/user_models/new_user.dart';
 
 import 'main.dart';
-import 'models/card_info.dart';
+import 'models/card_info_models/card_info.dart';
+import 'models/notification_models/notification_dto.dart';
 import 'models/project_models/project_in_class.dart';
-import 'models/user.dart';
+import 'models/user_models/user.dart';
 
 class HttpService {
   var authHeader = {
@@ -342,6 +343,38 @@ class HttpService {
     }
   }
 
+  Future<List<NotificationDTO>?> getCurrentUserNotifications() async {
+    Uri uri = Uri.https("localhost:7277", "api/Notifications/GetForCurUser");
+    Response res = await get(uri, headers: authHeader);
+
+    List<NotificationDTO> notifications = [];
+
+    if (res.statusCode == 200) {
+      List<dynamic> notificationBody = jsonDecode(res.body);
+
+      for (dynamic notification in notificationBody) {
+        NotificationDTO notificationToAdd = NotificationDTO(
+            id: notification["id"],
+            title: notification["title"],
+            description: notification["description"],
+            isInvite: notification["isInvite"],
+            projectID: notification["projectID"],
+            projectName: notification["projectName"],
+            classID: notification["classID"],
+            className: notification["className"],
+            fromID: notification["fromID"],
+            toID: notification["toID"],
+            sentAt: DateTime.parse((notification["sentAt"])),
+            read: notification["read"]);
+
+        notifications.add(notificationToAdd);
+      }
+      return notifications;
+    } else {
+      return null;
+    }
+  }
+
   Future<List<ProjectInClass>?> getCurrentUserProjectsAndClasses() async {
     Uri uri = Uri.https("localhost:7277", "api/Classes/currentuserclasses");
     Response classesRes = await get(uri, headers: authHeader);
@@ -383,7 +416,6 @@ class HttpService {
           return null;
         }
       }
-      print(projectsInClass.length);
       return projectsInClass;
     } else {
       return null;

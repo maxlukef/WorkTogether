@@ -8,7 +8,7 @@ import 'package:work_together_flutter/pages/profile/edit_profile_page.dart';
 import 'package:work_together_flutter/provider/interest_list.dart';
 
 import '../../http_request.dart';
-import '../../models/user.dart';
+import '../../models/user_models/user.dart';
 import '../../provider/filter_choices.dart';
 import '../../provider/meeting_time_list.dart';
 import '../../provider/skill_list.dart';

@@ -4,7 +4,7 @@ import 'package:work_together_flutter/global_components/tag.dart';
 import 'package:work_together_flutter/provider/interest_list.dart';
 import '../../global_components/custom_app_bar.dart';
 import '../../http_request.dart';
-import '../../models/user.dart';
+import '../../models/user_models/user.dart';
 
 enum StudentStatus { fullTime, partTime }
 

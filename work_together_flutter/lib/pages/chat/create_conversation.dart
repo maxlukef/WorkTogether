@@ -3,7 +3,7 @@ import 'package:work_together_flutter/http_request.dart';
 import 'package:work_together_flutter/models/classes_models/classes_dto.dart';
 
 import '../../global_components/custom_app_bar.dart';
-import '../../models/user.dart';
+import '../../models/user_models/user.dart';
 
 class CreateConversation extends StatefulWidget {
   const CreateConversation({super.key});

@@ -6,7 +6,7 @@ import 'package:work_together_flutter/provider/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
 import '../../http_request.dart';
-import '../../models/card_info.dart';
+import '../../models/card_info_models/card_info.dart';
 import '../../provider/skill_list.dart';
 import '../group_search/group_search_page.dart';
 
