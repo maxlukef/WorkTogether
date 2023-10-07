@@ -47,7 +47,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var task = await _context.Tasks.Where(t => t.Id == id).Include(t => t.Team).FirstOrDefaultAsync();
+            var task = await _context.Tasks.Where(t => t.Id == id).Include(t => t.Team).Include(t => t.ParentMilestone).FirstOrDefaultAsync();
             Team team = await _context.Teams.Where(te => te.Id == task.Team.Id).Include(te => te.Members).FirstOrDefaultAsync();
             if (task == null || team == null)
             {
@@ -78,7 +78,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t=>t.Team).Where(t => t.Assignees.Contains(curr_user) && !t.Completed).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t=>t.Team).Include(t => t.ParentMilestone).Where(t => t.Assignees.Contains(curr_user) && !t.Completed).ToListAsync();
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
             foreach (TaskItem task in tasks) {
@@ -102,7 +102,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t => t.Team).Where(t => t.Assignees.Contains(curr_user)).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t=> t.ParentMilestone).Include(t => t.Team).Where(t => t.Assignees.Contains(curr_user)).ToListAsync();
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
             foreach (TaskItem task in tasks)
@@ -141,7 +141,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Where(t => t.Team.Id == teamid && !t.Completed).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && !t.Completed).ToListAsync();
 
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
@@ -181,7 +181,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Where(t => t.Team.Id == teamid).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid).ToListAsync();
 
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
@@ -221,7 +221,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Where(t => t.Team.Id == teamid && !t.Completed && t.Assignees.Contains(curr_user)).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && !t.Completed && t.Assignees.Contains(curr_user)).ToListAsync();
 
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
@@ -260,7 +260,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Where(t => t.Team.Id == teamid && t.Assignees.Contains(curr_user)).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && t.Assignees.Contains(curr_user)).ToListAsync();
 
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
@@ -302,7 +302,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Where(t => t.ParentMilestone == ms && !t.Completed).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t=>t.Team).Include(t=>t.Assignees).Where(t => t.ParentMilestone == ms && !t.Completed).ToListAsync();
 
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
@@ -343,7 +343,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Where(t => t.ParentMilestone == ms).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t=>t.Team).Include(t=>t.Assignees).Where(t => t.ParentMilestone == ms).ToListAsync();
 
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
@@ -370,9 +370,13 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).FirstOrDefaultAsync();
-            if (ms == null) { return NotFound(); }
-            var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
+            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
+            if (ms == null) { 
+                
+                return NotFound();
+            
+            }
+            var team = await _context.Teams.Include(te => te.Project).Include(te => te.Members).Where(te => te.Project.Id == ms.Project.Id && te.Members.Contains(curr_user)).FirstOrDefaultAsync();
 
 
             if (team == null)
@@ -384,7 +388,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.Assignees).Where(t => t.ParentMilestone == ms && !t.Completed && t.Assignees.Contains(curr_user)).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.ParentMilestone == ms && !t.Completed && t.Assignees.Contains(curr_user)).ToListAsync();
 
 
             List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
@@ -536,7 +540,7 @@ namespace WorkTogether.Controllers
 
             Team t = await _context.Teams.Where(t => t.Id == task.Team.Id).Include(t => t.Members).FirstOrDefaultAsync();
 
-            if (t != null)
+            if (t == null)
             {
                 return NotFound(t.Id);
             }
@@ -556,7 +560,8 @@ namespace WorkTogether.Controllers
             {
                 TaskMs = await _context.Milestones.FindAsync(taskDTO.ParentMilestoneID);
             }
-
+            _context.Tasks.Remove(task);
+            _context.SaveChanges();
             task.DueDate = StrToDate(taskDTO.DueDate);
             task.Description = taskDTO.Description;
             task.Completed = taskDTO.Completed;
@@ -566,9 +571,8 @@ namespace WorkTogether.Controllers
             task.ParentTask = TaskPT;
 
             task.Assignees = taskAssignees;
-
-
-            await _context.SaveChangesAsync();
+            _context.Tasks.Add(task);
+            _context.SaveChanges();
 
             return Ok();
         }
