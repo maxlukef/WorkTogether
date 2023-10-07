@@ -1,12 +1,19 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
+import 'package:work_together_flutter/models/chat_models/chat_message_dto.dart';
+import 'package:work_together_flutter/models/chat_models/chat_rename_dto.dart';
+import 'package:work_together_flutter/models/chat_models/create_chat_dto.dart';
+import 'package:work_together_flutter/models/chat_models/send_message_dto.dart';
+import 'package:work_together_flutter/models/classes_models/classes_dto.dart';
 import 'package:work_together_flutter/models/login_request.dart';
 import 'package:work_together_flutter/models/login_results.dart';
 import 'package:work_together_flutter/models/new_user.dart';
 
 import 'main.dart';
 import 'models/card_info.dart';
+import 'models/project_models/project_in_class.dart';
 import 'models/user.dart';
 
 class HttpService {
@@ -287,6 +294,167 @@ class HttpService {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<bool> createNewConversation(CreateChatDTO dto) async {
+    String body = jsonEncode(dto);
+
+    Uri uri = Uri.https("localhost:7277", "new");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> sendMessage(SendMessageDto dto) async {
+    String body = jsonEncode(dto);
+
+    Uri uri = Uri.https("localhost:7277", "send");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> renameChat(ChatRenameDTO dto) async {
+    String body = jsonEncode(dto);
+
+    Uri uri = Uri.https("localhost:7277", "rename");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> leaveChat(int chatID) async {
+    Uri uri = Uri.https("localhost:7277", "leave/$chatID");
+    Response res = await post(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<List<ChatInfo>?> getConversationInfo() async {
+    Uri uri = Uri.https("localhost:7277", "currentuserchats");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ChatInfo> conversations;
+
+      conversations = (json.decode(res.body) as List)
+          .map((i) => ChatInfo.fromJson(i))
+          .toList();
+      return conversations;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ChatMessage>?> getMessages(int chatID) async {
+    Uri uri = Uri.https("localhost:7277", "messages/$chatID");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ChatMessage> conversations;
+
+      conversations = (json.decode(res.body) as List)
+          .map((i) => ChatMessage.fromJson(i))
+          .toList();
+      return conversations;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ClassesDTO>?> getCurrentUsersClasses() async {
+    Uri uri = Uri.https("localhost:7277", "api/Classes/currentuserclasses");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ClassesDTO> classes;
+
+      classes = (json.decode(res.body) as List)
+          .map((i) => ClassesDTO.fromJson(i))
+          .toList();
+      return classes;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ProjectInClass>?> getCurrentUserProjectsAndClasses() async {
+    Uri uri = Uri.https("localhost:7277", "api/Classes/currentuserclasses");
+    Response classesRes = await get(uri, headers: authHeader);
+
+    if (classesRes.statusCode == 200) {
+      List<ClassesDTO> classes;
+      List<ProjectInClass> projectsInClass = [];
+
+      classes = (json.decode(classesRes.body) as List)
+          .map((i) => ClassesDTO.fromJson(i))
+          .toList();
+
+      for (ClassesDTO classDto in classes) {
+        int classId = classDto.classID;
+
+        Uri uri = Uri.https(
+            'localhost:7277', 'api/Projects/GetProjectsByClassId/$classId');
+        var projectsRes = await get(uri, headers: authHeader);
+
+        if (projectsRes.statusCode == 200) {
+          List<dynamic> projectBody = jsonDecode(projectsRes.body);
+
+          for (dynamic project in projectBody) {
+            ProjectInClass projectInClass = ProjectInClass(
+                id: project["id"],
+                name: project["name"],
+                description: project["description"],
+                className: classDto.name,
+                classId: classDto.classID,
+                minTeamSize: project["minTeamSize"],
+                maxTeamSize: project["maxTeamSize"],
+                deadline: DateTime.parse((project["deadline"])),
+                teamFormationDeadline:
+                    DateTime.parse((project["teamFormationDeadline"])));
+
+            projectsInClass.add(projectInClass);
+          }
+        } else {
+          return null;
+        }
+      }
+      print(projectsInClass.length);
+      return projectsInClass;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<User>?> getStudentsInClass(int id) async {
+    Uri uri = Uri.https("localhost:7277", "api/Classes/getstudentsinclass/$id");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<User> students;
+
+      students =
+          (json.decode(res.body) as List).map((i) => User.fromJson(i)).toList();
+      return students;
+    } else {
+      return null;
     }
   }
 

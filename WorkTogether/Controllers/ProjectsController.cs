@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -57,20 +58,33 @@ namespace WorkTogether.Controllers
             return projectToDTO(project);
         }
 
-        // GET: api/Projects/GetOpenTeamSearchForClass/5
-        [HttpGet("GetOpenTeamSearchForClass/{ClassID}")]
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOpenTeamSearch(int ClassID)
+        // GET: api/Projects/GetProjectsByClassId/5
+        // Get All projects in a class
+        [HttpGet("GetProjectsByClassId/{ClassID}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsByClassId(int ClassID)
         {
-            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline > DateTime.Now).ToListAsync();
+            var projects = await _context.Projects.Where(x => x.ClassId == ClassID).ToListAsync();
 
             return Ok(projects);
         }
 
-        // GET: api/Projects/GetOpenProjectsForClass/5
-        [HttpGet("GetOpenProjectsForClass/{ClassID}")]
-        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetOpenProjects(int ClassID)
+        // GET: api/Projects/GetProjectsInGroupSearchPhase/5
+        // Team search deadline has NOT passed
+        [HttpGet("GetProjectsInGroupSearchPhase/{ClassID}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsInGroupSearchPhase(int ClassID)
         {
-            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).Where(x => x.Deadline > DateTime.Now).ToListAsync();
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline > DateTime.Now).Where(x => x.ClassId == ClassID).ToListAsync();
+
+            return Ok(projects);
+        }
+
+        // GET: api/Projects/GetProjectsNotInGroupSearchPhase/5
+        // Team search deadline has passed && Project deadline is not current time
+        [HttpGet("GetProjectsNotInGroupSearchPhase/{ClassID}")]
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsNotInGroupSearchPhase(int ClassID)
+        {
+            var projects = await _context.Projects.Where(x => x.TeamFormationDeadline < DateTime.Now).Where(x => x.ClassId == ClassID).ToListAsync();
 
             return Ok(projects);
         }
@@ -167,7 +181,7 @@ namespace WorkTogether.Controllers
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                ClassId = p.Class.Id,
+                ClassId = p.ClassId,
                 MinTeamSize = p.MinTeamSize,
                 MaxTeamSize = p.MaxTeamSize,
                 Deadline = p.Deadline,
@@ -191,7 +205,7 @@ namespace WorkTogether.Controllers
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                Class = c,
+                ClassId = p.ClassId,
                 MinTeamSize = p.MinTeamSize,
                 MaxTeamSize = p.MaxTeamSize,
                 Deadline = p.Deadline,

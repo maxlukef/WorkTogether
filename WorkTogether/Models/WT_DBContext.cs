@@ -7,6 +7,8 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Permissions;
+using WorkTogether.Models;
+using System.Diagnostics;
 
 namespace WorkTogether.Models
 {
@@ -50,6 +52,7 @@ namespace WorkTogether.Models
         public DbSet<Chat> Chats { get; set; }
 
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Notification> Notifications { get; set; } = null!;
 
 
         //These exist to make the multiple many to many relationships between Users and Classes work.
@@ -86,20 +89,32 @@ namespace WorkTogether.Models
                 
 
                 Class newClass = new Class();
+                newClass.Id = 1;
                 newClass.Name = "CS 2420: Data Structures and Algs";
                 newClass.Description = "The weed-out class.";
                 newClass.Professor = newUser2;
                 Classes.Add(newClass);
+                Debug.WriteLine("#########################");
+                Debug.WriteLine(newClass.Id);
 
+                // Project where deadline has passed and team formation deadline has passed (Project complete)
                 Project newProject = new Project();
+<<<<<<< 3793e53e3d48950c2faa80b1cc93c21b147df4bd
                 newProject.Deadline = new DateTime(2023, 11, 5);
+=======
+                newProject.Deadline = new DateTime(2023, 5, 5);
+                newProject.TeamFormationDeadline = new DateTime(2023, 4, 3);
+>>>>>>> 23f5adb2eed9d204ef02cbcd39b8dbf956e409cd
                 newProject.Name = "Implement a hash map";
                 newProject.Description = "Implement a hashmap in Java. This will take some time, so make sure you start early!";
                 newProject.MaxTeamSize = 3;
                 newProject.MinTeamSize = 1;
-                newProject.Class = newClass;
+                newProject.ClassId = newClass.Id;
+                Debug.WriteLine("######################");
+                Debug.WriteLine(newProject.ClassId);
                 Projects.Add(newProject);
 
+<<<<<<< 3793e53e3d48950c2faa80b1cc93c21b147df4bd
 
                 Milestone m = new Milestone();
                 m.Deadline = new DateTime(2023, 11, 1);
@@ -109,23 +124,59 @@ namespace WorkTogether.Models
                 Milestones.Add(m);
 
 
+=======
+                // Project where Deadline has not passed and team formation deadline has not passed (Group Search Phase)
+                Project newProject3 = new Project();
+                newProject3.Deadline = new DateTime(2025, 5, 5);
+                newProject3.TeamFormationDeadline = new DateTime(2024, 4, 4);
+                newProject3.Name = "Time Travel";
+                newProject3.Description = "Build a time machine";
+                newProject3.MaxTeamSize = 4;
+                newProject3.MinTeamSize = 2;
+                newProject3.ClassId = newClass.Id;
+                Projects.Add(newProject3);
+
+                // Project where Deadline has not passed and team formation deadline has not passed (Project complete)
+                Project project1 = new Project();
+                project1.ClassId = newClass.Id;
+                project1.Description = "Capstone Project";
+                project1.Name = "Capstone";
+                project1.MinTeamSize = 4;
+                project1.MaxTeamSize = 5;
+                project1.Deadline = new DateTime(2023, 5, 30);
+                project1.TeamFormationDeadline = new DateTime(2023, 4, 18);
+                Projects.Add(project1);
+                this.SaveChanges();
+>>>>>>> 23f5adb2eed9d204ef02cbcd39b8dbf956e409cd
 
                 Class newClass2 = new Class();
+                newClass2.Id = 2;
                 newClass2.Name = "CS 4000: Capstone Design";
                 newClass2.Description = "The first phase of the capstone project.";
                 newClass2.Professor = newUser2;
                 Classes.Add(newClass2);
 
+                // Project where deadline has passed and team formation deadline has passed (Project complete)
                 Project newProject2 = new Project();
                 newProject2.Deadline = new DateTime(2023, 4, 26);
-                newProject2.Name = "Create a prototype of your project";
-                newProject2.Description = "Prepare for the prototype demo day on 4/26!";
+                newProject2.TeamFormationDeadline = new DateTime(2023, 3, 1);
+                newProject2.Name = "Create Facebook";
+                newProject2.Description = "Good luck";
                 newProject2.MaxTeamSize = 4;
                 newProject2.MinTeamSize = 4;
-                newProject2.Class = newClass2;
+                newProject2.ClassId = newClass2.Id;
                 Projects.Add(newProject2 );
 
-
+                // Project where deadline has NOT passed and team formation deadline has passed (Project In Progress)
+                Project newProject4 = new Project();
+                newProject4.Deadline = new DateTime(2024, 2, 15);
+                newProject4.TeamFormationDeadline = new DateTime(2023, 3, 1);
+                newProject4.Name = "Create a prototype of your project";
+                newProject4.Description = "Prepare for the prototype demo day on 4/26!";
+                newProject4.MaxTeamSize = 4;
+                newProject4.MinTeamSize = 4;
+                newProject4.ClassId = newClass2.Id;
+                Projects.Add(newProject4);
 
                 User newUser = new User();
                 newUser.Name = "John Coder";
@@ -144,16 +195,6 @@ namespace WorkTogether.Models
                 studentClass1.Class = newClass;
                 studentClass1.Student = newUser;
                 StudentClasses.Add(studentClass1);
-
-                Project p1 = new Project();
-                p1.Class = newClass;
-                p1.MaxTeamSize = 4;
-                p1.MinTeamSize = 2;
-                p1.Deadline= DateTime.MaxValue;
-                p1.Name = "Time Travel";
-                p1.Description = "Build a time machine";
-                Projects.Add(p1);
-                this.SaveChanges();
 
                 User newUser3 = new User();
                 newUser3.Name = "Jim Roberts";
@@ -252,6 +293,7 @@ namespace WorkTogether.Models
                 studentClass2_7.Student = newUser7;
                 StudentClasses.Add(studentClass2_7);
 
+                // Memeber of 2 classes 
                 User newUser8 = new User();
                 newUser8.Name = "Donny Owen";
                 newUser8.Interests = "Urban Spelunking, Geocaching, Leetcoding";
@@ -436,16 +478,6 @@ namespace WorkTogether.Models
                 studentClass2_16.Student = newUser16;
                 StudentClasses.Add(studentClass2_16);
 
-                this.SaveChanges();
-
-                Project project1 = new Project();
-                project1.Class = newClass;
-                project1.Description = "Capstone Project";
-                project1.Name = "Capstone";
-                project1.MinTeamSize = 4;
-                project1.MaxTeamSize = 5;
-                project1.Deadline = new DateTime(2023, 5, 30);
-                Projects.Add(project1);
                 this.SaveChanges();
 
                 Team t1 = new Team();
@@ -1017,5 +1049,17 @@ namespace WorkTogether.Models
                 this.SaveChanges();
             }
         }
+
+        //And this exists for the many to many relationship between Users and Chats
+
+
+
+
+
+
+        /// <summary>
+        /// Seeds dummy users and dummy classes if your database is empty.
+        /// </summary>
+        public DbSet<WorkTogether.Models.Notification>? Notification { get; set; }
     }
 }

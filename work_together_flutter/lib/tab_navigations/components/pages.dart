@@ -8,7 +8,7 @@ enum PageEnum { home, chat, notifications, profile }
 
 class Pages {
   static final allPages = [
-    HomePage(userId: loggedUserId, classId: 1),
+    const HomePage(),
     const ConversationPage(),
     const NotificationsPage(),
     const ProfilePage(),
