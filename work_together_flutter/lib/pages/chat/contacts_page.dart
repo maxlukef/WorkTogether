@@ -150,8 +150,8 @@ class _ConversationPageState extends State<ConversationPage> {
                                 getConversationsApiCall();
                               }
                             },
-                            child: const Row(
-                              children: [
+                            child: Row(
+                              children: const [
                                 Icon(
                                   Icons.edit,
                                   size: 15.0,
@@ -173,8 +173,8 @@ class _ConversationPageState extends State<ConversationPage> {
                                 }
                               }
                             },
-                            child: const Row(
-                              children: [
+                            child: Row(
+                              children: const [
                                 Icon(
                                   Icons.delete,
                                   size: 15.0,

@@ -94,8 +94,8 @@ class _CreateConversationState extends State<CreateConversation> {
               title: "Create Conversation",
             ),
             body: noClasses == true
-                ? const Column(
-                    children: [
+                ? Column(
+                    children: const [
                       Padding(
                         padding: EdgeInsets.all(12.0),
                         child: Text(
