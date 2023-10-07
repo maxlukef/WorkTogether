@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:work_together_flutter/http_request.dart';
+import 'package:work_together_flutter/main.dart';
+import 'package:work_together_flutter/models/chat_models/create_chat_dto.dart';
 import 'package:work_together_flutter/models/classes_models/classes_dto.dart';
 
 import '../../global_components/custom_app_bar.dart';
@@ -13,21 +16,18 @@ class CreateConversation extends StatefulWidget {
 }
 
 class _CreateConversationState extends State<CreateConversation> {
-  TextEditingController taskName = TextEditingController();
-  TextEditingController taskLabel = TextEditingController();
-  TextEditingController taskDescription = TextEditingController();
-  TextEditingController taskDeadline = TextEditingController();
+  TextEditingController conversationName = TextEditingController();
 
   // Class selections.
   List<ClassesDTO>? studentClasses;
-  late List<DropdownMenuItem<ClassesDTO>> classesDropdownList;
-  ClassesDTO? selectedClass;
+  late List<MultiSelectItem<ClassesDTO>> classesDropdownList;
+  List<ClassesDTO> selectedClasses = [];
   bool noClasses = false;
 
   // Student selections.
   List<User>? studentsInClass;
-  User? selectedStudent;
-  late List<DropdownMenuItem<User>> studentsDropdownList;
+  List<User> selectedStudents = [];
+  late List<MultiSelectItem<User>> studentsDropdownList;
 
   @override
   void initState() {
@@ -38,49 +38,50 @@ class _CreateConversationState extends State<CreateConversation> {
   Future<void> getUserClasses() async {
     studentClasses = await HttpService().getCurrentUsersClasses();
 
-    studentClasses ??= [];
-    noClasses = true;
-
-    // Initialize to the first class.
-    if (studentClasses!.isNotEmpty) {
-      selectedClass = studentClasses!.first;
-      await getStudentsInClass(selectedClass!.classID);
+    if (studentClasses == null) {
+      studentClasses ??= [];
+      noClasses = true;
     }
-    List<DropdownMenuItem<ClassesDTO>> dropDownOptions = [];
+
+    List<MultiSelectItem<ClassesDTO>> dropDownOptions = [];
 
     for (ClassesDTO dto in studentClasses!) {
-      dropDownOptions.add(DropdownMenuItem<ClassesDTO>(
-        value: dto,
-        child: Text(dto.name),
-      ));
+      dropDownOptions.add(MultiSelectItem(dto, dto.name));
     }
 
     classesDropdownList = dropDownOptions;
     setState(() {});
   }
 
-  Future<void> getStudentsInClass(int id) async {
-    studentsInClass =
-        await HttpService().getStudentsInClass(selectedClass!.classID);
-
-    studentsInClass ??= [];
-
-    // Initialize to the first class.
-    if (studentsInClass!.isNotEmpty) {
-      selectedStudent = studentsInClass!.first;
+  Future<void> getAllStudentsInClassSelections() async {
+    studentsInClass = [];
+    for (ClassesDTO dto in selectedClasses) {
+      List<User> studentsInThisClass = await getStudentsInClass(dto.classID);
+      studentsInClass!.addAll(studentsInThisClass);
     }
+    removeDuplicatesAndCurrentUser();
 
-    List<DropdownMenuItem<User>> dropDownOptions = [];
+    List<MultiSelectItem<User>> dropDownOptions = [];
 
     for (User student in studentsInClass!) {
-      dropDownOptions.add(DropdownMenuItem<User>(
-        value: student,
-        child: Text(student.name),
-      ));
+      dropDownOptions.add(MultiSelectItem(student, student.name));
     }
 
     studentsDropdownList = dropDownOptions;
     setState(() {});
+  }
+
+  Future<List<User>> getStudentsInClass(int id) async {
+    List<User>? students = await HttpService().getStudentsInClass(id);
+    students ??= [];
+
+    return students;
+  }
+
+  void removeDuplicatesAndCurrentUser() {
+    studentsInClass!.removeWhere((student) => student.id == loggedUserId);
+    Set<int> uniqueStudents = {};
+    studentsInClass!.retainWhere((element) => uniqueStudents.add(element.id));
   }
 
   @override
@@ -93,8 +94,8 @@ class _CreateConversationState extends State<CreateConversation> {
               title: "Create Conversation",
             ),
             body: noClasses == true
-                ? Column(
-                    children: const [
+                ? const Column(
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(12.0),
                         child: Text(
@@ -116,7 +117,7 @@ class _CreateConversationState extends State<CreateConversation> {
                             const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text(
-                                "Conversation Name:",
+                                "Conversation Name.",
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
@@ -126,50 +127,70 @@ class _CreateConversationState extends State<CreateConversation> {
                               child: TextField(
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
-                                  hintText: "Enter Conversation Name",
+                                  hintText:
+                                      "Enter Conversation Name (Optional)",
                                 ),
-                                controller: taskName,
+                                controller: conversationName,
                               ),
                             ),
                             const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text(
-                                "Select Class:",
+                                "Add users to chat. At least one student must be selected.",
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: DropdownButton<ClassesDTO>(
+                              child: MultiSelectDialogField(
                                 items: classesDropdownList,
-                                value: selectedClass,
-                                onChanged: (newSelection) async {
-                                  selectedClass = newSelection;
-                                  await getStudentsInClass(
-                                      selectedClass!.classID);
-                                },
-                              ),
-                            ),
-                            if (studentsInClass != null)
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Select Student:",
+                                title: const Text(
+                                  "Select Classes",
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600),
                                 ),
+                                buttonText: const Text(
+                                  "Select Classes to Find Users",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                onConfirm: (results) async {
+                                  selectedClasses = results;
+                                  selectedStudents = [];
+                                  if (results.isNotEmpty) {
+                                    await getAllStudentsInClassSelections();
+                                  } else {
+                                    studentsInClass = null;
+                                    setState(() {});
+                                  }
+                                },
+                                searchable: true,
                               ),
+                            ),
                             if (studentsInClass != null)
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: DropdownButton<User>(
+                                child: MultiSelectDialogField(
                                   items: studentsDropdownList,
-                                  value: selectedStudent,
-                                  onChanged: (newSelection) async {
-                                    selectedStudent = newSelection;
+                                  title: const Text(
+                                    "Select Users To Add",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  buttonText: const Text(
+                                    "Add Users To Chat",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  onConfirm: (results) {
+                                    selectedStudents = results;
                                   },
+                                  searchable: true,
                                 ),
                               ),
                             Padding(
@@ -177,8 +198,25 @@ class _CreateConversationState extends State<CreateConversation> {
                               child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.blue),
-                                  // Send task to backend.
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    List<int> usersToAdd = [];
+                                    for (User u in selectedStudents) {
+                                      usersToAdd.add(u.id);
+                                    }
+                                    String name = "";
+                                    if (conversationName.text.isNotEmpty) {
+                                      name = conversationName.text;
+                                    }
+                                    if (usersToAdd.isNotEmpty) {
+                                      CreateChatDTO dto =
+                                          CreateChatDTO(name, usersToAdd);
+                                      await HttpService()
+                                          .createNewConversation(dto);
+                                      if (context.mounted) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    }
+                                  },
                                   child: const Padding(
                                     padding: EdgeInsets.fromLTRB(1, 4, 12, 8),
                                     child: Text(

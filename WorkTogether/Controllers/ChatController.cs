@@ -32,8 +32,9 @@ namespace WorkTogether.Controllers
         /// <returns></returns>
         [HttpPost("new")]
         [Authorize]
-        public async Task<ActionResult<ChatInfoDTO>> NewChat(List<int> userIds)
+        public async Task<ActionResult<ChatInfoDTO>> NewChat([FromBody] CreateChatDTO info)
         {
+            List<int> userIds = info.UserIDs;
             if(userIds.Count == 0)
             {
                 return BadRequest("Did not specify users");
@@ -52,7 +53,12 @@ namespace WorkTogether.Controllers
                 chat.Users.Add(u);
                 cname += (", " + u.Name);
             }
-            chat.Name = cname;
+            if(info.Name == "")
+                chat.Name = cname;
+            else
+            {
+                chat.Name = info.Name;
+            }
             _context.Chats.Add(chat);
             _context.SaveChanges();
             return ChatToDto(chat);
@@ -65,7 +71,7 @@ namespace WorkTogether.Controllers
         /// <returns>an ActionResult, NotFound if the chat doesn't exist, Unauthorized if the user is not authorized to send to this chat, or Ok if all is well.</returns>
         [HttpPost("send")]
         [Authorize]
-        public async Task<ActionResult> SendMessage(SendMessageDTO msg)
+        public async Task<ActionResult> SendMessage([FromBody] SendMessageDTO msg)
         {
             User u = GetCurrentUser(HttpContext);
             Chat c = await _context.Chats.Where(c => c.Id == msg.ChatID).Include(c=>c.Users).FirstOrDefaultAsync();
@@ -126,10 +132,10 @@ namespace WorkTogether.Controllers
         /// <returns>200 OK if successful, otherwise notfound if no such chat, or unauthorized if the user cannot make these changes</returns>
         [HttpPost("rename")]
         [Authorize]
-        public async Task<ActionResult> Rename(int chatId, string newName)
+        public async Task<ActionResult> Rename([FromBody] ChatRenameDTO rename)
         {
             User u = GetCurrentUser(HttpContext);
-            Chat c = await _context.Chats.Where(c => c.Id == chatId).Include(c=> c.Users).FirstOrDefaultAsync();
+            Chat c = await _context.Chats.Where(c => c.Id == rename.Id).Include(c=> c.Users).FirstOrDefaultAsync();
             if(c == null)
             {
                 return NotFound();
@@ -138,7 +144,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            c.Name = newName;
+            c.Name = rename.NewName;
             _context.SaveChanges();
             return Ok();
         }
