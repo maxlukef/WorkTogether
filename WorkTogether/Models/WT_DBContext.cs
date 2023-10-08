@@ -99,12 +99,8 @@ namespace WorkTogether.Models
 
                 // Project where deadline has passed and team formation deadline has passed (Project complete)
                 Project newProject = new Project();
-<<<<<<< 3793e53e3d48950c2faa80b1cc93c21b147df4bd
                 newProject.Deadline = new DateTime(2023, 11, 5);
-=======
-                newProject.Deadline = new DateTime(2023, 5, 5);
                 newProject.TeamFormationDeadline = new DateTime(2023, 4, 3);
->>>>>>> 23f5adb2eed9d204ef02cbcd39b8dbf956e409cd
                 newProject.Name = "Implement a hash map";
                 newProject.Description = "Implement a hashmap in Java. This will take some time, so make sure you start early!";
                 newProject.MaxTeamSize = 3;
@@ -114,7 +110,6 @@ namespace WorkTogether.Models
                 Debug.WriteLine(newProject.ClassId);
                 Projects.Add(newProject);
 
-<<<<<<< 3793e53e3d48950c2faa80b1cc93c21b147df4bd
 
                 Milestone m = new Milestone();
                 m.Deadline = new DateTime(2023, 11, 1);
@@ -124,7 +119,6 @@ namespace WorkTogether.Models
                 Milestones.Add(m);
 
 
-=======
                 // Project where Deadline has not passed and team formation deadline has not passed (Group Search Phase)
                 Project newProject3 = new Project();
                 newProject3.Deadline = new DateTime(2025, 5, 5);
@@ -147,7 +141,7 @@ namespace WorkTogether.Models
                 project1.TeamFormationDeadline = new DateTime(2023, 4, 18);
                 Projects.Add(project1);
                 this.SaveChanges();
->>>>>>> 23f5adb2eed9d204ef02cbcd39b8dbf956e409cd
+
 
                 Class newClass2 = new Class();
                 newClass2.Id = 2;
