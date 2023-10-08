@@ -110,8 +110,8 @@ namespace WorkTogether.Controllers
         {
             User u = GetCurrentUser(HttpContext);
             List<Project> teamprojects = await _context.Teams.Include(t => t.Members).Include(t=>t.Project).Where(t => t.Members.Contains(u)).Select(t=>t.Project).ToListAsync();
-            var userclasses = await _context.StudentClasses.Include(s => s.Class).Where(s => s.Student == u).Select(s => s.Class).ToListAsync();
-            var userprojects = await _context.Projects.Include(p=> p.Class).Where(p => userclasses.Contains(p.Class) && !teamprojects.Contains(p)).ToListAsync();
+            var userclasses = await _context.StudentClasses.Include(s => s.Class).Where(s => s.Student == u).Select(s => s.Class.Id).ToListAsync();
+            var userprojects = await _context.Projects.Include(p=> p.ClassId).Where(p => userclasses.Contains(p.ClassId) && !teamprojects.Contains(p)).ToListAsync();
             List<ProjectDTO> toReturn = new List<ProjectDTO>();
             foreach(Project x in userprojects)
             {
@@ -119,7 +119,7 @@ namespace WorkTogether.Controllers
                 projectDTO.Id = x.Id;
                 projectDTO.Name = x.Name;
                 projectDTO.Description = x.Description;
-                projectDTO.ClassId = x.Class.Id;
+                projectDTO.ClassId = x.ClassId;
                 projectDTO.Deadline = x.Deadline;
                 projectDTO.MaxTeamSize = x.MaxTeamSize;
                 projectDTO.MinTeamSize = x.MinTeamSize;
@@ -259,15 +259,15 @@ namespace WorkTogether.Controllers
 
             var inviter = await _context.Users.Where(u => u.UserId == inviterId).FirstOrDefaultAsync();
             var invitee = await _context.Users.Where(u => u.UserId == inviteeId).FirstOrDefaultAsync();
-            var project = await _context.Projects.Include(p => p.Class).Where(Project => Project.Id == projectId).ToListAsync();
-            if (project.Count == 0) {
+            var project = await _context.Projects.Include(p => p.ClassId).Where(Project => Project.Id == projectId).ToListAsync();
+            if (project.Count() == 0) {
                 return BadRequest("No such project");
             }
             if (inviter == null || invitee == null)
             {
                 return BadRequest("No such user");
             }
-            Class c = project[0].Class;
+            Class c = _context.Classes.Find(project[0].ClassId);
             var inviteeStudentClass = await _context.StudentClasses.Include(s => s.Student).Include(s => s.Class).Where(StudentClass => StudentClass.Class == c && StudentClass.Student == invitee).ToListAsync();
             var inviterStudentClass = await _context.StudentClasses.Include(s => s.Student).Include(s => s.Class).Where(StudentClass => StudentClass.Class == c && StudentClass.Student == inviter).ToListAsync();
             if(inviteeStudentClass.Count == 0 || inviterStudentClass.Count == 0)
@@ -276,7 +276,7 @@ namespace WorkTogether.Controllers
             }
 
             var inviteeTeam = await _context.Teams.Include(T => T.Members).Include(T => T.Project).Where(Team => Team.Project == project[0] && Team.Members.Contains(invitee)).ToListAsync();
-            if(inviteeTeam.Count > 0)
+            if(inviteeTeam.Count() > 0)
             {
                 return BadRequest("Invitee already part of a team");
             }

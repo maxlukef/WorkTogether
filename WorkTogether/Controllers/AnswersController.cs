@@ -60,7 +60,7 @@ namespace WorkTogether.Controllers
                    join q in _context.Questionnaires on p.Id equals q.Project.Id
                    join que in _context.Questions on q equals que.Questionnaire
                    join a in _context.Answers on que equals a.Question
-                   where a.Answerer.UserId == StudentID && p.Class.Id == classID
+                   where a.Answerer.UserId == StudentID && p.ClassId == classID
                    select new { question = a.Question, answer = a.AnswerStr }).ToListAsync();
 
             List<AnswerDTO> answerList = new List<AnswerDTO>();

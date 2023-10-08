@@ -313,6 +313,45 @@ namespace WorkTogether.Migrations
                     b.ToTable("Milestones");
                 });
 
+            modelBuilder.Entity("WorkTogether.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("AttachedProject")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FromID")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsInvite")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ToID")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notification");
+                });
+
             modelBuilder.Entity("WorkTogether.Models.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -343,8 +382,6 @@ namespace WorkTogether.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ClassId");
 
                     b.ToTable("Projects");
                 });
@@ -748,17 +785,6 @@ namespace WorkTogether.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("WorkTogether.Models.Project", b =>
-                {
-                    b.HasOne("WorkTogether.Models.Class", "Class")
-                        .WithMany()
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Class");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Question", b =>
