@@ -40,7 +40,7 @@ namespace WorkTogether.Controllers
         /// <returns>a TaskDTO</returns>
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<BasicTaskDTO>> GetTask(int id)
+        public async Task<ActionResult<ReturnTaskDTO>> GetTask(int id)
         {
             User curr_user = await _um.GetUserAsync(User);
             if (_context.Tasks == null)
@@ -59,7 +59,7 @@ namespace WorkTogether.Controllers
                 return Unauthorized();
             }
 
-            BasicTaskDTO taskDTO = TaskToBasicDTO(task);
+            ReturnTaskDTO taskDTO = TaskToReturnDTO(task);
 
             return taskDTO;
         }
@@ -71,7 +71,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of tasks for the current user</returns>
         [Authorize]
         [HttpGet("UserTasks")]
-        public async Task<ActionResult<BasicTaskDTO>> GetUserTasks()
+        public async Task<ActionResult<ReturnTaskDTO>> GetUserTasks()
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -80,9 +80,9 @@ namespace WorkTogether.Controllers
             }
             var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t=>t.Team).Include(t => t.ParentMilestone).Where(t => t.Assignees.Contains(curr_user) && !t.Completed).ToListAsync();
 
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks) {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -95,7 +95,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of task dtos for the current user</returns>
         [Authorize]
         [HttpGet("AllUserTasks")]
-        public async Task<ActionResult<BasicTaskDTO>> GetAllUserTasks()
+        public async Task<ActionResult<ReturnTaskDTO>> GetAllUserTasks()
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -104,10 +104,10 @@ namespace WorkTogether.Controllers
             }
             var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t=> t.ParentMilestone).Include(t => t.Team).Where(t => t.Assignees.Contains(curr_user)).ToListAsync();
 
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -122,7 +122,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of task dtos</returns>
         [Authorize]
         [HttpGet("GroupTasks/{teamid}")]
-        public async Task<ActionResult<BasicTaskDTO>> GetGroupTasks(int teamid)
+        public async Task<ActionResult<ReturnTaskDTO>> GetGroupTasks(int teamid)
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -144,10 +144,10 @@ namespace WorkTogether.Controllers
             var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && !t.Completed).ToListAsync();
 
 
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -162,7 +162,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of task dtos</returns>
         [Authorize]
         [HttpGet("AllGroupTasks/{teamid}")]
-        public async Task<ActionResult<BasicTaskDTO>> GetAllGroupTasks(int teamid)
+        public async Task<ActionResult<ReturnTaskDTO>> GetAllGroupTasks(int teamid)
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -184,10 +184,10 @@ namespace WorkTogether.Controllers
             var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid).ToListAsync();
 
 
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -202,7 +202,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of task DTOs</returns>
         [Authorize]
         [HttpGet("UserGroupTasks/{teamid}")]
-        public async Task<ActionResult<BasicTaskDTO>> GetUserGroupTasks(int teamid)
+        public async Task<ActionResult<ReturnTaskDTO>> GetUserGroupTasks(int teamid)
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -224,10 +224,10 @@ namespace WorkTogether.Controllers
             var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && !t.Completed && t.Assignees.Contains(curr_user)).ToListAsync();
 
 
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -241,7 +241,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of task DTOs</returns>
         [Authorize]
         [HttpGet("AllUserGroupTasks/{teamid}")]
-        public async Task<ActionResult<BasicTaskDTO>> GetAllUserGroupTasks(int teamid)
+        public async Task<ActionResult<ReturnTaskDTO>> GetAllUserGroupTasks(int teamid)
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -262,11 +262,10 @@ namespace WorkTogether.Controllers
             }
             var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && t.Assignees.Contains(curr_user)).ToListAsync();
 
-
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -281,7 +280,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of tasks for the milestone</returns>
         [Authorize]
         [HttpGet("MilestoneTasks/{msid}")]
-        public async Task<ActionResult<BasicTaskDTO>> GetMilestoneTasks(int msid)
+        public async Task<ActionResult<ReturnTaskDTO>> GetMilestoneTasks(int msid)
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -305,10 +304,10 @@ namespace WorkTogether.Controllers
             var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t=>t.Team).Include(t=>t.Assignees).Where(t => t.ParentMilestone == ms && !t.Completed).ToListAsync();
 
 
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -322,7 +321,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of tasks for the milestone</returns>
         [Authorize]
         [HttpGet("AllMilestoneTasks/{msid}")]
-        public async Task<ActionResult<BasicTaskDTO>> GetAllMilestoneTasks(int msid)
+        public async Task<ActionResult<ReturnTaskDTO>> GetAllMilestoneTasks(int msid)
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -345,11 +344,10 @@ namespace WorkTogether.Controllers
             }
             var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t=>t.Team).Include(t=>t.Assignees).Where(t => t.ParentMilestone == ms).ToListAsync();
 
-
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -363,7 +361,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of tasks for the milestone</returns>
         [Authorize]
         [HttpGet("UserMilestoneTasks/{msid}")]
-        public async Task<ActionResult<BasicTaskDTO>> GetUserMilestoneTasks(int msid)
+        public async Task<ActionResult<ReturnTaskDTO>> GetUserMilestoneTasks(int msid)
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -390,11 +388,10 @@ namespace WorkTogether.Controllers
             }
             var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.ParentMilestone == ms && !t.Completed && t.Assignees.Contains(curr_user)).ToListAsync();
 
-
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -409,7 +406,7 @@ namespace WorkTogether.Controllers
         /// <returns>List of tasks for the milestone</returns>
         [Authorize]
         [HttpGet("AllUserMilestoneTasks/{msid}")]
-        public async Task<ActionResult<BasicTaskDTO>> GetAllUserMilestoneTasks(int msid)
+        public async Task<ActionResult<ReturnTaskDTO>> GetAllUserMilestoneTasks(int msid)
         {
             User curr_user = GetCurrentUser(HttpContext);
             if (_context.Tasks == null)
@@ -433,10 +430,10 @@ namespace WorkTogether.Controllers
             var tasks = await _context.Tasks.Include(t => t.Assignees).Where(t => t.ParentMilestone == ms && t.Assignees.Contains(curr_user)).ToListAsync();
 
 
-            List<BasicTaskDTO> tasks_dto = new List<BasicTaskDTO>();
+            List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
             {
-                tasks_dto.Add(TaskToBasicDTO(task));
+                tasks_dto.Add(TaskToReturnDTO(task));
             }
 
             return new ObjectResult(tasks_dto);
@@ -450,7 +447,7 @@ namespace WorkTogether.Controllers
         /// <returns>Ok if successful, error otherwise. problem, Notfound, or Unauthorized</returns>
         [HttpPost("create")]
         [Authorize]
-        public async Task<ActionResult<BasicTaskDTO>> CreateTask(CreateTaskDTO taskDTO)
+        public async Task<ActionResult> CreateTask(CreateTaskDTO taskDTO)
         {
             User curr = GetCurrentUser(HttpContext);
 
@@ -789,6 +786,39 @@ namespace WorkTogether.Controllers
             };
         }
 
+
+        private static ReturnTaskDTO TaskToReturnDTO(TaskItem task)
+        {
+            int? ptid = null;
+            int? pmid = null;
+            if (task.ParentTask != null)
+            {
+                ptid = task.ParentTask.Id;
+            }
+            if (task.ParentMilestone != null)
+            {
+                pmid = task.ParentMilestone.Id;
+            }
+            List<UserProfileDTO> assgd = new List<UserProfileDTO>();
+            foreach(User u in task.Assignees)
+            {
+                assgd.Add(UsertoProfileDTO(u));
+            }
+            return new ReturnTaskDTO
+            {
+                Id = task.Id,
+                Name = task.Name,
+                Description = task.Description,
+                TeamID = task.Team.Id,
+                ParentTaskID = ptid,
+                ParentMilestoneID = pmid,
+                Assignees = assgd,
+                DueDate = DateToStr(task.DueDate),
+                Completed = task.Completed,
+
+            };
+        }
+
         private static DateTime StrToDate(string date)
         {
             var splitdate = date.Split('-');
@@ -801,6 +831,19 @@ namespace WorkTogether.Controllers
             return "" + d.Year + "-" + d.Month + "-" + d.Day;
         }
 
+
+        private static UserProfileDTO UsertoProfileDTO(User user) =>
+        new UserProfileDTO
+        {
+        Id = user.UserId,
+        Name = user.Name,
+        Email = user.Email,
+        Bio = user.Bio,
+        Major = user.Major,
+        EmploymentStatus = user.EmploymentStatus,
+        StudentStatus = user.StudentStatus,
+        Interests = user.Interests
+           };
         /*
 
 // PUT: api/Tasks/5
@@ -891,22 +934,22 @@ public async Task<IActionResult> PutTask(int id, BasicTaskDTO taskDTO)
 
             return CreatedAtAction("GetTask", new { id = task.Id }, task);
         }*/
-                /*
+        /*
 
-        // GET: api/Tasks
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<BasicTaskDTO>>> GetTasks()
-        {
-          if (_context.Tasks == null)
-          {
-              return NotFound();
-          }
-            var all_tasks = await _context.Tasks.ToListAsync();
+// GET: api/Tasks
+[HttpGet]
+public async Task<ActionResult<IEnumerable<BasicTaskDTO>>> GetTasks()
+{
+  if (_context.Tasks == null)
+  {
+      return NotFound();
+  }
+    var all_tasks = await _context.Tasks.ToListAsync();
 
-            IEnumerable<BasicTaskDTO> all_tasks_dto = from task in all_tasks select TaskToBasicDTO(task);
+    IEnumerable<BasicTaskDTO> all_tasks_dto = from task in all_tasks select TaskToBasicDTO(task);
 
-            return new ObjectResult(all_tasks_dto);
-        }
-        */
+    return new ObjectResult(all_tasks_dto);
+}
+*/
     }
 }
