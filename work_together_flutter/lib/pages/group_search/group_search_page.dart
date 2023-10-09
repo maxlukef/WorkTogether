@@ -12,14 +12,20 @@ import '../../provider/filter_choices.dart';
 enum ExpectedGrade { A, B, C, notApplicable }
 
 class GroupSearchPage extends ConsumerStatefulWidget {
-  const GroupSearchPage({
-    Key? key,
-    required this.userId,
-    required this.classId,
-  }) : super(key: key);
+  const GroupSearchPage(
+      {Key? key,
+      required this.userId,
+      required this.classId,
+      required this.className,
+      required this.projectId,
+      required this.projectName})
+      : super(key: key);
 
   final int userId;
   final int classId;
+  final String className;
+  final int projectId;
+  final String projectName;
 
   @override
   ConsumerState<GroupSearchPage> createState() => _GroupSearchPageState();
@@ -119,6 +125,10 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                             weeklyHours: teamMates![index].weeklyHours,
                             interests: teamMates![index].interests,
                             notifyParent: refresh,
+                            classId: widget.classId,
+                            className: widget.className,
+                            projectId: widget.projectId,
+                            projectName: widget.projectName,
                           );
                         }),
                     const Padding(
@@ -209,6 +219,10 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                           weeklyHours: filteredUsers[index].weeklyHours,
                           interests: filteredUsers[index].interests,
                           notifyParent: refresh,
+                          classId: widget.classId,
+                          className: widget.className,
+                          projectId: widget.projectId,
+                          projectName: widget.projectName,
                         );
                       });
                 } else {
@@ -232,6 +246,10 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                           weeklyHours: users![index].weeklyHours,
                           interests: users![index].interests,
                           notifyParent: refresh,
+                          classId: widget.classId,
+                          className: widget.className,
+                          projectId: widget.projectId,
+                          projectName: widget.projectName,
                         );
                       });
                 }

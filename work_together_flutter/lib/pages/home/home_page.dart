@@ -130,8 +130,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   Navigator.push(context, MaterialPageRoute(
                                     builder: (context) {
                                       return QuestionnairePage(
-                                          classId: projectNameValue.classId,
-                                          userId: loggedUserId);
+                                        loggedUserId: loggedUserId,
+                                        classId: projectNameValue.classId,
+                                        className: projectNameValue.className,
+                                        projectId: projectNameValue.id,
+                                        projectName: projectNameValue.name,
+                                      );
                                     },
                                   ));
                                 } else {

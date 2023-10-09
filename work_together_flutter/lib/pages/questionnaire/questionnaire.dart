@@ -13,14 +13,20 @@ import '../group_search/group_search_page.dart';
 enum ExpectedQuality { A, B, C }
 
 class QuestionnairePage extends ConsumerStatefulWidget {
-  const QuestionnairePage({
-    Key? key,
-    required this.userId,
-    required this.classId,
-  }) : super(key: key);
+  const QuestionnairePage(
+      {Key? key,
+      required this.loggedUserId,
+      required this.classId,
+      required this.className,
+      required this.projectId,
+      required this.projectName})
+      : super(key: key);
 
-  final int userId;
+  final int loggedUserId;
   final int classId;
+  final String className;
+  final int projectId;
+  final String projectName;
 
   @override
   ConsumerState<QuestionnairePage> createState() => _QuestionnairePageState();
@@ -48,7 +54,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await httpService
           .getQuestionnaireAnswersByClassIdAndUserId(
-              widget.classId, widget.userId)
+              widget.classId, widget.loggedUserId)
           .then((loggedUserAnswers) => {
                 loggedUser = loggedUserAnswers,
                 if (loggedUserAnswers.expectedGrade == "A")
@@ -449,7 +455,11 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return GroupSearchPage(
-                                  classId: 1, userId: loggedUserId);
+                                  userId: widget.loggedUserId,
+                                  classId: widget.classId,
+                                  className: widget.className,
+                                  projectId: widget.projectId,
+                                  projectName: widget.projectName);
                             },
                           ))
                         },

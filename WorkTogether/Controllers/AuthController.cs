@@ -58,7 +58,8 @@ namespace WorkTogether.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    id = user.UserId
+                    id = user.UserId,
+                    name = user.Name,
                 });
             }
             return Unauthorized();
@@ -117,7 +118,8 @@ namespace WorkTogether.Controllers
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                id = user.UserId
+                id = user.UserId,
+                name = user.Name,
             });
         }
 

@@ -275,6 +275,7 @@ class HttpService {
 
       authToken = result.authToken;
       loggedUserId = result.id;
+      loggedUserName = result.name;
       return true;
     } else {
       return false;
@@ -396,6 +397,22 @@ class HttpService {
     }
   }
 
+  Future<bool> sendInviteNotificationToUser(
+    NotificationDTO notificationDTO,
+  ) async {
+    String body = jsonEncode(notificationDTO);
+
+    Uri uri =
+        Uri.https("localhost:7277", "api/Notifications/PostForSingleUser");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
   Future<List<NotificationDTO>?> getCurrentUserNotifications() async {
     Uri uri = Uri.https("localhost:7277", "api/Notifications/GetForCurUser");
     Response res = await get(uri, headers: authHeader);
@@ -416,7 +433,9 @@ class HttpService {
             classID: notification["classID"],
             className: notification["className"],
             fromID: notification["fromID"],
+            fromName: notification["fromName"],
             toID: notification["toID"],
+            toName: notification["toName"],
             sentAt: DateTime.parse((notification["sentAt"])),
             read: notification["read"]);
 

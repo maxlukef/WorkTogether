@@ -304,9 +304,9 @@ namespace WorkTogether.Models
                     "This is incredibly important towards the completion of milestone 1";
                 notification1_newUser8.IsInvite = false;
                 notification1_newUser8.AttachedProject = newProject3.Id;
-                notification1_newUser8.FromID = newUser2.Id;
+                notification1_newUser8.FromID = newUser2.UserId;
                 notification1_newUser8.FromName = newUser2.Name;
-                notification1_newUser8.ToID = newUser8.Id;
+                notification1_newUser8.ToID = newUser8.UserId;
                 notification1_newUser8.ToName = newUser8.Name;
                 notification1_newUser8.SentAt = DateTime.Now;
                 notification1_newUser8.Read = false;
@@ -318,9 +318,9 @@ namespace WorkTogether.Models
                     "You will need a team for this project it is mandatory.";
                 notification2_newUser8.IsInvite = false;
                 notification2_newUser8.AttachedProject = newProject3.Id;
-                notification2_newUser8.FromID = newUser2.Id;
+                notification2_newUser8.FromID = newUser2.UserId;
                 notification2_newUser8.FromName = newUser2.Name;
-                notification2_newUser8.ToID = newUser8.Id;
+                notification2_newUser8.ToID = newUser8.UserId;
                 notification2_newUser8.ToName = newUser8.Name;
                 notification2_newUser8.SentAt = DateTime.Now;
                 notification2_newUser8.Read = false;
@@ -331,9 +331,9 @@ namespace WorkTogether.Models
                 notification3_newUser8.Description = "Show up in person to class this Monday. We have an important announcment.";
                 notification3_newUser8.IsInvite = false;
                 notification3_newUser8.AttachedProject = newProject3.Id;
-                notification3_newUser8.FromID = newUser2.Id;
+                notification3_newUser8.FromID = newUser2.UserId;
                 notification3_newUser8.FromName = newUser2.Name;
-                notification3_newUser8.ToID = newUser8.Id;
+                notification3_newUser8.ToID = newUser8.UserId;
                 notification3_newUser8.ToName = newUser8.Name;
                 notification3_newUser8.SentAt = DateTime.Now;
                 notification3_newUser8.Read = false;

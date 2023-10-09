@@ -38,10 +38,13 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
             for (NotificationDTO currentUserNotification
                 in currentUserNotifications) {
-              notificationsWidgets.add(createNotification(
-                  currentUserNotification.className,
-                  currentUserNotification.title,
-                  "${currentUserNotification.sentAt.year}/${currentUserNotification.sentAt.month}/${currentUserNotification.sentAt.day}"));
+              notificationsWidgets.add(
+                createNotification(
+                    currentUserNotification.className,
+                    currentUserNotification.title,
+                    "${currentUserNotification.sentAt.year}/${currentUserNotification.sentAt.month}/${currentUserNotification.sentAt.day}",
+                    currentUserNotification.fromName),
+              );
             }
 
             return buildPage(context, notificationsWidgets);
@@ -76,7 +79,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         ));
   }
 
-  Widget createNotification(String className, String title, String dueDate) {
+  Widget createNotification(
+      String className, String title, String dueDate, String fromUserName) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +98,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         Row(
           children: [
             const Text(
-              "Due: ",
+              "Recieved: ",
               style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
@@ -106,6 +110,21 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   fontWeight: FontWeight.normal,
                   fontSize: 15,
                   color: Color.fromARGB(255, 31, 152, 252)),
+            ),
+            const Spacer(),
+            const Text(
+              "From: ",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 15),
+            ),
+            Text(
+              fromUserName,
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 15),
             ),
           ],
         ),

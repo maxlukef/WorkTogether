@@ -20,9 +20,13 @@ class NotificationDTO {
   @JsonKey()
   final String className;
   @JsonKey()
-  final String fromID;
+  final int fromID;
   @JsonKey()
-  final String toID;
+  final String fromName;
+  @JsonKey()
+  final int toID;
+  @JsonKey()
+  final String toName;
   @JsonKey()
   final DateTime sentAt;
   @JsonKey()
@@ -38,7 +42,9 @@ class NotificationDTO {
     required this.classID,
     required this.className,
     required this.fromID,
+    required this.fromName,
     required this.toID,
+    required this.toName,
     required this.sentAt,
     required this.read,
   });

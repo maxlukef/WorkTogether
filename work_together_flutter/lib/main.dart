@@ -7,6 +7,7 @@ void main() {
 }
 
 int loggedUserId = 0;
+String loggedUserName = "";
 String authToken = "";
 
 class MyApp extends StatelessWidget {
