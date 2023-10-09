@@ -18,6 +18,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   final HttpService httpService = HttpService();
   @override
   Widget build(BuildContext context) {
+    final HttpService httpService = HttpService();
+
     return FutureBuilder(
         future: httpService.getCurrentUserNotifications(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -47,13 +49,15 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               );
             }
 
-            return buildPage(context, notificationsWidgets);
+            return buildPage(
+                context, notificationsWidgets, currentUserNotifications);
           }
           return const CircularProgressIndicator();
         });
   }
 
-  Widget buildPage(BuildContext context, List<Widget> notificationsWidgets) {
+  Widget buildPage(BuildContext context, List<Widget> notificationsWidgets,
+      List<NotificationDTO> currentUserNotifications) {
     return Scaffold(
         backgroundColor: const Color(0xFFFFFFFF),
         appBar: const CustomAppBar(title: "Notifications"),
@@ -69,7 +73,68 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey.shade200),
                       // Bring user to relavant page regarding the notification.
-                      onPressed: () {},
+                      onPressed: () => {
+                            if (currentUserNotifications
+                                .elementAt(index)
+                                .isInvite)
+                              {
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: Text(
+                                        '${currentUserNotifications.elementAt(index).fromName} Team Invite'),
+                                    content: Text(
+                                        "${currentUserNotifications.elementAt(index).fromName} invited You To a Team. Would you like to join?"),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, 'Reject'),
+                                        child: const Text('Reject'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => {
+                                          HttpService().inviteToTeam(
+                                              currentUserNotifications
+                                                  .elementAt(index)
+                                                  .projectID,
+                                              currentUserNotifications
+                                                  .elementAt(index)
+                                                  .fromID,
+                                              currentUserNotifications
+                                                  .elementAt(index)
+                                                  .toID),
+                                          Navigator.pop(context, 'Accept')
+                                        },
+                                        child: const Text('Accept'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              }
+                            else
+                              {
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: Text(currentUserNotifications
+                                        .elementAt(index)
+                                        .title),
+                                    content: Text(currentUserNotifications
+                                        .elementAt(index)
+                                        .description),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, 'Ok'),
+                                        child: const Text('Ok'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              }
+                          },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: notificationsWidgets[index],
