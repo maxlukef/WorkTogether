@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -15,7 +17,30 @@ class NotificationsPage extends ConsumerStatefulWidget {
 }
 
 class _NotificationsPageState extends ConsumerState<NotificationsPage> {
+  Timer? timer;
   final HttpService httpService = HttpService();
+  late List<NotificationDTO> currentUserNotifications = [];
+
+  Future<void> getNotificationsApiCall() async {
+    currentUserNotifications =
+        (await httpService.getCurrentUserNotifications())!;
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(
+        const Duration(seconds: 5), (Timer t) => getNotificationsApiCall());
+    getNotificationsApiCall();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final HttpService httpService = HttpService();
@@ -34,7 +59,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           } else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData &&
               snapshot.data != null) {
-            List<NotificationDTO> currentUserNotifications = snapshot.data!;
+            currentUserNotifications = snapshot.data!;
 
             List<Widget> notificationsWidgets = [];
 
@@ -51,8 +76,25 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
             return buildPage(
                 context, notificationsWidgets, currentUserNotifications);
+          } else if (currentUserNotifications.isNotEmpty && snapshot.hasData) {
+            List<Widget> notificationsWidgets = [];
+
+            for (NotificationDTO currentUserNotification
+                in currentUserNotifications) {
+              notificationsWidgets.add(
+                createNotification(
+                    currentUserNotification.className,
+                    currentUserNotification.title,
+                    "${currentUserNotification.sentAt.year}/${currentUserNotification.sentAt.month}/${currentUserNotification.sentAt.day}",
+                    currentUserNotification.fromName),
+              );
+            }
+
+            return buildPage(
+                context, notificationsWidgets, currentUserNotifications);
+          } else {
+            return const CircularProgressIndicator();
           }
-          return const CircularProgressIndicator();
         });
   }
 

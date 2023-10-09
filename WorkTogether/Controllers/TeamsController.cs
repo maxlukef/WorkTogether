@@ -247,15 +247,18 @@ namespace WorkTogether.Controllers
 
             var inviter = await _context.Users.Where(u => u.UserId == inviterId).FirstOrDefaultAsync();
             var invitee = await _context.Users.Where(u => u.UserId == inviteeId).FirstOrDefaultAsync();
-            var project = await _context.Projects.Include(p => p.ClassId).Where(Project => Project.Id == projectId).ToListAsync();
-            if (project.Count() == 0) {
+            var project = await _context.Projects.Where(Project => Project.Id == projectId).FirstOrDefaultAsync();
+
+            if (project == null) {
                 return BadRequest("No such project");
             }
+
             if (inviter == null || invitee == null)
             {
                 return BadRequest("No such user");
             }
-            Class c = _context.Classes.Find(project[0].ClassId);
+
+            Class c = _context.Classes.Find(project.ClassId);
             var inviteeStudentClass = await _context.StudentClasses.Include(s => s.Student).Include(s => s.Class).Where(StudentClass => StudentClass.Class == c && StudentClass.Student == invitee).ToListAsync();
             var inviterStudentClass = await _context.StudentClasses.Include(s => s.Student).Include(s => s.Class).Where(StudentClass => StudentClass.Class == c && StudentClass.Student == inviter).ToListAsync();
             if(inviteeStudentClass.Count == 0 || inviterStudentClass.Count == 0)
@@ -263,13 +266,13 @@ namespace WorkTogether.Controllers
                 return BadRequest("Both users must be students in the class");
             }
 
-            var inviteeTeam = await _context.Teams.Include(T => T.Members).Include(T => T.Project).Where(Team => Team.Project == project[0] && Team.Members.Contains(invitee)).ToListAsync();
+            var inviteeTeam = await _context.Teams.Include(T => T.Members).Include(T => T.Project).Where(Team => Team.Project == project && Team.Members.Contains(invitee)).ToListAsync();
             if(inviteeTeam.Count() > 0)
             {
                 return BadRequest("Invitee already part of a team");
             }
 
-            var inviterTeam = await _context.Teams.Include(T => T.Members).Include(T => T.Project).Where(Team => Team.Project == project[0] && Team.Members.Contains(inviter)).ToListAsync();
+            var inviterTeam = await _context.Teams.Include(T => T.Members).Include(T => T.Project).Where(Team => Team.Project == project && Team.Members.Contains(inviter)).ToListAsync();
             Team t;
             if(inviterTeam.Count > 0)
             {
@@ -282,12 +285,13 @@ namespace WorkTogether.Controllers
                 _context.SaveChanges();
             } else { 
                 t = new Team();
-                t.Project = project[0];
+                t.Project = project;
                 t.Complete = false;
                 t.Name = "Untitled";
                 t.Members = new List<User>();
                 t.Members.Add(inviter);
             }
+
             t.Members.Add(invitee);
             _context.Teams.Add(t);
             _context.SaveChanges();
