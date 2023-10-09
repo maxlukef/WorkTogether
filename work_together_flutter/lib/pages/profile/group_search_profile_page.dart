@@ -6,19 +6,24 @@ import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
 import '../../http_request.dart';
 import '../../main.dart';
-import '../../models/user.dart';
+import '../../models/notification_models/notification_dto.dart';
+import '../../models/user_models/user.dart';
 
 class GroupSearchProfilePage extends ConsumerStatefulWidget {
-  const GroupSearchProfilePage({
-    Key? key,
-    required this.id,
-    required this.availableMornings,
-    required this.availableAfternoons,
-    required this.availableEvenings,
-    required this.skills,
-    required this.expectedGrade,
-    required this.weeklyHours,
-  }) : super(key: key);
+  const GroupSearchProfilePage(
+      {Key? key,
+      required this.id,
+      required this.availableMornings,
+      required this.availableAfternoons,
+      required this.availableEvenings,
+      required this.skills,
+      required this.expectedGrade,
+      required this.weeklyHours,
+      required this.classId,
+      required this.className,
+      required this.projectId,
+      required this.projectName})
+      : super(key: key);
 
   final int id;
   final List<String> availableMornings;
@@ -27,6 +32,10 @@ class GroupSearchProfilePage extends ConsumerStatefulWidget {
   final List<String> skills;
   final String expectedGrade;
   final String weeklyHours;
+  final int classId;
+  final String className;
+  final int projectId;
+  final String projectName;
 
   @override
   ConsumerState<GroupSearchProfilePage> createState() =>
@@ -107,12 +116,35 @@ class _GroupProfileProfilePageState
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
                             return QuestionnairePage(
-                                classId: 1, userId: loggedUserId);
+                                loggedUserId: loggedUserId,
+                                classId: widget.classId,
+                                className: widget.className,
+                                projectId: widget.projectId,
+                                projectName: widget.projectName);
                           },
                         ));
                       } else {
-                        HttpService().inviteToTeam(1, loggedUserId, widget.id);
-                        Navigator.pop(context);
+                        NotificationDTO teamInviteNotificationDTO = NotificationDTO(
+                            id: -1,
+                            title: "$loggedUserName Invited You To a Team",
+                            description:
+                                "$loggedUserName Invited You To a Team. Would you like to join?",
+                            isInvite: true,
+                            projectID: widget.projectId,
+                            projectName: widget.projectName,
+                            classID: widget.classId,
+                            className: widget.className,
+                            fromID: loggedUserId,
+                            fromName: loggedUserName,
+                            toID: userdata.id,
+                            toName: userdata.name,
+                            sentAt: DateTime.now(),
+                            read: false);
+
+                        HttpService().sendInviteNotificationToUser(
+                            teamInviteNotificationDTO);
+                        // HttpService().inviteToTeam(1, loggedUserId, widget.id);
+                        // Navigator.pop(context);
                       }
                     },
                     style: ElevatedButton.styleFrom(

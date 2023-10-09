@@ -39,25 +39,16 @@ class _HomePageState extends ConsumerState<HomePage> {
               snapshot.data != null) {
             List<ProjectInClass> classesAndProjects = snapshot.data!;
 
-            print(classesAndProjects.length);
-
             // Hashmap of class names to a list of projects
             final Map<String, List<ProjectInClass>> classesToProjects =
                 HashMap();
 
             for (ProjectInClass classesAndProject in classesAndProjects) {
-              // print(classesAndProject.name);
               classesToProjects.putIfAbsent(
                   classesAndProject.className, () => <ProjectInClass>[]);
               classesToProjects[classesAndProject.className]
                   ?.add(classesAndProject);
             }
-
-            classesToProjects.forEach((key, value) {
-              value.forEach((element) {
-                print(element.name);
-              });
-            });
 
             return buildPage(context, classesToProjects);
           }
@@ -139,8 +130,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   Navigator.push(context, MaterialPageRoute(
                                     builder: (context) {
                                       return QuestionnairePage(
-                                          classId: projectNameValue.classId,
-                                          userId: loggedUserId);
+                                        loggedUserId: loggedUserId,
+                                        classId: projectNameValue.classId,
+                                        className: projectNameValue.className,
+                                        projectId: projectNameValue.id,
+                                        projectName: projectNameValue.name,
+                                      );
                                     },
                                   ));
                                 } else {

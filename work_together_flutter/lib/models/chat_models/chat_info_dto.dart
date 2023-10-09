@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:work_together_flutter/models/user.dart';
+import 'package:work_together_flutter/models/user_models/user.dart';
 part 'chat_info_dto.g.dart';
 
 @JsonSerializable(explicitToJson: true)

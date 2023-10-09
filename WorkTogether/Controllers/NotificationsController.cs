@@ -71,7 +71,7 @@ namespace WorkTogether.Controllers
             }
 
             var user = GetCurrentUser(HttpContext);
-            var notifications = await _context.Notification.Where(x => x.ToID == user.UserName).ToListAsync();
+            var notifications = await _context.Notification.Where(x => x.ToID == user.UserId).ToListAsync();
             var notificationDTOs = new List<NotificationDTO>();
             foreach (var notification in notifications)
             {
@@ -114,16 +114,35 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
-        // POST: api/Notifications
+        // POST: api/Notifications/PostForSingleUser
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("PostForSingleUser")]
+        [Authorize]
         public async Task<ActionResult<Notification>> PostNotification(NotificationDTO notificationDTO)
         {
-          if (_context.Notification == null)
-          {
+            if (_context.Notification == null)
+            {
               return Problem("Entity set 'WT_DBContext.Notification'  is null.");
-          }
-            Notification notification = DTOToNotification(notificationDTO);
+            }
+
+            NotificationDTO newNotificationDTO = new NotificationDTO();
+
+            // TODO: May not be best practice
+            newNotificationDTO.Title = notificationDTO.Title;
+            newNotificationDTO.Description = notificationDTO.Description;
+            newNotificationDTO.IsInvite = notificationDTO.IsInvite;
+            newNotificationDTO.ProjectID = notificationDTO.ProjectID;
+            newNotificationDTO.ProjectName = notificationDTO.ProjectName;
+            newNotificationDTO.ClassID = notificationDTO.ClassID;
+            newNotificationDTO.ClassName = notificationDTO.ClassName;
+            newNotificationDTO.FromID = notificationDTO.FromID;
+            newNotificationDTO.FromName = notificationDTO.FromName;
+            newNotificationDTO.ToID = notificationDTO.ToID;
+            newNotificationDTO.ToName = notificationDTO.ToName;
+            newNotificationDTO.SentAt = notificationDTO.SentAt;
+            newNotificationDTO.Read = notificationDTO.Read;
+
+            Notification notification = DTOToNotification(newNotificationDTO);
 
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
@@ -144,7 +163,7 @@ namespace WorkTogether.Controllers
 
             foreach(var user in users)
             {
-                notification.ToID = user.Id;
+                notification.ToID = user.UserId;
                 _context.Notification.Add(notification);
             }
 
@@ -152,8 +171,8 @@ namespace WorkTogether.Controllers
             return CreatedAtAction("GetNotification", new { id = notification.Id }, notification);
         }
 
-        // DELETE: api/Notifications/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Notifications/DeleteNotification/5
+        [HttpDelete("DeleteNotification/{id}")]
         public async Task<IActionResult> DeleteNotification(int id)
         {
             if (_context.Notification == null)
@@ -194,7 +213,9 @@ namespace WorkTogether.Controllers
                 ClassID = proj.ClassId,
                 ClassName = c.Name,
                 FromID = notification.FromID,
+                FromName = notification.FromName,
                 ToID = notification.ToID,
+                ToName = notification.ToName,
                 SentAt = notification.SentAt,
                 Read = notification.Read,
             };
@@ -210,7 +231,9 @@ namespace WorkTogether.Controllers
                 IsInvite = notification.IsInvite,
                 AttachedProject = notification.ProjectID,
                 FromID = notification.FromID,
+                FromName = notification.FromName,
                 ToID = notification.ToID,
+                ToName = notification.ToName,
                 SentAt = notification.SentAt,
                 Read = notification.Read,
 

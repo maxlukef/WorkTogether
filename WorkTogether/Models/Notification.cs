@@ -9,8 +9,10 @@ namespace WorkTogether.Models
         public string Description { get; set; }
         public Boolean IsInvite { get; set; }
         public int AttachedProject { get; set; }
-        public string FromID { get; set; }
-        public string ToID { get; set; }
+        public int FromID { get; set; }
+        public string FromName { get; set; }
+        public int ToID { get; set; }
+        public string ToName { get; set; }
         public DateTime SentAt { get; set; }
         public Boolean Read { get; set; }
     }
@@ -25,8 +27,10 @@ namespace WorkTogether.Models
         public string? ProjectName { get; set; }
         public int ClassID { get; set; }
         public string? ClassName { get; set; }
-        public string FromID { get; set; }
-        public string ToID { get; set; }
+        public int FromID { get; set; }
+        public string FromName { get; set; }
+        public int ToID { get; set; }
+        public string ToName { get; set; }
         public DateTime SentAt { get; set; }
         public Boolean Read { get; set; }
     }

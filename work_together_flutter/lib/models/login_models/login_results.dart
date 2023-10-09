@@ -7,8 +7,10 @@ class LoginResults {
   final String authToken;
   @JsonKey()
   final int id;
+  @JsonKey()
+  final String name;
 
-  LoginResults({required this.authToken, required this.id});
+  LoginResults({required this.authToken, required this.id, required this.name});
 
   factory LoginResults.fromJson(Map<String, dynamic> json) =>
       _$LoginResultsFromJson(json);

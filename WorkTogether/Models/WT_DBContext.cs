@@ -52,19 +52,14 @@ namespace WorkTogether.Models
         public DbSet<Chat> Chats { get; set; }
 
         public DbSet<Message> Messages { get; set; }
-        public DbSet<Notification> Notifications { get; set; } = null!;
 
+        public DbSet<Notification> Notifications { get; set; } = null!;
 
         //These exist to make the multiple many to many relationships between Users and Classes work.
         public DbSet<TAClass> TAClasses { get; set; } = null!;
         public DbSet<StudentClass> StudentClasses { get; set; } = null!;
 
         //And this exists for the many to many relationship between Users and Chats
-
-
-
-
-
 
         /// <summary>
         /// Seeds dummy users and dummy classes if your database is empty.
@@ -299,7 +294,7 @@ namespace WorkTogether.Models
                 newUser8.Major = "Computer Science";
                 newUser8.UserId = 7;
                 newUser8.UserName = newUser8.Email;
-                _um.CreateAsync(newUser8, "pw");
+                await _um.CreateAsync(newUser8, "pw");
 
                 StudentClass studentClass7 = new StudentClass();
                 studentClass7.Class = newClass;
@@ -310,6 +305,50 @@ namespace WorkTogether.Models
                 studentClass2_8.Class = newClass2;
                 studentClass2_8.Student = newUser8;
                 StudentClasses.Add(studentClass2_8);
+
+                // Create Notifcations for User 8 u0000007@utah.edu
+
+                Notification notification1_newUser8 = new Notification();
+                notification1_newUser8.Title = "Build Time Travel GUI";
+                notification1_newUser8.Description = "Remember to build the time travel graphical user interface. " +
+                    "This is incredibly important towards the completion of milestone 1";
+                notification1_newUser8.IsInvite = false;
+                notification1_newUser8.AttachedProject = newProject3.Id;
+                notification1_newUser8.FromID = newUser2.UserId;
+                notification1_newUser8.FromName = newUser2.Name;
+                notification1_newUser8.ToID = newUser8.UserId;
+                notification1_newUser8.ToName = newUser8.Name;
+                notification1_newUser8.SentAt = DateTime.Now;
+                notification1_newUser8.Read = false;
+                Notifications.Add(notification1_newUser8);
+
+                Notification notification2_newUser8 = new Notification();
+                notification2_newUser8.Title = "Remember to Complete Team Formation";
+                notification2_newUser8.Description = "Please complete team formation prior to the team deadling closing. " +
+                    "You will need a team for this project it is mandatory.";
+                notification2_newUser8.IsInvite = false;
+                notification2_newUser8.AttachedProject = newProject3.Id;
+                notification2_newUser8.FromID = newUser2.UserId;
+                notification2_newUser8.FromName = newUser2.Name;
+                notification2_newUser8.ToID = newUser8.UserId;
+                notification2_newUser8.ToName = newUser8.Name;
+                notification2_newUser8.SentAt = DateTime.Now;
+                notification2_newUser8.Read = false;
+                Notifications.Add(notification2_newUser8);
+
+                Notification notification3_newUser8 = new Notification();
+                notification3_newUser8.Title = "Show up to Class";
+                notification3_newUser8.Description = "Show up in person to class this Monday. We have an important announcment.";
+                notification3_newUser8.IsInvite = false;
+                notification3_newUser8.AttachedProject = newProject3.Id;
+                notification3_newUser8.FromID = newUser2.UserId;
+                notification3_newUser8.FromName = newUser2.Name;
+                notification3_newUser8.ToID = newUser8.UserId;
+                notification3_newUser8.ToName = newUser8.Name;
+                notification3_newUser8.SentAt = DateTime.Now;
+                notification3_newUser8.Read = false;
+                Notifications.Add(notification3_newUser8);
+
 
                 User newUser9 = new User();
                 newUser9.Name = "Melissa Walker";

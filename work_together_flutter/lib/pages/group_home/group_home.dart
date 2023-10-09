@@ -4,8 +4,8 @@ import 'package:work_together_flutter/pages/create_tasks/create_tasks.dart';
 import 'package:work_together_flutter/pages/milestone%20description/milestone_description.dart';
 
 import '../../global_components/custom_app_bar.dart';
-import '../../models/milestone.dart';
-import '../../models/task.dart';
+import '../../models/milestone_models/milestone.dart';
+import '../../models/task_models/task.dart';
 import '../task description/task_description.dart';
 
 class GroupHome extends StatelessWidget {
