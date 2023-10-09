@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
 import 'package:work_together_flutter/models/chat_models/chat_message_dto.dart';
+import 'package:work_together_flutter/models/chat_models/chat_rename_dto.dart';
+import 'package:work_together_flutter/models/chat_models/create_chat_dto.dart';
+import 'package:work_together_flutter/models/chat_models/send_message_dto.dart';
 import 'package:work_together_flutter/models/classes_models/classes_dto.dart';
 import 'package:work_together_flutter/models/login_models/login_request.dart';
 import 'package:work_together_flutter/models/login_models/login_results.dart';
@@ -293,6 +296,56 @@ class HttpService {
     } else {
       return false;
     }
+  }
+
+  Future<bool> createNewConversation(CreateChatDTO dto) async {
+    String body = jsonEncode(dto);
+
+    Uri uri = Uri.https("localhost:7277", "new");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> sendMessage(SendMessageDto dto) async {
+    String body = jsonEncode(dto);
+
+    Uri uri = Uri.https("localhost:7277", "send");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> renameChat(ChatRenameDTO dto) async {
+    String body = jsonEncode(dto);
+
+    Uri uri = Uri.https("localhost:7277", "rename");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> leaveChat(int chatID) async {
+    Uri uri = Uri.https("localhost:7277", "leave/$chatID");
+    Response res = await post(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
   }
 
   Future<List<ChatInfo>?> getConversationInfo() async {
