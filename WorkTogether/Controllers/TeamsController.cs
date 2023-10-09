@@ -128,43 +128,55 @@ namespace WorkTogether.Controllers
             return toReturn;
         }
 
-            // GET: api/Teams/5
-            [HttpGet("{id}")]
+        // GET: api/Teams/5
+        [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<TeamDTO>> GetTeam(int id)
         {
-          if (_context.Teams == null)
-          {
-              return NotFound();
-          }
-          var team = await _context.Teams.Include(T => T.Project).Where(Team => Team.Id == id).FirstOrDefaultAsync();
-
-          if (team == null)
-          {
-            return NotFound();
-          }
-          var teamMembers = await _context.Teams.Include(T => T.Members).Where(Team => Team.Id == id).Select(Team => Team.Members).FirstOrDefaultAsync();
-
-            if (teamMembers == null)
+            User u = GetCurrentUser(HttpContext);
+            Team team = await _context.Teams.Where(t => t.Id == id).Include(t => t.Project).Include(t => t.Members).FirstOrDefaultAsync();
+            if (team == null)
             {
                 return NotFound();
             }
-
+            if (!team.Members.Contains(u))
+            {
+                return Unauthorized();
+            }
             TeamDTO t = new TeamDTO();
+            t.Name = team.Name;
+            t.Id = team.Id;
             t.Complete = team.Complete;
             t.projectId = team.Project.Id;
-            t.Id = team.Id;
             t.Members = new List<UserProfileDTO>();
-
-            foreach (User i in teamMembers)
+            foreach (User cur in team.Members)
             {
-                //var userToAdd = await _context.Users.FindAsync(i);
-                if (i != null)
-                {
-                    t.Members.Add(UsertoProfileDTO(i));
-                }
-
+                t.Members.Add(UsertoProfileDTO(cur));
             }
+            return t;
+        }
 
+        // GET: api/Teams/byproject/1
+        [HttpGet("byproject/{id}")]
+        [Authorize]
+        public async Task<ActionResult<TeamDTO>> GetTeamByProjectId(int id)
+        {
+            User u = GetCurrentUser(HttpContext);
+            Team team = await _context.Teams.Include(t => t.Project).Include(t => t.Members).Where(t => t.Project.Id == id && t.Members.Contains(u)).FirstOrDefaultAsync();
+            if(team == null)
+            {
+                return NotFound();
+            }
+            TeamDTO t = new TeamDTO();
+            t.Name = team.Name;
+            t.Id = team.Id;
+            t.Complete = team.Complete;
+            t.projectId = team.Project.Id;
+            t.Members = new List<UserProfileDTO>();
+            foreach (User cur in team.Members)
+            {
+                t.Members.Add(UsertoProfileDTO(cur));
+            }
             return t;
         }
 
