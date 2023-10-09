@@ -171,8 +171,8 @@ namespace WorkTogether.Controllers
             return CreatedAtAction("GetNotification", new { id = notification.Id }, notification);
         }
 
-        // DELETE: api/Notifications/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Notifications/DeleteNotification/5
+        [HttpDelete("DeleteNotification/{id}")]
         public async Task<IActionResult> DeleteNotification(int id)
         {
             if (_context.Notification == null)

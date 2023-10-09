@@ -397,6 +397,18 @@ class HttpService {
     }
   }
 
+  Future<bool> deleteNotification(int id) async {
+    Uri uri =
+        Uri.https("localhost:7277", "api/Notifications/DeleteNotification/$id");
+    Response res = await delete(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
   Future<bool> sendInviteNotificationToUser(
     NotificationDTO notificationDTO,
   ) async {

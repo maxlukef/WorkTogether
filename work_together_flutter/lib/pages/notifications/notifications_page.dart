@@ -76,7 +76,11 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
             return buildPage(
                 context, notificationsWidgets, currentUserNotifications);
-          } else if (currentUserNotifications.isNotEmpty && snapshot.hasData) {
+          }
+
+          if (currentUserNotifications.isEmpty && !snapshot.hasData) {
+            return const CircularProgressIndicator();
+          } else {
             List<Widget> notificationsWidgets = [];
 
             for (NotificationDTO currentUserNotification
@@ -92,8 +96,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
             return buildPage(
                 context, notificationsWidgets, currentUserNotifications);
-          } else {
-            return const CircularProgressIndicator();
           }
         });
   }
@@ -130,8 +132,14 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                                         "${currentUserNotifications.elementAt(index).fromName} invited You To a Team. Would you like to join?"),
                                     actions: <Widget>[
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'Reject'),
+                                        onPressed: () => {
+                                          httpService.deleteNotification(
+                                              currentUserNotifications
+                                                  .elementAt(index)
+                                                  .id),
+                                          Navigator.pop(context, 'Reject'),
+                                          setState(() {})
+                                        },
                                         child: const Text('Reject'),
                                       ),
                                       TextButton(
