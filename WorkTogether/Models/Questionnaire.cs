@@ -19,4 +19,10 @@
 
         public int ProjectID { get; set; }
     }
+
+    public class QuestionnaireDTO
+    {
+        public int Id { get; set; }
+        public int ProjectID { get; set; }
+    }
 }

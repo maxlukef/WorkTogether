@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Printing;
@@ -52,6 +53,31 @@ namespace WorkTogether.Controllers
             return answer;
         }
 
+        // GET: api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/1
+        [HttpGet("GetAnswersByQuestionnaireIdForCurrentUser/{questionnaireId}")]
+        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByQuestionnaireIdForCurrentUser(int questionnaireId, int currUserId)
+        {
+            // TODO: Add back with auth once everything is working on the frontend
+            // User u = GetCurrentUser(HttpContext);
+
+            var result = await (from projects in _context.Projects
+                                join questionnaire in _context.Questionnaires on projects.Id equals questionnaire.Project.Id
+                                join question in _context.Questions on questionnaire.Id equals question.Questionnaire.Id
+                                join answers in _context.Answers on question.Id equals answers.Question.Id
+                                where answers.Answerer.UserId == currUserId && questionnaire.Id == questionnaireId
+                                select new { Id = answers.Id, AnswerStr =  answers.AnswerStr, Question = answers.Question, Answerer = answers.Answerer}).ToListAsync();
+
+            List<AnswerDTO> answerList = new List<AnswerDTO>();
+
+            foreach (var answer in result)
+            {
+                answerList.Add(
+                    AnswertoAnswerDTO(new Answer { Id = answer.Id, AnswerStr = answer.AnswerStr, Question = answer.Question, Answerer = answer.Answerer }));
+            }
+
+            return answerList;
+        }
+
         // GET: api/Answers/1/5
         [HttpGet("{classID}/{StudentID}")]
         public async Task<ActionResult<List<AnswerDTO>>> GetAnswersForStudentProject(int classID, int StudentID)
@@ -74,7 +100,7 @@ namespace WorkTogether.Controllers
             return answerList;
         }
 
-        [HttpPost("{projectID}/{StudentID}")]
+/*        [HttpPost("{projectID}/{StudentID}")]
         public async Task<IActionResult> PostAnswersForStudentProject(int projectID, int StudentID, List<AnswerDTO> answers)
         {
             var user = _context.Users.Where(x => x.UserId == StudentID).Single();
@@ -102,9 +128,9 @@ namespace WorkTogether.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }*/
 
-        [HttpPut("{ProjectID}/{StudentID}")]
+/*        [HttpPut("{ProjectID}/{StudentID}")]
         public async Task<IActionResult> PutAnswersForStudentProject(int ProjectID, int StudentID, List<AnswerDTO> answers)
         {
             var user = _context.Users.Where(x => x.UserId == StudentID).Single();
@@ -124,7 +150,7 @@ namespace WorkTogether.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }*/
 
         // PUT: api/Answers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -197,11 +223,21 @@ namespace WorkTogether.Controllers
             return (_context.Answers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+        private User GetCurrentUser(HttpContext httpContext)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
+            return u1;
+        }
+
         private static AnswerDTO AnswertoAnswerDTO(Answer answer) =>
         new AnswerDTO
         {
-            qNum = answer.Question.Id,
-            answerText = answer.AnswerStr
+            Id = answer.Id,
+            AnswerText = answer.AnswerStr,
+            QuestionId = answer.Question.Id,
+            AnswererId = answer.Answerer.UserId,
+            AnswererName = answer.Answerer.Name,
         };
     }
 }

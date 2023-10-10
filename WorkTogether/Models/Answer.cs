@@ -25,8 +25,10 @@
 
     public class AnswerDTO
     {
-        public int qNum { get; set; }
-        public string answerText { get; set; }
-
+        public int Id { get; set; }
+        public string AnswerText { get; set; }
+        public int QuestionId { get; set; }
+        public int AnswererId { get; set; }
+        public string AnswererName { get; set; }
     }
 }

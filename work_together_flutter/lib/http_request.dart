@@ -15,6 +15,7 @@ import 'main.dart';
 import 'models/card_info_models/card_info.dart';
 import 'models/notification_models/notification_dto.dart';
 import 'models/project_models/project_in_class.dart';
+import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
 class HttpService {
@@ -520,6 +521,32 @@ class HttpService {
       return null;
     }
   }
+
+  // Future<QuestionnaireInfo> getQuestionnaireInfoByProjectId(
+  //     int projectId) async {
+  //   Uri uri = Uri.https('localhost:7277',
+  //       'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
+
+  //   Response res = await get(uri);
+
+  //   QuestionnaireInfo questionnaireInfo;
+
+  //   if (res.statusCode == 200) {
+  //     List<dynamic> questionnaireBody = jsonDecode(res.body);
+
+  //     print(questionnaireBody);
+  //     questionnaireInfo = QuestionnaireInfo(
+  //         id: questionnaireBody[0]["id"],
+  //         projectId: questionnaireBody[0]["projectId"]);
+  //     print("Got here");
+  //     print(questionnaireInfo.id);
+  //     print(questionnaireInfo.projectId);
+  //     return questionnaireInfo;
+  //   } else {
+  //     print("BLEW UP");
+  //     throw "Unable to retrieve Questionnaire";
+  //   }
+  // }
 
   Future<CardInfo> getQuestionnaireAnswersByClassIdAndUserId(
       classId, userId) async {

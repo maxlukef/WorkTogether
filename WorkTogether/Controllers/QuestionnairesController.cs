@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using WorkTogether.Models;
 
@@ -58,6 +59,35 @@ namespace WorkTogether.Controllers
             }
 
             return questionnaire;
+        }
+
+        // GET: api/Questionnaires/GetQuestionnaireByProjectId/5
+        [HttpGet("GetQuestionnaireByProjectId/{projectID}")]
+        public async Task<ActionResult<QuestionnaireDTO>> GetQuestionnaireByProjectId(int projectID)
+        {
+            if (_context.Questionnaires == null)
+            {
+                return NotFound();
+            }
+
+            Questionnaire questionnaireFinal = new Questionnaire();
+
+            var result = await (from questionnaire in _context.Questionnaires
+                                join project in _context.Projects on projectID equals project.Id
+                                where questionnaire.ProjectID == projectID
+                                select new { Id = questionnaire.Id, Questions = questionnaire.Questions, Project = project, ProjectId = project.Id }).ToListAsync();
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            questionnaireFinal.Id = result[0].Id;
+            questionnaireFinal.Questions = result[0].Questions;
+            questionnaireFinal.Project = result[0].Project;
+            questionnaireFinal.ProjectID = result[0].ProjectId;
+
+            return QuestionnaireToDTO(questionnaireFinal);
         }
 
         //GET: api/QuestionnaireComplete/1
@@ -165,6 +195,15 @@ namespace WorkTogether.Controllers
         private bool QuestionnaireExists(int id)
         {
             return (_context.Questionnaires?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private QuestionnaireDTO QuestionnaireToDTO(Questionnaire questionnaire)
+        {
+            return new QuestionnaireDTO
+            {
+                Id = questionnaire.Id,
+                ProjectID = questionnaire.ProjectID
+            };
         }
     }
 }
