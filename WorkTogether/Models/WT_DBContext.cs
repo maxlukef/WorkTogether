@@ -282,6 +282,33 @@ namespace WorkTogether.Models
                 studentClass2_7.Student = newUser7;
                 StudentClasses.Add(studentClass2_7);
 
+                Notification notification = new Notification();
+                notification.AttachedProject = newProject.Id;
+                notification.Read = false;
+                notification.ToID = 6;
+                notification.FromID = 7;
+                notification.FromName = "Donny Owen";
+                notification.ToName = "Harriett Morton";
+                notification.IsInvite = true;
+                notification.SentAt = DateTime.Now;
+                notification.Description = "join my team!";
+                notification.Title = "Team Invite";
+                Notifications.Add(notification);
+
+                Notification notification2 = new Notification();
+                notification2.AttachedProject = newProject.Id;
+                notification2.Read = false;
+                notification2.ToID = 5;
+                notification2.FromID = 7;
+                notification2.FromName = "Donny Owen";
+                notification2.ToName = "Dale Hayden";
+                notification2.IsInvite = true;
+                notification2.SentAt = DateTime.Now;
+                notification2.Description = "join my team!";
+                notification2.Title = "Team Invite";
+                Notifications.Add(notification2);
+
+
                 // Memeber of 2 classes 
                 User newUser8 = new User();
                 newUser8.Name = "Donny Owen";

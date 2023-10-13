@@ -141,7 +141,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && !t.Completed).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && !t.Completed && !t.Assignees.Contains(curr_user)).ToListAsync();
 
 
             List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
@@ -181,7 +181,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Team).Include(t => t.Assignees).Include(t => t.ParentMilestone).Where(t => t.Team.Id == teamid && !t.Assignees.Contains(curr_user)).ToListAsync();
 
 
             List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
