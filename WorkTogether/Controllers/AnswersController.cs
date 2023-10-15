@@ -54,7 +54,7 @@ namespace WorkTogether.Controllers
         }
 
         // GET: api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/1
-        [HttpGet("GetAnswersByQuestionnaireIdForCurrentUser/{questionnaireId}")]
+        [HttpGet("GetAnswersByQuestionnaireIdForCurrentUser/{questionnaireId}/{currUserId}")]
         public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByQuestionnaireIdForCurrentUser(int questionnaireId, int currUserId)
         {
             // TODO: Add back with auth once everything is working on the frontend
@@ -87,14 +87,14 @@ namespace WorkTogether.Controllers
                    join que in _context.Questions on q equals que.Questionnaire
                    join a in _context.Answers on que equals a.Question
                    where a.Answerer.UserId == StudentID && p.ClassId == classID
-                   select new { question = a.Question, answer = a.AnswerStr }).ToListAsync();
+                   select new { Id = a.Id, AnswerStr = a.AnswerStr, Question = a.Question, Answerer = a.Answerer }).ToListAsync();
 
             List<AnswerDTO> answerList = new List<AnswerDTO>();
 
             foreach(var answer in result)
             {
                 answerList.Add(
-                    AnswertoAnswerDTO(new Answer { AnswerStr = answer.answer, Question = answer.question }));
+                    AnswertoAnswerDTO(new Answer { Id = answer.Id, AnswerStr = answer.AnswerStr, Question = answer.Question, Answerer = answer.Answerer }));
             }
 
             return answerList;

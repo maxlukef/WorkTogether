@@ -12,6 +12,7 @@ import 'package:work_together_flutter/models/login_models/login_results.dart';
 import 'package:work_together_flutter/models/user_models/new_user.dart';
 
 import 'main.dart';
+import 'models/answer_models/answer_dto.dart';
 import 'models/card_info_models/card_info.dart';
 import 'models/notification_models/notification_dto.dart';
 import 'models/project_models/project_in_class.dart';
@@ -522,31 +523,44 @@ class HttpService {
     }
   }
 
-  // Future<QuestionnaireInfo> getQuestionnaireInfoByProjectId(
-  //     int projectId) async {
-  //   Uri uri = Uri.https('localhost:7277',
-  //       'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
+  Future<List<AnswerDTO>> getQuestionnaireAnswers(int projectId) async {
+    Uri uri = Uri.https('localhost:7277',
+        'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
 
-  //   Response res = await get(uri);
+    List<AnswerDTO> answersToQuestionnaire;
 
-  //   QuestionnaireInfo questionnaireInfo;
+    Response res = await get(uri);
 
-  //   if (res.statusCode == 200) {
-  //     List<dynamic> questionnaireBody = jsonDecode(res.body);
+    QuestionnaireInfo questionnaireInfo;
 
-  //     print(questionnaireBody);
-  //     questionnaireInfo = QuestionnaireInfo(
-  //         id: questionnaireBody[0]["id"],
-  //         projectId: questionnaireBody[0]["projectId"]);
-  //     print("Got here");
-  //     print(questionnaireInfo.id);
-  //     print(questionnaireInfo.projectId);
-  //     return questionnaireInfo;
-  //   } else {
-  //     print("BLEW UP");
-  //     throw "Unable to retrieve Questionnaire";
-  //   }
-  // }
+    if (res.statusCode == 200) {
+      var questionnaireBody = jsonDecode(res.body);
+
+      questionnaireInfo = QuestionnaireInfo(
+          id: questionnaireBody["id"],
+          projectId: questionnaireBody["projectID"]);
+
+      Uri uriAnswers = Uri.https('localhost:7277',
+          'api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/${questionnaireInfo.id}/$loggedUserId');
+
+      Response resAnswers = await get(uriAnswers);
+
+      if (resAnswers.statusCode == 200) {
+        answersToQuestionnaire = (json.decode(resAnswers.body) as List)
+            .map((i) => AnswerDTO.fromJson(i))
+            .toList();
+
+        print("Length of answers:");
+        print(answersToQuestionnaire.length);
+
+        return answersToQuestionnaire;
+      } else {
+        throw "Unable to retrieve Answers";
+      }
+    } else {
+      throw "Unable to retrieve Questionnaire";
+    }
+  }
 
   Future<CardInfo> getQuestionnaireAnswersByClassIdAndUserId(
       classId, userId) async {

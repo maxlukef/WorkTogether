@@ -523,9 +523,9 @@ namespace WorkTogether.Models
                 this.SaveChanges();
 
                 Questionnaire default_questionnaire = new Questionnaire();
-                default_questionnaire.Project = project1;
-                default_questionnaire.ProjectID = project1.Id;
-                project1.Questionnaire = default_questionnaire;
+                default_questionnaire.Project = newProject3;
+                default_questionnaire.ProjectID = newProject3.Id;
+                newProject3.Questionnaire = default_questionnaire;
                 Questionnaires.Add(default_questionnaire);
 
                 this.SaveChanges();

@@ -53,36 +53,35 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await httpService
-          .getQuestionnaireAnswersByClassIdAndUserId(
-              widget.classId, widget.loggedUserId)
+          .getQuestionnaireAnswers(widget.projectId)
           .then((loggedUserAnswers) => {
-                loggedUser = loggedUserAnswers,
-                if (loggedUserAnswers.expectedGrade == "A")
-                  {_quality = ExpectedQuality.A}
-                else if (loggedUserAnswers.expectedGrade == "B")
-                  {_quality = ExpectedQuality.B}
-                else
-                  {_quality = ExpectedQuality.C},
-                numberHoursTextFieldController.text =
-                    loggedUserAnswers.weeklyHours,
-                skillList.clear(),
-                skillList.addAll(loggedUserAnswers.skills),
-                meetingTimeList.clear(),
-                if (loggedUserAnswers.availableAfternoons.isNotEmpty)
-                  {
-                    meetingTimeList.add(MeetingTime("Afternoon",
-                        loggedUserAnswers.availableAfternoons, "NA"))
-                  },
-                if (loggedUserAnswers.availableMornings.isNotEmpty)
-                  {
-                    meetingTimeList.add(MeetingTime(
-                        "Morning", loggedUserAnswers.availableMornings, "NA")),
-                  },
-                if (loggedUserAnswers.availableEvenings.isNotEmpty)
-                  {
-                    meetingTimeList.add(MeetingTime(
-                        "Evening", loggedUserAnswers.availableEvenings, "NA"))
-                  }
+                // loggedUser = loggedUserAnswers,
+                // if (loggedUserAnswers.expectedGrade == "A")
+                //   {_quality = ExpectedQuality.A}
+                // else if (loggedUserAnswers.expectedGrade == "B")
+                //   {_quality = ExpectedQuality.B}
+                // else
+                //   {_quality = ExpectedQuality.C},
+                // numberHoursTextFieldController.text =
+                //     loggedUserAnswers.weeklyHours,
+                // skillList.clear(),
+                // skillList.addAll(loggedUserAnswers.skills),
+                // meetingTimeList.clear(),
+                // if (loggedUserAnswers.availableAfternoons.isNotEmpty)
+                //   {
+                //     meetingTimeList.add(MeetingTime("Afternoon",
+                //         loggedUserAnswers.availableAfternoons, "NA"))
+                //   },
+                // if (loggedUserAnswers.availableMornings.isNotEmpty)
+                //   {
+                //     meetingTimeList.add(MeetingTime(
+                //         "Morning", loggedUserAnswers.availableMornings, "NA")),
+                //   },
+                // if (loggedUserAnswers.availableEvenings.isNotEmpty)
+                //   {
+                //     meetingTimeList.add(MeetingTime(
+                //         "Evening", loggedUserAnswers.availableEvenings, "NA"))
+                //   }
               });
       setState(() {});
     });
