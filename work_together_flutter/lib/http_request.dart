@@ -529,7 +529,7 @@ class HttpService {
 
     List<AnswerDTO> answersToQuestionnaire;
 
-    Response res = await get(uri);
+    Response res = await get(uri, headers: authHeader);
 
     QuestionnaireInfo questionnaireInfo;
 
@@ -541,9 +541,9 @@ class HttpService {
           projectId: questionnaireBody["projectID"]);
 
       Uri uriAnswers = Uri.https('localhost:7277',
-          'api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/${questionnaireInfo.id}/$loggedUserId');
+          'api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/${questionnaireInfo.id}');
 
-      Response resAnswers = await get(uriAnswers);
+      Response resAnswers = await get(uriAnswers, headers: authHeader);
 
       if (resAnswers.statusCode == 200) {
         answersToQuestionnaire = (json.decode(resAnswers.body) as List)
@@ -569,7 +569,8 @@ class HttpService {
 
     List<AnswerDTO> answersToQuestionnaire;
 
-    Response resQuestionnaire = await get(uriQuestionnaire);
+    Response resQuestionnaire =
+        await get(uriQuestionnaire, headers: authHeader);
 
     QuestionnaireInfo questionnaireInfo;
 
@@ -584,9 +585,9 @@ class HttpService {
           jsonEncode(answers.map((i) => i.toJson()).toList()).toString();
 
       Uri uri = Uri.https('localhost:7277',
-          'api/Answers/PutAnswersFromQuestionnaireForCurrentUser/${questionnaireInfo.id}/$loggedUserId');
+          'api/Answers/PutAnswersFromQuestionnaireForCurrentUser/${questionnaireInfo.id}');
 
-      Response res = await put(uri, headers: nonAuthHeader, body: body);
+      Response res = await put(uri, headers: authHeader, body: body);
 
       if (res.statusCode == 200) {
         return true;

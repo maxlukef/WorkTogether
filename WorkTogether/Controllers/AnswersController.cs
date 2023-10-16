@@ -6,6 +6,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -54,17 +55,18 @@ namespace WorkTogether.Controllers
         }
 
         // GET: api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/1
-        [HttpGet("GetAnswersByQuestionnaireIdForCurrentUser/{questionnaireId}/{currUserId}")]
-        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByQuestionnaireIdForCurrentUser(int questionnaireId, int currUserId)
+        [HttpGet("GetAnswersByQuestionnaireIdForCurrentUser/{questionnaireId}")]
+        [Authorize]
+        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByQuestionnaireIdForCurrentUser(int questionnaireId)
         {
             // TODO: Add back with auth once everything is working on the frontend
-            // User u = GetCurrentUser(HttpContext);
+            User u = GetCurrentUser(HttpContext);
 
             var result = await (from projects in _context.Projects
                                 join questionnaire in _context.Questionnaires on projects.Id equals questionnaire.Project.Id
                                 join question in _context.Questions on questionnaire.Id equals question.Questionnaire.Id
                                 join answers in _context.Answers on question.Id equals answers.Question.Id
-                                where answers.Answerer.UserId == currUserId && questionnaire.Id == questionnaireId
+                                where answers.Answerer.UserId == u.UserId && questionnaire.Id == questionnaireId
                                 select new { Id = answers.Id, AnswerStr =  answers.AnswerStr, Question = answers.Question, Answerer = answers.Answerer}).ToListAsync();
 
             List<AnswerDTO> answerList = new List<AnswerDTO>();
@@ -131,10 +133,11 @@ namespace WorkTogether.Controllers
             return NoContent();
         }*/
 
-        [HttpPut("PutAnswersFromQuestionnaireForCurrentUser/{questionnaireId}/{StudentID}")]
-        public async Task<IActionResult> PutAnswersFromQuestionnaireForCurrentUser(int questionnaireId, int StudentID, List<AnswerDTO> answers)
+        [HttpPut("PutAnswersFromQuestionnaireForCurrentUser/{questionnaireId}")]
+        [Authorize]
+        public async Task<IActionResult> PutAnswersFromQuestionnaireForCurrentUser(int questionnaireId, List<AnswerDTO> answers)
         {
-            var user = _context.Users.Where(x => x.UserId == StudentID).Single();
+            User user = GetCurrentUser(HttpContext);
             var curQuestionnaire = _context.Questionnaires.Where(x => x.Id == questionnaireId).Single();
             var curQuestions = _context.Questions.Where(x => x.Questionnaire == curQuestionnaire);
 

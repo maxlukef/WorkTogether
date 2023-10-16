@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
@@ -60,6 +61,7 @@ namespace WorkTogether.Controllers
 
         // GET: api/Questions/GetQuestionsByQuestionnaireId/5
         [HttpGet("GetQuestionsByQuestionnaireId/{questionnaireId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByQuestionnaireId(int questionnaireId)
         {
             if (_context.Questions == null)

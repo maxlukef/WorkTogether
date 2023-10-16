@@ -63,6 +63,7 @@ namespace WorkTogether.Controllers
 
         // GET: api/Questionnaires/GetQuestionnaireByProjectId/5
         [HttpGet("GetQuestionnaireByProjectId/{projectID}")]
+        [Authorize]
         public async Task<ActionResult<QuestionnaireDTO>> GetQuestionnaireByProjectId(int projectID)
         {
             if (_context.Questionnaires == null)
