@@ -43,6 +43,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
   var times;
   var cur;
   var skills;
+  var concatenatedMeetingTimes;
 
   List<String> mornings = [];
   List<String> afternoons = [];
@@ -86,7 +87,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                         if (mornings.isNotEmpty)
                           {
                             meetingTimeList
-                                .add(MeetingTime("Afternoon", mornings, "NA"))
+                                .add(MeetingTime("Morning", mornings, "NA"))
                           },
                         if (afternoons.isNotEmpty)
                           {
@@ -96,7 +97,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                         if (evenings.isNotEmpty)
                           {
                             meetingTimeList
-                                .add(MeetingTime("Afternoon", evenings, "NA"))
+                                .add(MeetingTime("Evening", evenings, "NA"))
                           }
                       }
                     else if (i == 1)
@@ -496,7 +497,49 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                           for (int i = 0; i < answers.length; i++)
                             {
                               if (i == 0)
-                                {}
+                                {
+                                  concatenatedMeetingTimes = "",
+                                  for (int i = 0;
+                                      i < meetingTimeList.length;
+                                      i++)
+                                    {
+                                      if (meetingTimeList[i].timeOfDay ==
+                                          "Morning")
+                                        {
+                                          concatenatedMeetingTimes +=
+                                              "Morning:",
+                                          concatenatedMeetingTimes +=
+                                              meetingTimeList[i]
+                                                  .daysOfWeek
+                                                  .join(','),
+                                          concatenatedMeetingTimes += '`'
+                                        }
+                                      else if (meetingTimeList[i].timeOfDay ==
+                                          "Afternoon")
+                                        {
+                                          concatenatedMeetingTimes +=
+                                              "Afternoon:",
+                                          concatenatedMeetingTimes +=
+                                              meetingTimeList[i]
+                                                  .daysOfWeek
+                                                  .join(','),
+                                          concatenatedMeetingTimes += '`'
+                                        }
+                                      else if (meetingTimeList[i].timeOfDay ==
+                                          "Evening")
+                                        {
+                                          concatenatedMeetingTimes +=
+                                              "Evening:",
+                                          concatenatedMeetingTimes +=
+                                              meetingTimeList[i]
+                                                  .daysOfWeek
+                                                  .join(','),
+                                          concatenatedMeetingTimes += '`'
+                                        }
+                                    },
+                                  answers[i].answerText =
+                                      concatenatedMeetingTimes
+                                }
                               else if (i == 1)
                                 {
                                   if (_quality == ExpectedQuality.A)
