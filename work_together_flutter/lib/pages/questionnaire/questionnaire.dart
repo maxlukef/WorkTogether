@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/main.dart';
+import 'package:work_together_flutter/models/answer_models/answer_dto.dart';
 import 'package:work_together_flutter/provider/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
@@ -39,7 +40,17 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
   var skillsTextFieldController = TextEditingController();
   var numberHoursTextFieldController = TextEditingController();
 
+  var times;
+  var cur;
+  var skills;
+
+  List<String> mornings = [];
+  List<String> afternoons = [];
+  List<String> evenings = [];
+
   final HttpService httpService = HttpService();
+
+  late List<AnswerDTO> answers;
 
   late List<String> skillList;
 
@@ -55,33 +66,62 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
       await httpService
           .getQuestionnaireAnswers(widget.projectId)
           .then((loggedUserAnswers) => {
-                // loggedUser = loggedUserAnswers,
-                // if (loggedUserAnswers.expectedGrade == "A")
-                //   {_quality = ExpectedQuality.A}
-                // else if (loggedUserAnswers.expectedGrade == "B")
-                //   {_quality = ExpectedQuality.B}
-                // else
-                //   {_quality = ExpectedQuality.C},
-                // numberHoursTextFieldController.text =
-                //     loggedUserAnswers.weeklyHours,
-                // skillList.clear(),
-                // skillList.addAll(loggedUserAnswers.skills),
-                // meetingTimeList.clear(),
-                // if (loggedUserAnswers.availableAfternoons.isNotEmpty)
-                //   {
-                //     meetingTimeList.add(MeetingTime("Afternoon",
-                //         loggedUserAnswers.availableAfternoons, "NA"))
-                //   },
-                // if (loggedUserAnswers.availableMornings.isNotEmpty)
-                //   {
-                //     meetingTimeList.add(MeetingTime(
-                //         "Morning", loggedUserAnswers.availableMornings, "NA")),
-                //   },
-                // if (loggedUserAnswers.availableEvenings.isNotEmpty)
-                //   {
-                //     meetingTimeList.add(MeetingTime(
-                //         "Evening", loggedUserAnswers.availableEvenings, "NA"))
-                //   }
+                answers = loggedUserAnswers,
+                for (int i = 0; i < loggedUserAnswers.length; i++)
+                  {
+                    if (i == 0)
+                      {
+                        meetingTimeList.clear(),
+                        times = loggedUserAnswers[i].answerText.split('`'),
+                        for (var j = 0; j < times.length; j++)
+                          {
+                            cur = times[j].split(':'),
+                            if (cur[0] == 'Morning')
+                              {mornings = cur[1].split(',')}
+                            else if (cur[0] == 'Afternoon')
+                              {afternoons = cur[1].split(',')}
+                            else if (cur[0] == 'Evening')
+                              {evenings = cur[1].split(',')}
+                          },
+                        if (mornings.isNotEmpty)
+                          {
+                            meetingTimeList
+                                .add(MeetingTime("Afternoon", mornings, "NA"))
+                          },
+                        if (afternoons.isNotEmpty)
+                          {
+                            meetingTimeList.add(
+                                MeetingTime("Afternoon", afternoons, "NA")),
+                          },
+                        if (evenings.isNotEmpty)
+                          {
+                            meetingTimeList
+                                .add(MeetingTime("Afternoon", evenings, "NA"))
+                          }
+                      }
+                    else if (i == 1)
+                      {
+                        if (loggedUserAnswers[i].answerText == 'A')
+                          {_quality = ExpectedQuality.A}
+                        else if (loggedUserAnswers[i].answerText == 'B')
+                          {_quality = ExpectedQuality.B}
+                        else if (loggedUserAnswers[i].answerText == 'C')
+                          {_quality = ExpectedQuality.C}
+                      }
+                    else if (i == 2)
+                      {
+                        skills = loggedUserAnswers[i].answerText.split(','),
+                        skillList.clear(),
+                        skillList.addAll(skills),
+                      }
+                    else if (i == 3)
+                      {
+                        numberHoursTextFieldController.text =
+                            loggedUserAnswers[i].answerText,
+                      }
+                    else if (i == 4)
+                      {}
+                  }
               });
       setState(() {});
     });
