@@ -523,6 +523,25 @@ class HttpService {
     }
   }
 
+  Future<List<AnswerDTO>> getProjectAnswers(int projectId) async {
+    Uri uriAnswers = Uri.https('localhost:7277',
+        'api/Answers/GetCurrentUserAnswersByProjectId/$projectId');
+
+    List<AnswerDTO> answersToQuestionnaire;
+
+    Response resAnswers = await get(uriAnswers, headers: authHeader);
+
+    if (resAnswers.statusCode == 200) {
+      answersToQuestionnaire = (json.decode(resAnswers.body) as List)
+          .map((i) => AnswerDTO.fromJson(i))
+          .toList();
+
+      return answersToQuestionnaire;
+    } else {
+      throw "Unable to retrieve current user answers for project";
+    }
+  }
+
   Future<List<AnswerDTO>> getQuestionnaireAnswers(int projectId) async {
     Uri uri = Uri.https('localhost:7277',
         'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
@@ -549,9 +568,6 @@ class HttpService {
         answersToQuestionnaire = (json.decode(resAnswers.body) as List)
             .map((i) => AnswerDTO.fromJson(i))
             .toList();
-
-        print("Length of answers:");
-        print(answersToQuestionnaire.length);
 
         return answersToQuestionnaire;
       } else {

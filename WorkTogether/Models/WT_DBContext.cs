@@ -511,6 +511,25 @@ namespace WorkTogether.Models
                 studentClass2_16.Student = newUser16;
                 StudentClasses.Add(studentClass2_16);
 
+                // User that has not submitted answers to the questionnaire
+                User newUser17 = new User();
+                newUser17.Name = "Joe Rogaine";
+                newUser17.Interests = "Hunting, UFC, Elk Meat, Walking, Running";
+                newUser17.StudentStatus = "Part Time Student";
+                newUser17.Bio = "I love hunting and eating elk meat from time to time";
+                newUser17.Major = "Computer Science";
+                newUser17.Email = "u0000016@utah.edu";
+                newUser17.EmploymentStatus = "Part Time";
+                newUser17.Major = "Computer Science";
+                newUser17.UserId = 16;
+                newUser17.UserName = newUser17.Email;
+                await _um.CreateAsync(newUser17, "pw");
+
+                StudentClass studentClass11 = new StudentClass();
+                studentClass11.Class = newClass;
+                studentClass11.Student = newUser17;
+                StudentClasses.Add(studentClass11);
+
                 this.SaveChanges();
 
                 Team t1 = new Team();

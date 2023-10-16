@@ -59,7 +59,6 @@ namespace WorkTogether.Controllers
         [Authorize]
         public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByQuestionnaireIdForCurrentUser(int questionnaireId)
         {
-            // TODO: Add back with auth once everything is working on the frontend
             User u = GetCurrentUser(HttpContext);
 
             var result = await (from projects in _context.Projects
@@ -68,6 +67,31 @@ namespace WorkTogether.Controllers
                                 join answers in _context.Answers on question.Id equals answers.Question.Id
                                 where answers.Answerer.UserId == u.UserId && questionnaire.Id == questionnaireId
                                 select new { Id = answers.Id, AnswerStr =  answers.AnswerStr, Question = answers.Question, Answerer = answers.Answerer}).ToListAsync();
+
+            List<AnswerDTO> answerList = new List<AnswerDTO>();
+
+            foreach (var answer in result)
+            {
+                answerList.Add(
+                    AnswertoAnswerDTO(new Answer { Id = answer.Id, AnswerStr = answer.AnswerStr, Question = answer.Question, Answerer = answer.Answerer }));
+            }
+
+            return answerList;
+        }
+
+        // GET: api/Answers/GetCurrentUserAnswersByProjectId/1
+        [HttpGet("GetCurrentUserAnswersByProjectId/{projectId}")]
+        [Authorize]
+        public async Task<ActionResult<List<AnswerDTO>>> GetCurrentUserAnswersByProjectId(int projectId)
+        {
+            User u = GetCurrentUser(HttpContext);
+
+            var result = await (from p in _context.Projects
+                                join q in _context.Questionnaires on p.Id equals q.Project.Id
+                                join que in _context.Questions on q equals que.Questionnaire
+                                join a in _context.Answers on que equals a.Question
+                                where a.Answerer.UserId == u.UserId && p.Id == projectId
+                                select new { Id = a.Id, AnswerStr = a.AnswerStr, Question = a.Question, Answerer = a.Answerer }).ToListAsync();
 
             List<AnswerDTO> answerList = new List<AnswerDTO>();
 
