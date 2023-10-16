@@ -574,6 +574,32 @@ namespace WorkTogether.Controllers
             return Ok();
         }
 
+        [HttpPost("ChangeTaskMilestone/{taskid}/{msid}")]
+        [Authorize]
+        public async Task<ActionResult> ChangeTaskMilestone(int taskid, int msid)
+        {
+            User curr = GetCurrentUser(HttpContext);
+            TaskItem t = await _context.Tasks.Where(t => t.Id == taskid).Include(t => t.Team).FirstOrDefaultAsync();
+            if (t == null)
+            {
+                return NotFound();
+            }
+            Team te = await _context.Teams.Where(te => te.Id == t.Team.Id).Include(te => te.Members).FirstOrDefaultAsync();
+            if (!te.Members.Contains(curr))
+            {
+                return Unauthorized();
+            }
+
+            Milestone ms = _context.Milestones.Find(msid);
+            if (ms == null)
+            {
+                return NotFound();
+            }
+            t.ParentMilestone = ms;
+            _context.SaveChanges();
+            return Ok();
+        }
+
         //POST: api/Tasks/assign/5/6
         /// <summary>
         /// Assigns a user to a task
