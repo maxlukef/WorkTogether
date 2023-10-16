@@ -562,63 +562,39 @@ class HttpService {
     }
   }
 
-  Future<CardInfo> getQuestionnaireAnswersByClassIdAndUserId(
-      classId, userId) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Users/profile/$userId');
+  Future<bool> putQuestionnaireAnswers(
+      int projectId, List<AnswerDTO> answers) async {
+    Uri uriQuestionnaire = Uri.https('localhost:7277',
+        'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
 
-    Response res = await get(uri);
+    List<AnswerDTO> answersToQuestionnaire;
 
-    int loggedInUserId;
-    User loggedInUser;
+    Response resQuestionnaire = await get(uriQuestionnaire);
 
-    if (res.statusCode == 200) {
-      dynamic body = jsonDecode(res.body);
-      loggedInUser = User.fromJson(body);
-      loggedInUserId = loggedInUser.id;
-    } else {
-      throw "Unable to retrieve user.";
-    }
+    QuestionnaireInfo questionnaireInfo;
 
-    Uri cardUri =
-        Uri.https('localhost:7277', 'api/Answers/$classId/$loggedInUserId');
+    if (resQuestionnaire.statusCode == 200) {
+      var questionnaireBody = jsonDecode(resQuestionnaire.body);
 
-    var cardRes = await get(cardUri);
-    if (cardRes.statusCode == 200) {
-      List<dynamic> cardBody = jsonDecode(cardRes.body);
+      questionnaireInfo = QuestionnaireInfo(
+          id: questionnaireBody["id"],
+          projectId: questionnaireBody["projectID"]);
 
-      List<String> mornings = [];
-      List<String> afternoons = [];
-      List<String> evenings = [];
-      List<String> skillsList = cardBody[2]["answerText"].split(',');
-      String grade = cardBody[1]["answerText"];
-      String hours = cardBody[3]["answerText"];
+      String body =
+          jsonEncode(answers.map((i) => i.toJson()).toList()).toString();
 
-      var times = cardBody[0]["answerText"].split('`');
+      Uri uri = Uri.https('localhost:7277',
+          'api/Answers/PutAnswersFromQuestionnaireForCurrentUser/${questionnaireInfo.id}/$loggedUserId');
 
-      for (var j = 0; j < times.length; j++) {
-        var cur = times[j].split(':');
-        if (cur[0] == 'Morning') {
-          mornings = cur[1].split(',');
-        } else if (cur[0] == 'Afternoon') {
-          afternoons = cur[1].split(',');
-        } else if (cur[0] == 'Evening') {
-          evenings = cur[1].split(',');
-        }
+      Response res = await put(uri, headers: nonAuthHeader, body: body);
+
+      if (res.statusCode == 200) {
+        return true;
       }
 
-      return (CardInfo(
-          id: loggedInUser.id,
-          name: loggedInUser.name,
-          major: loggedInUser.major,
-          availableMornings: mornings,
-          availableAfternoons: afternoons,
-          availableEvenings: evenings,
-          skills: skillsList,
-          interests: loggedInUser.interests,
-          expectedGrade: grade,
-          weeklyHours: hours));
+      return false;
     } else {
-      throw "unable to get user questionnaire answers with $classId and $userId";
+      throw "Unable to retrieve Questionnaire";
     }
   }
 }

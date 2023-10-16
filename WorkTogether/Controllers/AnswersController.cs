@@ -100,26 +100,27 @@ namespace WorkTogether.Controllers
             return answerList;
         }
 
-/*        [HttpPost("{projectID}/{StudentID}")]
-        public async Task<IActionResult> PostAnswersForStudentProject(int projectID, int StudentID, List<AnswerDTO> answers)
+/*        [HttpPost("PostAnswersFromQuestionnaireForCurrentUser/{questionnaireId}/{StudentID}")]
+        public async Task<IActionResult> PostAnswersFromQuestionnaireForCurrentUser(int questionnaireId, int StudentID, List<AnswerDTO> answers)
         {
             var user = _context.Users.Where(x => x.UserId == StudentID).Single();
-            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == projectID).Single();
+            var curQuestionnaire = _context.Questionnaires.Where(x => x.Id == questionnaireId).Single();
             var curQuestions = _context.Questions.Where(x => x.Questionnaire == curQuestionnaire);
 
             for (int i = 0; i < answers.Count; i++)
             {
-                var curQuestion = curQuestions.Where(x => x.QNum == answers[i].qNum).Single();
+                var curQuestion = curQuestions.Where(x => x.Id == answers[i].QuestionId).Single();
 
                 Answer answer = new Answer
                 {
-                    AnswerStr = answers[i].answerText,
+                    Id = answers[i].Id,
+                    AnswerStr = answers[i].AnswerText,
                     Question = curQuestion,
                     Answerer = user
                 };
 
                 var answerCheck = _context.Answers.Where(x => x.Question == answer.Question).Where(x => x.Answerer != user);
-                if(answerCheck.ToList().Count == 1)
+                if (answerCheck.ToList().Count == 1)
                 {
                     _context.Answers.Add(answer);
                 }
@@ -130,19 +131,19 @@ namespace WorkTogether.Controllers
             return NoContent();
         }*/
 
-/*        [HttpPut("{ProjectID}/{StudentID}")]
-        public async Task<IActionResult> PutAnswersForStudentProject(int ProjectID, int StudentID, List<AnswerDTO> answers)
+        [HttpPut("PutAnswersFromQuestionnaireForCurrentUser/{questionnaireId}/{StudentID}")]
+        public async Task<IActionResult> PutAnswersFromQuestionnaireForCurrentUser(int questionnaireId, int StudentID, List<AnswerDTO> answers)
         {
             var user = _context.Users.Where(x => x.UserId == StudentID).Single();
-            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == ProjectID).Single();
+            var curQuestionnaire = _context.Questionnaires.Where(x => x.Id == questionnaireId).Single();
             var curQuestions = _context.Questions.Where(x => x.Questionnaire == curQuestionnaire);
 
             for (int i = 0; i < answers.Count; i++)
             {
-                var curQuestion = curQuestions.Where(x => x.QNum == answers[i].qNum).Where(x => x.Questionnaire == curQuestionnaire).Single();
+                var curQuestion = curQuestions.Where(x => x.Id == answers[i].QuestionId).Where(x => x.Questionnaire == curQuestionnaire).Single();
                 var answer = _context.Answers.Where(x => x.Question == curQuestion).Where(x => x.Answerer == user).First();
 
-                answer.AnswerStr = answers[i].answerText;
+                answer.AnswerStr = answers[i].AnswerText;
 
                 _context.Entry(answer).State = EntityState.Modified;
             }
@@ -150,7 +151,7 @@ namespace WorkTogether.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }*/
+        }
 
         // PUT: api/Answers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

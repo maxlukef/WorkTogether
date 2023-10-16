@@ -120,7 +120,9 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                             loggedUserAnswers[i].answerText,
                       }
                     else if (i == 4)
-                      {}
+                      {
+                        // Answer is not in use
+                      }
                   }
               });
       setState(() {});
@@ -490,17 +492,47 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                       child: ElevatedButton(
-                        onPressed: () => {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return GroupSearchPage(
-                                  userId: widget.loggedUserId,
-                                  classId: widget.classId,
-                                  className: widget.className,
-                                  projectId: widget.projectId,
-                                  projectName: widget.projectName);
+                        onPressed: () async => {
+                          for (int i = 0; i < answers.length; i++)
+                            {
+                              if (i == 0)
+                                {}
+                              else if (i == 1)
+                                {
+                                  if (_quality == ExpectedQuality.A)
+                                    {answers[i].answerText = "A"}
+                                  else if (_quality == ExpectedQuality.B)
+                                    {answers[i].answerText = "B"}
+                                  else if (_quality == ExpectedQuality.C)
+                                    {answers[i].answerText = "C"}
+                                }
+                              else if (i == 2)
+                                {answers[i].answerText = skillList.join(',')}
+                              else if (i == 3)
+                                {
+                                  answers[i].answerText =
+                                      numberHoursTextFieldController.text
+                                }
+                              else if (i == 4)
+                                {
+                                  // Answer is not in use
+                                }
                             },
-                          ))
+                          await httpService
+                              .putQuestionnaireAnswers(
+                                  widget.projectId, answers)
+                              .then((loggedUserAnswers) => {
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return GroupSearchPage(
+                                            userId: widget.loggedUserId,
+                                            classId: widget.classId,
+                                            className: widget.className,
+                                            projectId: widget.projectId,
+                                            projectName: widget.projectName);
+                                      },
+                                    ))
+                                  })
                         },
                         style: ElevatedButton.styleFrom(
                             minimumSize: const Size(150, 50),
