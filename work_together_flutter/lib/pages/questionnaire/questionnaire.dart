@@ -57,6 +57,8 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
 
   late List<MeetingTime> meetingTimeList;
 
+  late int popCount;
+
   FocusNode skillsFocusNode = FocusNode();
 
   @override
@@ -572,18 +574,10 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                                   .putQuestionnaireAnswers(
                                       widget.projectId, answers)
                                   .then((loggedUserAnswers) => {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                          builder: (context) {
-                                            return GroupSearchPage(
-                                                userId: widget.loggedUserId,
-                                                classId: widget.classId,
-                                                className: widget.className,
-                                                projectId: widget.projectId,
-                                                projectName:
-                                                    widget.projectName);
-                                          },
-                                        ))
+                                        popCount = 0,
+                                        Navigator.popUntil(context, (route) {
+                                          return popCount++ == 2;
+                                        })
                                       })
                             }
                           else
