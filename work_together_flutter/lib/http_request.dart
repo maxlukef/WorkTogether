@@ -269,7 +269,7 @@ class HttpService {
     LoginRequest requestData =
         LoginRequest(username: email, password: password);
     String body = jsonEncode(requestData);
-    Uri uri = Uri.https(connectionString, "login");
+    Uri uri = Uri.https(connectionString, "api/login");
     Response res = await post(uri, body: body, headers: nonAuthHeader);
 
     if (res.statusCode == 200) {
@@ -287,7 +287,7 @@ class HttpService {
 
   Future<bool> registerUser(NewUser newUser) async {
     String body = newUser.toJson();
-    Uri uri = Uri.https(connectionString, "register");
+    Uri uri = Uri.https(connectionString, "api/register");
     Response res = await post(uri, body: body, headers: nonAuthHeader);
 
     if (res.statusCode == 200) {
@@ -305,7 +305,7 @@ class HttpService {
   Future<bool> createNewConversation(CreateChatDTO dto) async {
     String body = jsonEncode(dto);
 
-    Uri uri = Uri.https(connectionString, "new");
+    Uri uri = Uri.https(connectionString, "api/new");
     Response res = await post(uri, headers: authHeader, body: body);
 
     if (res.statusCode == 200) {
@@ -318,7 +318,7 @@ class HttpService {
   Future<bool> sendMessage(SendMessageDto dto) async {
     String body = jsonEncode(dto);
 
-    Uri uri = Uri.https(connectionString, "send");
+    Uri uri = Uri.https(connectionString, "api/send");
     Response res = await post(uri, headers: authHeader, body: body);
 
     if (res.statusCode == 200) {
@@ -331,7 +331,7 @@ class HttpService {
   Future<bool> renameChat(ChatRenameDTO dto) async {
     String body = jsonEncode(dto);
 
-    Uri uri = Uri.https(connectionString, "rename");
+    Uri uri = Uri.https(connectionString, "api/rename");
     Response res = await post(uri, headers: authHeader, body: body);
 
     if (res.statusCode == 200) {
@@ -342,7 +342,7 @@ class HttpService {
   }
 
   Future<bool> leaveChat(int chatID) async {
-    Uri uri = Uri.https(connectionString, "leave/$chatID");
+    Uri uri = Uri.https(connectionString, "api/leave/$chatID");
     Response res = await post(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
@@ -353,7 +353,7 @@ class HttpService {
   }
 
   Future<List<ChatInfo>?> getConversationInfo() async {
-    Uri uri = Uri.https(connectionString, "currentuserchats");
+    Uri uri = Uri.https(connectionString, "api/currentuserchats");
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
@@ -369,7 +369,7 @@ class HttpService {
   }
 
   Future<List<ChatMessage>?> getMessages(int chatID) async {
-    Uri uri = Uri.https(connectionString, "messages/$chatID");
+    Uri uri = Uri.https(connectionString, "api/messages/$chatID");
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
