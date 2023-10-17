@@ -40,6 +40,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
 
     final HttpService httpService = HttpService();
 
+    CardInfo? loggedUserCard;
     List<CardInfo>? teamMates = [];
     List<CardInfo>? users = [];
     List<CardInfo>? filteredUsers = [];
@@ -80,27 +81,76 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
             ],
           ),
           FutureBuilder(
-              future: httpService.getTeam(widget.classId, widget.userId),
+              future: httpService.getLoggedUserCard(widget.projectId),
+              builder:
+                  (BuildContext context, AsyncSnapshot<CardInfo> snapshot) {
+                if (snapshot.hasData) {
+                  loggedUserCard = snapshot.data;
+                }
+
+                if (loggedUserCard != null) {
+                  return Column(children: [
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text("My Questionnaire",
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.w700)),
+                        )),
+                    MasonryGridView.count(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 15,
+                        crossAxisSpacing: 10,
+                        itemCount: 1,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return StudentCard(
+                            id: loggedUserCard!.id,
+                            fullName: loggedUserCard!.name,
+                            major: loggedUserCard!.major,
+                            availableMornings:
+                                loggedUserCard!.availableMornings,
+                            availableAfternoons:
+                                loggedUserCard!.availableAfternoons,
+                            availableEvenings:
+                                loggedUserCard!.availableEvenings,
+                            skills: loggedUserCard!.skills,
+                            expectedGrade: loggedUserCard!.expectedGrade,
+                            weeklyHours: loggedUserCard!.weeklyHours,
+                            interests: loggedUserCard!.interests,
+                            notifyParent: refresh,
+                            classId: widget.classId,
+                            className: widget.className,
+                            projectId: widget.projectId,
+                            projectName: widget.projectName,
+                          );
+                        }),
+                    const Padding(
+                        padding: EdgeInsets.only(
+                            left: 5, top: 5, bottom: 5, right: 5),
+                        child: Divider(color: Colors.black)),
+                  ]);
+                } else {
+                  return const SizedBox.shrink();
+                }
+              }),
+          FutureBuilder(
+              future: httpService.getTeam(widget.projectId),
               builder: (BuildContext context,
                   AsyncSnapshot<List<CardInfo>> snapshot) {
                 if (snapshot.hasData) {
                   teamMates = snapshot.data;
                 }
 
-                String loggedUserOrTeam = "My Questionnaire";
-
-                if (teamMates?.length != 1) {
-                  loggedUserOrTeam = "My Team";
-                }
-
                 if (teamMates!.isNotEmpty) {
                   return Column(children: [
-                    Align(
+                    const Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.only(left: 5),
-                          child: Text(loggedUserOrTeam,
-                              style: const TextStyle(
+                          child: Text("My Team",
+                              style: TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.w700)),
                         )),
                     MasonryGridView.count(
@@ -141,7 +191,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                 return const SizedBox.shrink();
               }),
           FutureBuilder(
-              future: httpService.getUsers(widget.classId, widget.userId),
+              future: httpService.getUsers(widget.classId, widget.projectId),
               builder: (BuildContext context,
                   AsyncSnapshot<List<CardInfo>> snapshot) {
                 if (snapshot.hasData) {
