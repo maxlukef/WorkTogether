@@ -127,7 +127,7 @@ class _SignupFormState extends State<SignupForm> {
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Email already in use, try logging in normally.",
+              "An error has occurred while registering.",
               style: TextStyle(fontSize: 18),
             ),
           ),
