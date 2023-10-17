@@ -16,6 +16,7 @@ import 'models/answer_models/answer_dto.dart';
 import 'models/card_info_models/card_info.dart';
 import 'models/notification_models/notification_dto.dart';
 import 'models/project_models/project_in_class.dart';
+import 'models/question_models/question_dto.dart';
 import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
@@ -542,6 +543,42 @@ class HttpService {
     }
   }
 
+  Future<List<QuestionDTO>> getQuestionnaireQuestions(int projectId) async {
+    Uri uri = Uri.https('localhost:7277',
+        'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
+
+    List<QuestionDTO> questionsToQuestionnaire;
+
+    Response res = await get(uri, headers: authHeader);
+
+    QuestionnaireInfo questionnaireInfo;
+
+    if (res.statusCode == 200) {
+      var questionnaireBody = jsonDecode(res.body);
+
+      questionnaireInfo = QuestionnaireInfo(
+          id: questionnaireBody["id"],
+          projectId: questionnaireBody["projectID"]);
+
+      Uri uriQuestions = Uri.https('localhost:7277',
+          'api/Questions/GetQuestionsByQuestionnaireId/${questionnaireInfo.id}');
+
+      Response resQuestions = await get(uriQuestions, headers: authHeader);
+
+      if (resQuestions.statusCode == 200) {
+        questionsToQuestionnaire = (json.decode(resQuestions.body) as List)
+            .map((i) => QuestionDTO.fromJson(i))
+            .toList();
+
+        return questionsToQuestionnaire;
+      } else {
+        throw "Unable to retrieve Questions";
+      }
+    } else {
+      throw "Unable to retrieve Questionnaire";
+    }
+  }
+
   Future<List<AnswerDTO>> getQuestionnaireAnswers(int projectId) async {
     Uri uri = Uri.https('localhost:7277',
         'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
@@ -573,6 +610,43 @@ class HttpService {
       } else {
         throw "Unable to retrieve Answers";
       }
+    } else {
+      throw "Unable to retrieve Questionnaire";
+    }
+  }
+
+  Future<bool> postQuestionnaireAnswers(
+      int projectId, List<AnswerDTO> answers) async {
+    Uri uriQuestionnaire = Uri.https('localhost:7277',
+        'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
+
+    List<AnswerDTO> answersToQuestionnaire;
+
+    Response resQuestionnaire =
+        await get(uriQuestionnaire, headers: authHeader);
+
+    QuestionnaireInfo questionnaireInfo;
+
+    if (resQuestionnaire.statusCode == 200) {
+      var questionnaireBody = jsonDecode(resQuestionnaire.body);
+
+      questionnaireInfo = QuestionnaireInfo(
+          id: questionnaireBody["id"],
+          projectId: questionnaireBody["projectID"]);
+
+      String body =
+          jsonEncode(answers.map((i) => i.toJson()).toList()).toString();
+
+      Uri uri = Uri.https('localhost:7277',
+          'api/Answers/PostAnswersFromQuestionnaireForCurrentUser/${questionnaireInfo.id}');
+
+      Response res = await post(uri, headers: authHeader, body: body);
+
+      if (res.statusCode == 200) {
+        return true;
+      }
+
+      return false;
     } else {
       throw "Unable to retrieve Questionnaire";
     }

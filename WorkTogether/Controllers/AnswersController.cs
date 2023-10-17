@@ -126,10 +126,11 @@ namespace WorkTogether.Controllers
             return answerList;
         }
 
-/*        [HttpPost("PostAnswersFromQuestionnaireForCurrentUser/{questionnaireId}/{StudentID}")]
-        public async Task<IActionResult> PostAnswersFromQuestionnaireForCurrentUser(int questionnaireId, int StudentID, List<AnswerDTO> answers)
+        [HttpPost("PostAnswersFromQuestionnaireForCurrentUser/{questionnaireId}")]
+        [Authorize]
+        public async Task<IActionResult> PostAnswersFromQuestionnaireForCurrentUser(int questionnaireId, List<AnswerDTO> answers)
         {
-            var user = _context.Users.Where(x => x.UserId == StudentID).Single();
+            User user = GetCurrentUser(HttpContext);
             var curQuestionnaire = _context.Questionnaires.Where(x => x.Id == questionnaireId).Single();
             var curQuestions = _context.Questions.Where(x => x.Questionnaire == curQuestionnaire);
 
@@ -139,23 +140,18 @@ namespace WorkTogether.Controllers
 
                 Answer answer = new Answer
                 {
-                    Id = answers[i].Id,
                     AnswerStr = answers[i].AnswerText,
                     Question = curQuestion,
                     Answerer = user
                 };
 
-                var answerCheck = _context.Answers.Where(x => x.Question == answer.Question).Where(x => x.Answerer != user);
-                if (answerCheck.ToList().Count == 1)
-                {
-                    _context.Answers.Add(answer);
-                }
+                _context.Answers.Add(answer);
             }
 
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }*/
+        }
 
         [HttpPut("PutAnswersFromQuestionnaireForCurrentUser/{questionnaireId}")]
         [Authorize]
