@@ -30,7 +30,7 @@ namespace WorkTogether.Controllers
         /// </summary>
         /// <param name="userIds">The IDs of the other users to add to the chat</param>
         /// <returns></returns>
-        [HttpPost("new")]
+        [HttpPost("api/new")]
         [Authorize]
         public async Task<ActionResult<ChatInfoDTO>> NewChat([FromBody] CreateChatDTO info)
         {
@@ -69,7 +69,7 @@ namespace WorkTogether.Controllers
         /// </summary>
         /// <param name="msg">a SendMessageDTO containing the chat ID and the message to send</param>
         /// <returns>an ActionResult, NotFound if the chat doesn't exist, Unauthorized if the user is not authorized to send to this chat, or Ok if all is well.</returns>
-        [HttpPost("send")]
+        [HttpPost("api/send")]
         [Authorize]
         public async Task<ActionResult> SendMessage([FromBody] SendMessageDTO msg)
         {
@@ -100,7 +100,7 @@ namespace WorkTogether.Controllers
         /// </summary>
         /// <param name="id">The ID of the chat</param>
         /// <returns>A list of MessageDTOs, or NotFound if there is no such chat, or Unauthorized if the user is not authorized</returns>
-        [HttpGet("messages/{id}")]
+        [HttpGet("api/messages/{id}")]
         [Authorize]
         public async Task<ActionResult<List<MessageDTO>>> GetChatMessages(int id)
         {
@@ -130,7 +130,7 @@ namespace WorkTogether.Controllers
         /// <param name="chatId">The chat to rename</param>
         /// <param name="newName">The new name for the chat</param>
         /// <returns>200 OK if successful, otherwise notfound if no such chat, or unauthorized if the user cannot make these changes</returns>
-        [HttpPost("rename")]
+        [HttpPost("api/rename")]
         [Authorize]
         public async Task<ActionResult> Rename([FromBody] ChatRenameDTO rename)
         {
@@ -156,7 +156,7 @@ namespace WorkTogether.Controllers
         /// <param name="userId">The ID of the user to add</param>
         /// <param name="chatId">The ID of the chat to add the user to</param>
         /// <returns>NotFound if no such user or chat, Unauthorized if the current user is not in the chat, otherwise OK</returns>
-        [HttpPost("adduser/{userId}/{chatId}")]
+        [HttpPost("api/adduser/{userId}/{chatId}")]
         [Authorize]
         public async Task<ActionResult> AddToChat(int userId, int chatId)
         {
@@ -188,7 +188,7 @@ namespace WorkTogether.Controllers
         /// </summary>
         /// <param name="chatId">The chat to leave</param>
         /// <returns>NotFound if no such user or chat, Unauthorized if the current user is not in the chat, otherwise OK</returns>
-        [HttpPost("leave/{chatId}")]
+        [HttpPost("api/leave/{chatId}")]
         [Authorize]
         public async Task<ActionResult> LeaveChat(int chatId)
         {
@@ -214,7 +214,7 @@ namespace WorkTogether.Controllers
         /// Gets ChatInfoDTOs of all of the current user's chats.
         /// </summary>
         /// <returns>a list of ChatInfoDTOs for each chat that the current user is a part of.</returns>
-        [HttpGet("currentuserchats")]
+        [HttpGet("api/currentuserchats")]
         [Authorize]
         public async Task<ActionResult<List<ChatInfoDTO>>> GetCurrentUserChats()
         {
