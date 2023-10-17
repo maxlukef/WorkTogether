@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
 using WorkTogether.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -121,10 +122,16 @@ using (var scope = app.Services.CreateScope())
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGet("/", () => "Hello ForwardedHeadersOptions!");
 app.MapControllers();
 
 app.Run();

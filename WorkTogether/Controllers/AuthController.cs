@@ -38,7 +38,7 @@ namespace WorkTogether.Controllers
         /// <param name="model">The login model, which contains 2 fields, Username and Password</param>
         /// <returns>a token to be sent in future requests for authentication</returns>
         [HttpPost]
-        [Route("login")]
+        [Route("api/login")]
         public async Task<IActionResult> Login([FromBody] Login model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
@@ -69,7 +69,7 @@ namespace WorkTogether.Controllers
         /// Registers a new user
         /// </summary>
         [HttpPost]
-        [Route("register")]
+        [Route("api/register")]
         public async Task<IActionResult> Register([FromBody] Register model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Email);
@@ -127,7 +127,7 @@ namespace WorkTogether.Controllers
         /// Registers an administrator
         /// </summary>
         [HttpPost]
-        [Route("register-admin")]
+        [Route("api/register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] Register model)
         {
             //ensure that there isn't already a user with this email

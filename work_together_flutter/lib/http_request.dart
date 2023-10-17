@@ -21,6 +21,9 @@ import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
 class HttpService {
+  // String connectionString = 'localhost:7277';
+  String connectionString = 'worktogether.site';
+
   var authHeader = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -33,7 +36,7 @@ class HttpService {
   };
 
   Future<User> getUser(userId) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Users/profile/$userId');
+    Uri uri = Uri.https(connectionString, 'api/Users/profile/$userId');
 
     Response res = await get(uri);
 
@@ -47,7 +50,7 @@ class HttpService {
   }
 
   putUser(User user) async {
-    Uri uri = Uri.https('localhost:7277', 'api/Users/profile');
+    Uri uri = Uri.https(connectionString, 'api/Users/profile');
     var body = user.toJson();
     try {
       await post(uri, body: body, headers: authHeader);
@@ -58,7 +61,7 @@ class HttpService {
 
   Future<List<CardInfo>> getUsers(classId, userId) async {
     Uri uri =
-        Uri.https('localhost:7277', 'api/Users/studentsbyclassID/$classId');
+        Uri.https(connectionString, 'api/Users/studentsbyclassID/$classId');
 
     var res = await get(uri);
 
@@ -77,7 +80,7 @@ class HttpService {
       for (var i = 0; i < users.length; i++) {
         if (!teamIds.contains(users[i].id) && users[i].id != loggedUserId) {
           Uri cardUri = Uri.https(
-              'localhost:7277', 'api/Answers/$classId/${users[i].id}');
+              connectionString, 'api/Answers/$classId/${users[i].id}');
           var cardRes = await get(cardUri);
           if (cardRes.statusCode == 200) {
             List<dynamic> cardBody = jsonDecode(cardRes.body);
@@ -125,7 +128,7 @@ class HttpService {
 
   Future<List<int>> getTeamIds(classId, userId) async {
     Uri uri = Uri.https(
-        'localhost:7277', 'api/Teams/ByStudentAndProject/$classId/$userId');
+        connectionString, 'api/Teams/ByStudentAndProject/$classId/$userId');
     var res = await get(uri);
     List<int> teamIds = [];
     if (res.statusCode == 200) {
@@ -141,7 +144,7 @@ class HttpService {
 
   Future<List<CardInfo>> getTeam(classId, userId) async {
     Uri uri = Uri.https(
-        'localhost:7277', 'api/Teams/ByStudentAndProject/$classId/$userId');
+        connectionString, 'api/Teams/ByStudentAndProject/$classId/$userId');
     Response res;
     List<CardInfo> teamMates = [];
     try {
@@ -153,7 +156,7 @@ class HttpService {
 
     // Occurs if no teammates exist
     if (res.statusCode == 404) {
-      Uri uri = Uri.https('localhost:7277', 'api/Users/profile/$userId');
+      Uri uri = Uri.https(connectionString, 'api/Users/profile/$userId');
 
       Response res = await get(uri);
 
@@ -169,7 +172,7 @@ class HttpService {
       }
 
       Uri cardUri =
-          Uri.https('localhost:7277', 'api/Answers/$classId/$loggedInUserId');
+          Uri.https(connectionString, 'api/Answers/$classId/$loggedInUserId');
 
       var cardRes = await get(cardUri);
       if (cardRes.statusCode == 200) {
@@ -217,7 +220,7 @@ class HttpService {
       for (var i = 0; i < body[0]["members"].length; i++) {
         var curMember = body[0]["members"][i];
         Uri cardUri = Uri.https(
-            'localhost:7277', 'api/Answers/$classId/${curMember["id"]}');
+            connectionString, 'api/Answers/$classId/${curMember["id"]}');
         var cardRes = await get(cardUri);
         if (cardRes.statusCode == 200) {
           List<dynamic> cardBody = jsonDecode(cardRes.body);
@@ -261,7 +264,7 @@ class HttpService {
 
   inviteToTeam(int projectId, int inviterId, int inviteeId) async {
     Uri uri = Uri.https(
-        "localhost:7277", "api/Teams/invite/$projectId/$inviterId/$inviteeId");
+        connectionString, "api/Teams/invite/$projectId/$inviterId/$inviteeId");
     await post(uri);
   }
 
@@ -269,7 +272,7 @@ class HttpService {
     LoginRequest requestData =
         LoginRequest(username: email, password: password);
     String body = jsonEncode(requestData);
-    Uri uri = Uri.https("localhost:7277", "login");
+    Uri uri = Uri.https(connectionString, "api/login");
     Response res = await post(uri, body: body, headers: nonAuthHeader);
 
     if (res.statusCode == 200) {
@@ -287,7 +290,7 @@ class HttpService {
 
   Future<bool> registerUser(NewUser newUser) async {
     String body = newUser.toJson();
-    Uri uri = Uri.https("localhost:7277", "register");
+    Uri uri = Uri.https(connectionString, "api/register");
     Response res = await post(uri, body: body, headers: nonAuthHeader);
 
     if (res.statusCode == 200) {
@@ -305,7 +308,7 @@ class HttpService {
   Future<bool> createNewConversation(CreateChatDTO dto) async {
     String body = jsonEncode(dto);
 
-    Uri uri = Uri.https("localhost:7277", "new");
+    Uri uri = Uri.https(connectionString, "api/new");
     Response res = await post(uri, headers: authHeader, body: body);
 
     if (res.statusCode == 200) {
@@ -318,7 +321,7 @@ class HttpService {
   Future<bool> sendMessage(SendMessageDto dto) async {
     String body = jsonEncode(dto);
 
-    Uri uri = Uri.https("localhost:7277", "send");
+    Uri uri = Uri.https(connectionString, "api/send");
     Response res = await post(uri, headers: authHeader, body: body);
 
     if (res.statusCode == 200) {
@@ -331,7 +334,7 @@ class HttpService {
   Future<bool> renameChat(ChatRenameDTO dto) async {
     String body = jsonEncode(dto);
 
-    Uri uri = Uri.https("localhost:7277", "rename");
+    Uri uri = Uri.https(connectionString, "api/rename");
     Response res = await post(uri, headers: authHeader, body: body);
 
     if (res.statusCode == 200) {
@@ -342,7 +345,7 @@ class HttpService {
   }
 
   Future<bool> leaveChat(int chatID) async {
-    Uri uri = Uri.https("localhost:7277", "leave/$chatID");
+    Uri uri = Uri.https(connectionString, "api/leave/$chatID");
     Response res = await post(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
@@ -353,7 +356,7 @@ class HttpService {
   }
 
   Future<List<ChatInfo>?> getConversationInfo() async {
-    Uri uri = Uri.https("localhost:7277", "currentuserchats");
+    Uri uri = Uri.https(connectionString, "api/currentuserchats");
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
@@ -369,7 +372,7 @@ class HttpService {
   }
 
   Future<List<ChatMessage>?> getMessages(int chatID) async {
-    Uri uri = Uri.https("localhost:7277", "messages/$chatID");
+    Uri uri = Uri.https(connectionString, "api/messages/$chatID");
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
@@ -385,7 +388,7 @@ class HttpService {
   }
 
   Future<List<ClassesDTO>?> getCurrentUsersClasses() async {
-    Uri uri = Uri.https("localhost:7277", "api/Classes/currentuserclasses");
+    Uri uri = Uri.https(connectionString, "api/Classes/currentuserclasses");
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
@@ -402,7 +405,7 @@ class HttpService {
 
   Future<bool> deleteNotification(int id) async {
     Uri uri =
-        Uri.https("localhost:7277", "api/Notifications/DeleteNotification/$id");
+        Uri.https(connectionString, "api/Notifications/DeleteNotification/$id");
     Response res = await delete(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
@@ -418,7 +421,7 @@ class HttpService {
     String body = jsonEncode(notificationDTO);
 
     Uri uri =
-        Uri.https("localhost:7277", "api/Notifications/PostForSingleUser");
+        Uri.https(connectionString, "api/Notifications/PostForSingleUser");
     Response res = await post(uri, headers: authHeader, body: body);
 
     if (res.statusCode == 200) {
@@ -429,7 +432,7 @@ class HttpService {
   }
 
   Future<List<NotificationDTO>?> getCurrentUserNotifications() async {
-    Uri uri = Uri.https("localhost:7277", "api/Notifications/GetForCurUser");
+    Uri uri = Uri.https(connectionString, "api/Notifications/GetForCurUser");
     Response res = await get(uri, headers: authHeader);
 
     List<NotificationDTO> notifications = [];
@@ -463,7 +466,7 @@ class HttpService {
   }
 
   Future<List<ProjectInClass>?> getCurrentUserProjectsAndClasses() async {
-    Uri uri = Uri.https("localhost:7277", "api/Classes/currentuserclasses");
+    Uri uri = Uri.https(connectionString, "api/Classes/currentuserclasses");
     Response classesRes = await get(uri, headers: authHeader);
 
     if (classesRes.statusCode == 200) {
@@ -478,7 +481,7 @@ class HttpService {
         int classId = classDto.classID;
 
         Uri uri = Uri.https(
-            'localhost:7277', 'api/Projects/GetProjectsByClassId/$classId');
+            connectionString, 'api/Projects/GetProjectsByClassId/$classId');
         var projectsRes = await get(uri, headers: authHeader);
 
         if (projectsRes.statusCode == 200) {
@@ -510,7 +513,7 @@ class HttpService {
   }
 
   Future<List<User>?> getStudentsInClass(int id) async {
-    Uri uri = Uri.https("localhost:7277", "api/Classes/getstudentsinclass/$id");
+    Uri uri = Uri.https(connectionString, "api/Classes/getstudentsinclass/$id");
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {

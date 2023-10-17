@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,16 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
+        private MilestoneDTO MilestoneToDTO(Milestone ms)
+        {
+            MilestoneDTO md = new MilestoneDTO();
+            md.ProjectID = ms.Project.Id;
+            md.Title = ms.Title;
+            md.Description = md.Description;
+            md.Deadline = ms.Deadline;
+            return md;
+        }
+
         // GET: api/Milestones
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Milestone>>> GetMilestones()
@@ -30,6 +41,24 @@ namespace WorkTogether.Controllers
           }
             return await _context.Milestones.ToListAsync();
         }
+
+
+        //Get all milestones for a project
+        [HttpGet("ProjectMilestones/{pid}")]
+        [Authorize]
+        public async Task<ActionResult<List<MilestoneDTO>>> GetMilestonesForProject(int pid)
+        {
+            
+            List<Milestone> ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Project.Id == pid).ToListAsync();
+            List<MilestoneDTO> md = new List<MilestoneDTO>();
+            foreach (var msItem in ms)
+            {
+                md.Add(MilestoneToDTO(msItem));
+            }
+            return md;
+
+        }
+
 
         // GET: api/Milestones/5
         [HttpGet("{id}")]
