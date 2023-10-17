@@ -528,7 +528,7 @@ class HttpService {
   }
 
   Future<List<AnswerDTO>> getProjectAnswers(int projectId) async {
-    Uri uriAnswers = Uri.https('localhost:7277',
+    Uri uriAnswers = Uri.https(connectionString,
         'api/Answers/GetCurrentUserAnswersByProjectId/$projectId');
 
     List<AnswerDTO> answersToQuestionnaire;
@@ -547,7 +547,7 @@ class HttpService {
   }
 
   Future<List<QuestionDTO>> getQuestionnaireQuestions(int projectId) async {
-    Uri uri = Uri.https('localhost:7277',
+    Uri uri = Uri.https(connectionString,
         'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
 
     List<QuestionDTO> questionsToQuestionnaire;
@@ -563,7 +563,7 @@ class HttpService {
           id: questionnaireBody["id"],
           projectId: questionnaireBody["projectID"]);
 
-      Uri uriQuestions = Uri.https('localhost:7277',
+      Uri uriQuestions = Uri.https(connectionString,
           'api/Questions/GetQuestionsByQuestionnaireId/${questionnaireInfo.id}');
 
       Response resQuestions = await get(uriQuestions, headers: authHeader);
@@ -583,7 +583,7 @@ class HttpService {
   }
 
   Future<List<AnswerDTO>> getQuestionnaireAnswers(int projectId) async {
-    Uri uri = Uri.https('localhost:7277',
+    Uri uri = Uri.https(connectionString,
         'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
 
     List<AnswerDTO> answersToQuestionnaire;
@@ -599,7 +599,7 @@ class HttpService {
           id: questionnaireBody["id"],
           projectId: questionnaireBody["projectID"]);
 
-      Uri uriAnswers = Uri.https('localhost:7277',
+      Uri uriAnswers = Uri.https(connectionString,
           'api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/${questionnaireInfo.id}');
 
       Response resAnswers = await get(uriAnswers, headers: authHeader);
@@ -620,7 +620,7 @@ class HttpService {
 
   Future<bool> postQuestionnaireAnswers(
       int projectId, List<AnswerDTO> answers) async {
-    Uri uriQuestionnaire = Uri.https('localhost:7277',
+    Uri uriQuestionnaire = Uri.https(connectionString,
         'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
 
     List<AnswerDTO> answersToQuestionnaire;
@@ -640,7 +640,7 @@ class HttpService {
       String body =
           jsonEncode(answers.map((i) => i.toJson()).toList()).toString();
 
-      Uri uri = Uri.https('localhost:7277',
+      Uri uri = Uri.https(connectionString,
           'api/Answers/PostAnswersFromQuestionnaireForCurrentUser/${questionnaireInfo.id}');
 
       Response res = await post(uri, headers: authHeader, body: body);
@@ -657,7 +657,7 @@ class HttpService {
 
   Future<bool> putQuestionnaireAnswers(
       int projectId, List<AnswerDTO> answers) async {
-    Uri uriQuestionnaire = Uri.https('localhost:7277',
+    Uri uriQuestionnaire = Uri.https(connectionString,
         'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
 
     List<AnswerDTO> answersToQuestionnaire;
@@ -677,7 +677,7 @@ class HttpService {
       String body =
           jsonEncode(answers.map((i) => i.toJson()).toList()).toString();
 
-      Uri uri = Uri.https('localhost:7277',
+      Uri uri = Uri.https(connectionString,
           'api/Answers/PutAnswersFromQuestionnaireForCurrentUser/${questionnaireInfo.id}');
 
       Response res = await put(uri, headers: authHeader, body: body);
