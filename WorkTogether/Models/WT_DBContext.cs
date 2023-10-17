@@ -109,9 +109,25 @@ namespace WorkTogether.Models
                 Milestone m = new Milestone();
                 m.Deadline = new DateTime(2023, 11, 1);
                 m.Description = "Implement your code before testing";
-                m.Title = "Implement";
+                m.Title = "Implement Hashmap";
                 m.Project = newProject;
                 Milestones.Add(m);
+
+
+                Milestone m2 = new Milestone();
+                m2.Deadline = new DateTime(2023, 11, 4);
+                m2.Description = "Test your HashMap for correctness";
+                m2.Title = "Test HashMap";
+                m2.Project = newProject;
+                Milestones.Add(m2);
+
+
+                Milestone m3 = new Milestone();
+                m3.Deadline = new DateTime(2023, 11, 5);
+                m3.Description = "Test your hashmap for runtime complexity";
+                m3.Title = "Hashmap Timing";
+                m3.Project = newProject;
+                Milestones.Add(m3);
 
 
                 // Project where Deadline has not passed and team formation deadline has not passed (Group Search Phase)
@@ -125,25 +141,68 @@ namespace WorkTogether.Models
                 newProject3.ClassId = newClass.Id;
                 Projects.Add(newProject3);
 
-                // Project where Deadline has not passed and team formation deadline has not passed (Project complete)
-                Project project1 = new Project();
-                project1.ClassId = newClass.Id;
-                project1.Description = "Capstone Project";
-                project1.Name = "Capstone";
-                project1.MinTeamSize = 4;
-                project1.MaxTeamSize = 5;
-                project1.Deadline = new DateTime(2023, 5, 30);
-                project1.TeamFormationDeadline = new DateTime(2023, 4, 18);
-                Projects.Add(project1);
-                this.SaveChanges();
+                Milestone m4 = new Milestone();
+                m4.Deadline = new DateTime(2025, 4, 25);
+                m4.Description = "You will need to use a flux capacitor for this.";
+                m4.Title = "Implement your time travel kernel";
+                m4.Project = newProject3;
+                Milestones.Add(m4);
+
+                Milestone m5 = new Milestone();
+                m5.Deadline = new DateTime(2025, 5, 5);
+                m5.Description = "Use the front end of your choice.";
+                m5.Title = "Implement your time travel GUI";
+                m5.Project = newProject3;
+                Milestones.Add(m5);
+
 
 
                 Class newClass2 = new Class();
                 newClass2.Id = 2;
-                newClass2.Name = "CS 4000: Capstone Design";
-                newClass2.Description = "The first phase of the capstone project.";
+                newClass2.Name = "Capstone Project";
+                newClass2.Description = "The CS Capstone";
                 newClass2.Professor = newUser2;
                 Classes.Add(newClass2);
+
+                // Project where Deadline has not passed and team formation deadline has not passed (Project complete)
+                Project project1 = new Project();
+                project1.ClassId = newClass2.Id;
+                project1.Description = "Capstone Project";
+                project1.Name = "Capstone";
+                project1.MinTeamSize = 4;
+                project1.MaxTeamSize = 5;
+                project1.Deadline = new DateTime(2023, 12, 1);
+                project1.TeamFormationDeadline = new DateTime(2023, 4, 18);
+                Projects.Add(project1);
+                this.SaveChanges();
+
+                Milestone m6 = new Milestone();
+                m6.Deadline = new DateTime(2023, 4, 25);
+                m6.Description = "Demonstrate the prototype of your capstone project";
+                m6.Title = "Prototype";
+                m6.Project = newProject3;
+                Milestones.Add(m6);
+
+                Milestone m7 = new Milestone();
+                m7.Deadline = new DateTime(2023, 9, 17);
+                m7.Description = "Demonstrate the alpha version of your capstone project";
+                m7.Title = "Alpha";
+                m7.Project = newProject3;
+                Milestones.Add(m7);
+
+                Milestone m8 = new Milestone();
+                m8.Deadline = new DateTime(2023, 10, 20);
+                m8.Description = "Demonstrate the Beta version of your capstone project";
+                m8.Title = "Beta";
+                m8.Project = newProject3;
+                Milestones.Add(m8);
+
+                Milestone m9 = new Milestone();
+                m9.Deadline = new DateTime(2023, 12, 10);
+                m9.Description = "Demonstrate the final version of your capstone project";
+                m9.Title = "Final Release";
+                m9.Project = newProject3;
+                Milestones.Add(m9);
 
                 // Project where deadline has passed and team formation deadline has passed (Project complete)
                 Project newProject2 = new Project();
@@ -156,16 +215,28 @@ namespace WorkTogether.Models
                 newProject2.ClassId = newClass2.Id;
                 Projects.Add(newProject2 );
 
-                // Project where deadline has NOT passed and team formation deadline has passed (Project In Progress)
-                Project newProject4 = new Project();
-                newProject4.Deadline = new DateTime(2024, 2, 15);
-                newProject4.TeamFormationDeadline = new DateTime(2023, 3, 1);
-                newProject4.Name = "Create a prototype of your project";
-                newProject4.Description = "Prepare for the prototype demo day on 4/26!";
-                newProject4.MaxTeamSize = 4;
-                newProject4.MinTeamSize = 4;
-                newProject4.ClassId = newClass2.Id;
-                Projects.Add(newProject4);
+                Milestone m10 = new Milestone();
+                m10.Deadline = new DateTime(2023, 3, 20);
+                m10.Description = "Find initial investors for facebook";
+                m10.Title = "Gather Facebook Investors";
+                m10.Project = newProject2;
+                Milestones.Add(m10);
+
+                Milestone m11 = new Milestone();
+                m11.Deadline = new DateTime(2023, 4, 26);
+                m11.Description = "Good luck!";
+                m11.Title = "Release Facebook";
+                m11.Project = newProject2;
+                Milestones.Add(m11);
+
+
+
+                Milestone m12 = new Milestone();
+                m12.Deadline = new DateTime(2023, 3, 20);
+                m12.Description = "Find initial investors for facebook";
+                m12.Title = "Gather Facebook Investors";
+                m12.Project = newProject2;
+                Milestones.Add(m12);
 
                 User newUser = new User();
                 newUser.Name = "John Coder";
@@ -184,6 +255,11 @@ namespace WorkTogether.Models
                 studentClass1.Class = newClass;
                 studentClass1.Student = newUser;
                 StudentClasses.Add(studentClass1);
+
+                StudentClass studentClassx = new StudentClass();
+                studentClassx.Class = newClass2;
+                studentClassx.Student = newUser;
+                StudentClasses.Add(studentClassx);
 
                 User newUser3 = new User();
                 newUser3.Name = "Jim Roberts";
