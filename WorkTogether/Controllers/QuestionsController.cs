@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using WorkTogether.Models;
 
@@ -55,6 +57,42 @@ namespace WorkTogether.Controllers
             }
 
             return questionDTO;
+        }
+
+        // GET: api/Questions/GetQuestionsByQuestionnaireId/5
+        [HttpGet("GetQuestionsByQuestionnaireId/{questionnaireId}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByQuestionnaireId(int questionnaireId)
+        {
+            if (_context.Questions == null)
+            {
+                return NotFound();
+            }
+
+            List<QuestionDTO> questionDTOs = new List<QuestionDTO>();
+
+            var result = await (from question in _context.Questions
+                                join questionnaire in _context.Questionnaires on questionnaireId equals questionnaire.Id
+                                where questionnaire.Id == questionnaireId
+                                select new { Id = question.Id, qNum = question.QNum, Prompt = question.Prompt, Type = question.Type, Questionnaire = question.Questionnaire }).ToListAsync();
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var q in result)
+            {
+                Question newQuestion = new Question();
+                newQuestion.Id = q.Id;
+                newQuestion.QNum = q.qNum;
+                newQuestion.Prompt = q.Prompt;
+                newQuestion.Type = q.Type;
+                newQuestion.Questionnaire = q.Questionnaire;
+                questionDTOs.Add(QuestionToDTO(newQuestion));
+            }
+
+            return questionDTOs;
         }
 
         // PUT: api/Questions/5

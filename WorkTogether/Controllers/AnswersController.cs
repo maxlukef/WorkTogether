@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -52,51 +54,99 @@ namespace WorkTogether.Controllers
             return answer;
         }
 
+        // GET: api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/1
+        [HttpGet("GetAnswersByQuestionnaireIdForCurrentUser/{questionnaireId}")]
+        [Authorize]
+        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByQuestionnaireIdForCurrentUser(int questionnaireId)
+        {
+            User u = GetCurrentUser(HttpContext);
+
+            var result = await (from projects in _context.Projects
+                                join questionnaire in _context.Questionnaires on projects.Id equals questionnaire.Project.Id
+                                join question in _context.Questions on questionnaire.Id equals question.Questionnaire.Id
+                                join answers in _context.Answers on question.Id equals answers.Question.Id
+                                where answers.Answerer.UserId == u.UserId && questionnaire.Id == questionnaireId
+                                select new { Id = answers.Id, AnswerStr =  answers.AnswerStr, Question = answers.Question, Answerer = answers.Answerer}).ToListAsync();
+
+            List<AnswerDTO> answerList = new List<AnswerDTO>();
+
+            foreach (var answer in result)
+            {
+                answerList.Add(
+                    AnswertoAnswerDTO(new Answer { Id = answer.Id, AnswerStr = answer.AnswerStr, Question = answer.Question, Answerer = answer.Answerer }));
+            }
+
+            return answerList;
+        }
+
+        // GET: api/Answers/GetCurrentUserAnswersByProjectId/1
+        [HttpGet("GetCurrentUserAnswersByProjectId/{projectId}")]
+        [Authorize]
+        public async Task<ActionResult<List<AnswerDTO>>> GetCurrentUserAnswersByProjectId(int projectId)
+        {
+            User u = GetCurrentUser(HttpContext);
+
+            var result = await (from p in _context.Projects
+                                join q in _context.Questionnaires on p.Id equals q.Project.Id
+                                join que in _context.Questions on q equals que.Questionnaire
+                                join a in _context.Answers on que equals a.Question
+                                where a.Answerer.UserId == u.UserId && p.Id == projectId
+                                select new { Id = a.Id, AnswerStr = a.AnswerStr, Question = a.Question, Answerer = a.Answerer }).ToListAsync();
+
+            List<AnswerDTO> answerList = new List<AnswerDTO>();
+
+            foreach (var answer in result)
+            {
+                answerList.Add(
+                    AnswertoAnswerDTO(new Answer { Id = answer.Id, AnswerStr = answer.AnswerStr, Question = answer.Question, Answerer = answer.Answerer }));
+            }
+
+            return answerList;
+        }
+
         // GET: api/Answers/1/5
-        [HttpGet("{classID}/{StudentID}")]
-        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersForStudentProject(int classID, int StudentID)
+        [HttpGet("GetAnswersByProjectIdAndUserId/{projectId}/{userId}")]
+        [Authorize]
+        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByProjectIdAndUserId(int projectId, int userId)
         {
             var result = await (from p in _context.Projects
                    join q in _context.Questionnaires on p.Id equals q.Project.Id
                    join que in _context.Questions on q equals que.Questionnaire
                    join a in _context.Answers on que equals a.Question
-                   where a.Answerer.UserId == StudentID && p.ClassId == classID
-                   select new { question = a.Question, answer = a.AnswerStr }).ToListAsync();
+                   where a.Answerer.UserId == userId && p.Id == projectId
+                                select new { Id = a.Id, AnswerStr = a.AnswerStr, Question = a.Question, Answerer = a.Answerer }).ToListAsync();
 
             List<AnswerDTO> answerList = new List<AnswerDTO>();
 
             foreach(var answer in result)
             {
                 answerList.Add(
-                    AnswertoAnswerDTO(new Answer { AnswerStr = answer.answer, Question = answer.question }));
+                    AnswertoAnswerDTO(new Answer { Id = answer.Id, AnswerStr = answer.AnswerStr, Question = answer.Question, Answerer = answer.Answerer }));
             }
 
             return answerList;
         }
 
-        [HttpPost("{projectID}/{StudentID}")]
-        public async Task<IActionResult> PostAnswersForStudentProject(int projectID, int StudentID, List<AnswerDTO> answers)
+        [HttpPost("PostAnswersFromQuestionnaireForCurrentUser/{questionnaireId}")]
+        [Authorize]
+        public async Task<IActionResult> PostAnswersFromQuestionnaireForCurrentUser(int questionnaireId, List<AnswerDTO> answers)
         {
-            var user = _context.Users.Where(x => x.UserId == StudentID).Single();
-            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == projectID).Single();
+            User user = GetCurrentUser(HttpContext);
+            var curQuestionnaire = _context.Questionnaires.Where(x => x.Id == questionnaireId).Single();
             var curQuestions = _context.Questions.Where(x => x.Questionnaire == curQuestionnaire);
 
             for (int i = 0; i < answers.Count; i++)
             {
-                var curQuestion = curQuestions.Where(x => x.QNum == answers[i].qNum).Single();
+                var curQuestion = curQuestions.Where(x => x.Id == answers[i].QuestionId).Single();
 
                 Answer answer = new Answer
                 {
-                    AnswerStr = answers[i].answerText,
+                    AnswerStr = answers[i].AnswerText,
                     Question = curQuestion,
                     Answerer = user
                 };
 
-                var answerCheck = _context.Answers.Where(x => x.Question == answer.Question).Where(x => x.Answerer != user);
-                if(answerCheck.ToList().Count == 1)
-                {
-                    _context.Answers.Add(answer);
-                }
+                _context.Answers.Add(answer);
             }
 
             await _context.SaveChangesAsync();
@@ -104,19 +154,20 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
-        [HttpPut("{ProjectID}/{StudentID}")]
-        public async Task<IActionResult> PutAnswersForStudentProject(int ProjectID, int StudentID, List<AnswerDTO> answers)
+        [HttpPut("PutAnswersFromQuestionnaireForCurrentUser/{questionnaireId}")]
+        [Authorize]
+        public async Task<IActionResult> PutAnswersFromQuestionnaireForCurrentUser(int questionnaireId, List<AnswerDTO> answers)
         {
-            var user = _context.Users.Where(x => x.UserId == StudentID).Single();
-            var curQuestionnaire = _context.Questionnaires.Where(x => x.ProjectID == ProjectID).Single();
+            User user = GetCurrentUser(HttpContext);
+            var curQuestionnaire = _context.Questionnaires.Where(x => x.Id == questionnaireId).Single();
             var curQuestions = _context.Questions.Where(x => x.Questionnaire == curQuestionnaire);
 
             for (int i = 0; i < answers.Count; i++)
             {
-                var curQuestion = curQuestions.Where(x => x.QNum == answers[i].qNum).Where(x => x.Questionnaire == curQuestionnaire).Single();
+                var curQuestion = curQuestions.Where(x => x.Id == answers[i].QuestionId).Where(x => x.Questionnaire == curQuestionnaire).Single();
                 var answer = _context.Answers.Where(x => x.Question == curQuestion).Where(x => x.Answerer == user).First();
 
-                answer.AnswerStr = answers[i].answerText;
+                answer.AnswerStr = answers[i].AnswerText;
 
                 _context.Entry(answer).State = EntityState.Modified;
             }
@@ -197,11 +248,21 @@ namespace WorkTogether.Controllers
             return (_context.Answers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+        private User GetCurrentUser(HttpContext httpContext)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
+            return u1;
+        }
+
         private static AnswerDTO AnswertoAnswerDTO(Answer answer) =>
         new AnswerDTO
         {
-            qNum = answer.Question.Id,
-            answerText = answer.AnswerStr
+            Id = answer.Id,
+            AnswerText = answer.AnswerStr,
+            QuestionId = answer.Question.Id,
+            AnswererId = answer.Answerer.UserId,
+            AnswererName = answer.Answerer.Name,
         };
     }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
 import 'package:work_together_flutter/main.dart';
+import 'package:work_together_flutter/models/answer_models/answer_dto.dart';
 import 'package:work_together_flutter/provider/meeting_time_list.dart';
 
 import '../../global_components/tag.dart';
@@ -39,11 +40,24 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
   var skillsTextFieldController = TextEditingController();
   var numberHoursTextFieldController = TextEditingController();
 
+  var times;
+  var cur;
+  var skills;
+  var concatenatedMeetingTimes;
+
+  List<String> mornings = [];
+  List<String> afternoons = [];
+  List<String> evenings = [];
+
   final HttpService httpService = HttpService();
+
+  late List<AnswerDTO> answers;
 
   late List<String> skillList;
 
   late List<MeetingTime> meetingTimeList;
+
+  late int popCount;
 
   FocusNode skillsFocusNode = FocusNode();
 
@@ -53,35 +67,65 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await httpService
-          .getQuestionnaireAnswersByClassIdAndUserId(
-              widget.classId, widget.loggedUserId)
+          .getQuestionnaireAnswers(widget.projectId)
           .then((loggedUserAnswers) => {
-                loggedUser = loggedUserAnswers,
-                if (loggedUserAnswers.expectedGrade == "A")
-                  {_quality = ExpectedQuality.A}
-                else if (loggedUserAnswers.expectedGrade == "B")
-                  {_quality = ExpectedQuality.B}
-                else
-                  {_quality = ExpectedQuality.C},
-                numberHoursTextFieldController.text =
-                    loggedUserAnswers.weeklyHours,
-                skillList.clear(),
-                skillList.addAll(loggedUserAnswers.skills),
-                meetingTimeList.clear(),
-                if (loggedUserAnswers.availableAfternoons.isNotEmpty)
+                answers = loggedUserAnswers,
+                for (int i = 0; i < loggedUserAnswers.length; i++)
                   {
-                    meetingTimeList.add(MeetingTime("Afternoon",
-                        loggedUserAnswers.availableAfternoons, "NA"))
-                  },
-                if (loggedUserAnswers.availableMornings.isNotEmpty)
-                  {
-                    meetingTimeList.add(MeetingTime(
-                        "Morning", loggedUserAnswers.availableMornings, "NA")),
-                  },
-                if (loggedUserAnswers.availableEvenings.isNotEmpty)
-                  {
-                    meetingTimeList.add(MeetingTime(
-                        "Evening", loggedUserAnswers.availableEvenings, "NA"))
+                    if (i == 0)
+                      {
+                        meetingTimeList.clear(),
+                        times = loggedUserAnswers[i].answerText.split('`'),
+                        for (var j = 0; j < times.length; j++)
+                          {
+                            cur = times[j].split(':'),
+                            if (cur[0] == 'Morning')
+                              {mornings = cur[1].split(',')}
+                            else if (cur[0] == 'Afternoon')
+                              {afternoons = cur[1].split(',')}
+                            else if (cur[0] == 'Evening')
+                              {evenings = cur[1].split(',')}
+                          },
+                        if (mornings.isNotEmpty)
+                          {
+                            meetingTimeList
+                                .add(MeetingTime("Morning", mornings, "NA"))
+                          },
+                        if (afternoons.isNotEmpty)
+                          {
+                            meetingTimeList.add(
+                                MeetingTime("Afternoon", afternoons, "NA")),
+                          },
+                        if (evenings.isNotEmpty)
+                          {
+                            meetingTimeList
+                                .add(MeetingTime("Evening", evenings, "NA"))
+                          }
+                      }
+                    else if (i == 1)
+                      {
+                        if (loggedUserAnswers[i].answerText == 'A')
+                          {_quality = ExpectedQuality.A}
+                        else if (loggedUserAnswers[i].answerText == 'B')
+                          {_quality = ExpectedQuality.B}
+                        else if (loggedUserAnswers[i].answerText == 'C')
+                          {_quality = ExpectedQuality.C}
+                      }
+                    else if (i == 2)
+                      {
+                        skills = loggedUserAnswers[i].answerText.split(','),
+                        skillList.clear(),
+                        skillList.addAll(skills),
+                      }
+                    else if (i == 3)
+                      {
+                        numberHoursTextFieldController.text =
+                            loggedUserAnswers[i].answerText,
+                      }
+                    else if (i == 4)
+                      {
+                        // Answer is not in use
+                      }
                   }
               });
       setState(() {});
@@ -451,17 +495,234 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                       child: ElevatedButton(
-                        onPressed: () => {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return GroupSearchPage(
-                                  userId: widget.loggedUserId,
-                                  classId: widget.classId,
-                                  className: widget.className,
-                                  projectId: widget.projectId,
-                                  projectName: widget.projectName);
-                            },
-                          ))
+                        onPressed: () async => {
+                          if (answers.isNotEmpty)
+                            {
+                              for (int i = 0; i < answers.length; i++)
+                                {
+                                  if (i == 0)
+                                    {
+                                      concatenatedMeetingTimes = "",
+                                      for (int i = 0;
+                                          i < meetingTimeList.length;
+                                          i++)
+                                        {
+                                          if (meetingTimeList[i].timeOfDay ==
+                                              "Morning")
+                                            {
+                                              concatenatedMeetingTimes +=
+                                                  "Morning:",
+                                              concatenatedMeetingTimes +=
+                                                  meetingTimeList[i]
+                                                      .daysOfWeek
+                                                      .join(','),
+                                              concatenatedMeetingTimes += '`'
+                                            }
+                                          else if (meetingTimeList[i]
+                                                  .timeOfDay ==
+                                              "Afternoon")
+                                            {
+                                              concatenatedMeetingTimes +=
+                                                  "Afternoon:",
+                                              concatenatedMeetingTimes +=
+                                                  meetingTimeList[i]
+                                                      .daysOfWeek
+                                                      .join(','),
+                                              concatenatedMeetingTimes += '`'
+                                            }
+                                          else if (meetingTimeList[i]
+                                                  .timeOfDay ==
+                                              "Evening")
+                                            {
+                                              concatenatedMeetingTimes +=
+                                                  "Evening:",
+                                              concatenatedMeetingTimes +=
+                                                  meetingTimeList[i]
+                                                      .daysOfWeek
+                                                      .join(','),
+                                              concatenatedMeetingTimes += '`'
+                                            }
+                                        },
+                                      answers[i].answerText =
+                                          concatenatedMeetingTimes
+                                    }
+                                  else if (i == 1)
+                                    {
+                                      if (_quality == ExpectedQuality.A)
+                                        {answers[i].answerText = "A"}
+                                      else if (_quality == ExpectedQuality.B)
+                                        {answers[i].answerText = "B"}
+                                      else if (_quality == ExpectedQuality.C)
+                                        {answers[i].answerText = "C"}
+                                    }
+                                  else if (i == 2)
+                                    {
+                                      answers[i].answerText =
+                                          skillList.join(',')
+                                    }
+                                  else if (i == 3)
+                                    {
+                                      answers[i].answerText =
+                                          numberHoursTextFieldController.text
+                                    }
+                                  else if (i == 4)
+                                    {
+                                      // Answer is not in use
+                                    }
+                                },
+                              await httpService
+                                  .putQuestionnaireAnswers(
+                                      widget.projectId, answers)
+                                  .then((loggedUserAnswers) => {
+                                        popCount = 0,
+                                        Navigator.popUntil(context, (route) {
+                                          return popCount++ == 2;
+                                        })
+                                      })
+                            }
+                          else
+                            {
+                              await httpService
+                                  .getQuestionnaireQuestions(widget.projectId)
+                                  .then((questions) async => {
+                                        for (int i = 0;
+                                            i < questions.length;
+                                            i++)
+                                          {
+                                            if (i == 0)
+                                              {
+                                                concatenatedMeetingTimes = "",
+                                                for (int i = 0;
+                                                    i < meetingTimeList.length;
+                                                    i++)
+                                                  {
+                                                    if (meetingTimeList[i]
+                                                            .timeOfDay ==
+                                                        "Morning")
+                                                      {
+                                                        concatenatedMeetingTimes +=
+                                                            "Morning:",
+                                                        concatenatedMeetingTimes +=
+                                                            meetingTimeList[i]
+                                                                .daysOfWeek
+                                                                .join(','),
+                                                        concatenatedMeetingTimes +=
+                                                            '`'
+                                                      }
+                                                    else if (meetingTimeList[i]
+                                                            .timeOfDay ==
+                                                        "Afternoon")
+                                                      {
+                                                        concatenatedMeetingTimes +=
+                                                            "Afternoon:",
+                                                        concatenatedMeetingTimes +=
+                                                            meetingTimeList[i]
+                                                                .daysOfWeek
+                                                                .join(','),
+                                                        concatenatedMeetingTimes +=
+                                                            '`'
+                                                      }
+                                                    else if (meetingTimeList[i]
+                                                            .timeOfDay ==
+                                                        "Evening")
+                                                      {
+                                                        concatenatedMeetingTimes +=
+                                                            "Evening:",
+                                                        concatenatedMeetingTimes +=
+                                                            meetingTimeList[i]
+                                                                .daysOfWeek
+                                                                .join(','),
+                                                        concatenatedMeetingTimes +=
+                                                            '`'
+                                                      }
+                                                  },
+                                                answers.add(AnswerDTO(
+                                                    -1,
+                                                    concatenatedMeetingTimes,
+                                                    questions[i].id,
+                                                    loggedUserId,
+                                                    loggedUserName)),
+                                              }
+                                            else if (i == 1)
+                                              {
+                                                if (_quality ==
+                                                    ExpectedQuality.A)
+                                                  {
+                                                    answers.add(AnswerDTO(
+                                                        -1,
+                                                        "A",
+                                                        questions[i].id,
+                                                        loggedUserId,
+                                                        loggedUserName)),
+                                                  }
+                                                else if (_quality ==
+                                                    ExpectedQuality.B)
+                                                  {
+                                                    answers.add(AnswerDTO(
+                                                        -1,
+                                                        "B",
+                                                        questions[i].id,
+                                                        loggedUserId,
+                                                        loggedUserName)),
+                                                  }
+                                                else if (_quality ==
+                                                    ExpectedQuality.C)
+                                                  {
+                                                    answers.add(AnswerDTO(
+                                                        -1,
+                                                        "C",
+                                                        questions[i].id,
+                                                        loggedUserId,
+                                                        loggedUserName)),
+                                                  }
+                                              }
+                                            else if (i == 2)
+                                              {
+                                                answers.add(AnswerDTO(
+                                                    -1,
+                                                    skillList.join(','),
+                                                    questions[i].id,
+                                                    loggedUserId,
+                                                    loggedUserName)),
+                                              }
+                                            else if (i == 3)
+                                              {
+                                                answers.add(AnswerDTO(
+                                                    -1,
+                                                    numberHoursTextFieldController
+                                                        .text,
+                                                    questions[i].id,
+                                                    loggedUserId,
+                                                    loggedUserName)),
+                                              }
+                                            else if (i == 4)
+                                              {
+                                                // Answer is not in use
+                                              }
+                                          },
+                                        await httpService
+                                            .postQuestionnaireAnswers(
+                                                widget.projectId, answers)
+                                            .then((loggedUserAnswers) => {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                    builder: (context) {
+                                                      return GroupSearchPage(
+                                                          userId: widget
+                                                              .loggedUserId,
+                                                          classId:
+                                                              widget.classId,
+                                                          className:
+                                                              widget.className,
+                                                          projectId:
+                                                              widget.projectId,
+                                                          projectName: widget
+                                                              .projectName);
+                                                    },
+                                                  ))
+                                                })
+                                      })
+                            }
                         },
                         style: ElevatedButton.styleFrom(
                             minimumSize: const Size(150, 50),

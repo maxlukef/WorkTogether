@@ -19,7 +19,8 @@ class StudentCard extends StatelessWidget {
       required this.classId,
       required this.className,
       required this.projectId,
-      required this.projectName});
+      required this.projectName,
+      required this.onLoggedUserTeam});
 
   int id;
   final String fullName;
@@ -36,6 +37,7 @@ class StudentCard extends StatelessWidget {
   String className;
   int projectId;
   String projectName;
+  bool onLoggedUserTeam;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class StudentCard extends StatelessWidget {
                     className: className,
                     projectId: projectId,
                     projectName: projectName,
+                    onLoggedUserTeam: onLoggedUserTeam,
                   );
                 },
               )).whenComplete(() => notifyParent())

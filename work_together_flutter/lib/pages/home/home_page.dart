@@ -9,6 +9,7 @@ import '../../global_components/custom_app_bar.dart';
 import '../../http_request.dart';
 import '../../main.dart';
 import '../../models/project_models/project_in_class.dart';
+import '../group_search/group_search_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({
@@ -124,20 +125,55 @@ class _HomePageState extends ConsumerState<HomePage> {
                             clipBehavior: Clip.hardEdge,
                             child: InkWell(
                               splashColor: Colors.blue.withAlpha(30),
-                              onTap: () {
+                              onTap: () async {
                                 if (projectNameValue.teamFormationDeadline
                                     .isAfter(DateTime.now())) {
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) {
-                                      return QuestionnairePage(
-                                        loggedUserId: loggedUserId,
-                                        classId: projectNameValue.classId,
-                                        className: projectNameValue.className,
-                                        projectId: projectNameValue.id,
-                                        projectName: projectNameValue.name,
-                                      );
-                                    },
-                                  ));
+                                  await httpService
+                                      .getProjectAnswers(projectNameValue.id)
+                                      .then((value) => {
+                                            if (value.isNotEmpty)
+                                              {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return GroupSearchPage(
+                                                        userId: loggedUserId,
+                                                        classId:
+                                                            projectNameValue
+                                                                .classId,
+                                                        className:
+                                                            projectNameValue
+                                                                .className,
+                                                        projectId:
+                                                            projectNameValue.id,
+                                                        projectName:
+                                                            projectNameValue
+                                                                .name);
+                                                  },
+                                                ))
+                                              }
+                                            else
+                                              {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return QuestionnairePage(
+                                                      loggedUserId:
+                                                          loggedUserId,
+                                                      classId: projectNameValue
+                                                          .classId,
+                                                      className:
+                                                          projectNameValue
+                                                              .className,
+                                                      projectId:
+                                                          projectNameValue.id,
+                                                      projectName:
+                                                          projectNameValue.name,
+                                                    );
+                                                  },
+                                                ))
+                                              }
+                                          });
                                 } else {
                                   Navigator.push(context, MaterialPageRoute(
                                     builder: (context) {

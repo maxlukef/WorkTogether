@@ -159,7 +159,7 @@ namespace WorkTogether.Controllers
         // GET: api/Teams/byproject/1
         [HttpGet("byproject/{id}")]
         [Authorize]
-        public async Task<ActionResult<TeamDTO>> GetTeamByProjectId(int id)
+        public async Task<ActionResult<TeamDTO>> byproject(int id)
         {
             User u = GetCurrentUser(HttpContext);
             Team team = await _context.Teams.Include(t => t.Project).Include(t => t.Members).Where(t => t.Project.Id == id && t.Members.Contains(u)).FirstOrDefaultAsync();

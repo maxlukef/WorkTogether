@@ -411,46 +411,46 @@ namespace WorkTogether.Models
 
                 // Create Notifcations for User 8 u0000007@utah.edu
 
-                Notification notification1_newUser8 = new Notification();
-                notification1_newUser8.Title = "Build Time Travel GUI";
-                notification1_newUser8.Description = "Remember to build the time travel graphical user interface. " +
+                Notification notification1_newUser = new Notification();
+                notification1_newUser.Title = "Build Time Travel GUI";
+                notification1_newUser.Description = "Remember to build the time travel graphical user interface. " +
                     "This is incredibly important towards the completion of milestone 1";
-                notification1_newUser8.IsInvite = false;
-                notification1_newUser8.AttachedProject = newProject3.Id;
-                notification1_newUser8.FromID = newUser2.UserId;
-                notification1_newUser8.FromName = newUser2.Name;
-                notification1_newUser8.ToID = newUser8.UserId;
-                notification1_newUser8.ToName = newUser8.Name;
-                notification1_newUser8.SentAt = DateTime.Now;
-                notification1_newUser8.Read = false;
-                Notifications.Add(notification1_newUser8);
+                notification1_newUser.IsInvite = false;
+                notification1_newUser.AttachedProject = newProject3.Id;
+                notification1_newUser.FromID = newUser2.UserId;
+                notification1_newUser.FromName = newUser2.Name;
+                notification1_newUser.ToID = newUser.UserId;
+                notification1_newUser.ToName = newUser.Name;
+                notification1_newUser.SentAt = DateTime.Now;
+                notification1_newUser.Read = false;
+                Notifications.Add(notification1_newUser);
 
-                Notification notification2_newUser8 = new Notification();
-                notification2_newUser8.Title = "Remember to Complete Team Formation";
-                notification2_newUser8.Description = "Please complete team formation prior to the team deadling closing. " +
+                Notification notification2_newUser = new Notification();
+                notification2_newUser.Title = "Remember to Complete Team Formation";
+                notification2_newUser.Description = "Please complete team formation prior to the team deadling closing. " +
                     "You will need a team for this project it is mandatory.";
-                notification2_newUser8.IsInvite = false;
-                notification2_newUser8.AttachedProject = newProject3.Id;
-                notification2_newUser8.FromID = newUser2.UserId;
-                notification2_newUser8.FromName = newUser2.Name;
-                notification2_newUser8.ToID = newUser8.UserId;
-                notification2_newUser8.ToName = newUser8.Name;
-                notification2_newUser8.SentAt = DateTime.Now;
-                notification2_newUser8.Read = false;
-                Notifications.Add(notification2_newUser8);
+                notification2_newUser.IsInvite = false;
+                notification2_newUser.AttachedProject = newProject3.Id;
+                notification2_newUser.FromID = newUser2.UserId;
+                notification2_newUser.FromName = newUser2.Name;
+                notification2_newUser.ToID = newUser.UserId;
+                notification2_newUser.ToName = newUser.Name;
+                notification2_newUser.SentAt = DateTime.Now;
+                notification2_newUser.Read = false;
+                Notifications.Add(notification2_newUser);
 
-                Notification notification3_newUser8 = new Notification();
-                notification3_newUser8.Title = "Show up to Class";
-                notification3_newUser8.Description = "Show up in person to class this Monday. We have an important announcment.";
-                notification3_newUser8.IsInvite = false;
-                notification3_newUser8.AttachedProject = newProject3.Id;
-                notification3_newUser8.FromID = newUser2.UserId;
-                notification3_newUser8.FromName = newUser2.Name;
-                notification3_newUser8.ToID = newUser8.UserId;
-                notification3_newUser8.ToName = newUser8.Name;
-                notification3_newUser8.SentAt = DateTime.Now;
-                notification3_newUser8.Read = false;
-                Notifications.Add(notification3_newUser8);
+                Notification notification3_newUser = new Notification();
+                notification3_newUser.Title = "Show up to Class";
+                notification3_newUser.Description = "Show up in person to class this Monday. We have an important announcment.";
+                notification3_newUser.IsInvite = false;
+                notification3_newUser.AttachedProject = newProject3.Id;
+                notification3_newUser.FromID = newUser2.UserId;
+                notification3_newUser.FromName = newUser2.Name;
+                notification3_newUser.ToID = newUser.UserId;
+                notification3_newUser.ToName = newUser.Name;
+                notification3_newUser.SentAt = DateTime.Now;
+                notification3_newUser.Read = false;
+                Notifications.Add(notification3_newUser);
 
 
                 User newUser9 = new User();
@@ -614,6 +614,25 @@ namespace WorkTogether.Models
                 studentClass2_16.Student = newUser16;
                 StudentClasses.Add(studentClass2_16);
 
+                // User that has not submitted answers to the questionnaire
+                User newUser17 = new User();
+                newUser17.Name = "Joe Rogaine";
+                newUser17.Interests = "Hunting, UFC, Elk Meat, Walking, Running";
+                newUser17.StudentStatus = "Part Time Student";
+                newUser17.Bio = "I love hunting and eating elk meat from time to time";
+                newUser17.Major = "Computer Science";
+                newUser17.Email = "u0000016@utah.edu";
+                newUser17.EmploymentStatus = "Part Time";
+                newUser17.Major = "Computer Science";
+                newUser17.UserId = 16;
+                newUser17.UserName = newUser17.Email;
+                await _um.CreateAsync(newUser17, "pw");
+
+                StudentClass studentClass11 = new StudentClass();
+                studentClass11.Class = newClass;
+                studentClass11.Student = newUser17;
+                StudentClasses.Add(studentClass11);
+
                 this.SaveChanges();
 
                 Team t1 = new Team();
@@ -626,8 +645,9 @@ namespace WorkTogether.Models
                 this.SaveChanges();
 
                 Questionnaire default_questionnaire = new Questionnaire();
-                default_questionnaire.Project = project1;
-                default_questionnaire.ProjectID = project1.Id;
+                default_questionnaire.Project = newProject3;
+                default_questionnaire.ProjectID = newProject3.Id;
+                newProject3.Questionnaire = default_questionnaire;
                 Questionnaires.Add(default_questionnaire);
 
                 this.SaveChanges();

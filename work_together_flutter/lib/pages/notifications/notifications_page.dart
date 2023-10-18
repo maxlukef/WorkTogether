@@ -144,16 +144,14 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                                       ),
                                       TextButton(
                                         onPressed: () => {
-                                          HttpService().inviteToTeam(
+                                          httpService.acceptInviteNotification(
                                               currentUserNotifications
                                                   .elementAt(index)
-                                                  .projectID,
+                                                  .id),
+                                          httpService.deleteNotification(
                                               currentUserNotifications
                                                   .elementAt(index)
-                                                  .fromID,
-                                              currentUserNotifications
-                                                  .elementAt(index)
-                                                  .toID),
+                                                  .id),
                                           Navigator.pop(context, 'Accept')
                                         },
                                         child: const Text('Accept'),

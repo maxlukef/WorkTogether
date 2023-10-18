@@ -12,9 +12,12 @@ import 'package:work_together_flutter/models/login_models/login_results.dart';
 import 'package:work_together_flutter/models/user_models/new_user.dart';
 
 import 'main.dart';
+import 'models/answer_models/answer_dto.dart';
 import 'models/card_info_models/card_info.dart';
 import 'models/notification_models/notification_dto.dart';
 import 'models/project_models/project_in_class.dart';
+import 'models/question_models/question_dto.dart';
+import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
 class HttpService {
@@ -56,9 +59,67 @@ class HttpService {
     }
   }
 
-  Future<List<CardInfo>> getUsers(classId, userId) async {
+  Future<CardInfo> getLoggedUserCard(int projectId) async {
+    Uri uri = Uri.https(connectionString, 'api/Users/profile/$loggedUserId');
+
+    Response res = await get(uri);
+    User loggedInUser;
+
+    if (res.statusCode == 200) {
+      dynamic body = jsonDecode(res.body);
+      loggedInUser = User.fromJson(body);
+    } else {
+      throw "Unable to retrieve user.";
+    }
+
+    Uri cardUri = Uri.https(connectionString,
+        'api/Answers/GetCurrentUserAnswersByProjectId/$projectId');
+
+    var cardRes = await get(cardUri, headers: authHeader);
+    if (cardRes.statusCode == 200) {
+      List<dynamic> cardBody = jsonDecode(cardRes.body);
+
+      List<String> mornings = [];
+      List<String> afternoons = [];
+      List<String> evenings = [];
+      List<String> skillsList = cardBody[2]["answerText"].split(',');
+      String grade = cardBody[1]["answerText"];
+      String hours = cardBody[3]["answerText"];
+
+      var times = cardBody[0]["answerText"].split('`');
+
+      for (var j = 0; j < times.length; j++) {
+        var cur = times[j].split(':');
+        if (cur[0] == 'Morning') {
+          mornings = cur[1].split(',');
+        } else if (cur[0] == 'Afternoon') {
+          afternoons = cur[1].split(',');
+        } else if (cur[0] == 'Evening') {
+          evenings = cur[1].split(',');
+        }
+      }
+
+      return CardInfo(
+          id: loggedInUser.id,
+          name: loggedInUser.name,
+          major: loggedInUser.major,
+          availableMornings: mornings,
+          availableAfternoons: afternoons,
+          availableEvenings: evenings,
+          skills: skillsList,
+          interests: loggedInUser.interests,
+          expectedGrade: grade,
+          weeklyHours: hours);
+    } else {
+      throw "Could not retrieve logged user card";
+    }
+  }
+
+  Future<List<CardInfo>> getUsers(int classId, int projectId) async {
     Uri uri =
         Uri.https(connectionString, 'api/Users/studentsbyclassID/$classId');
+
+    List<CardInfo> cardInfo = [];
 
     var res = await get(uri);
 
@@ -71,16 +132,19 @@ class HttpService {
           )
           .toList();
 
-      List<CardInfo> cardInfo = [];
-      List<int> teamIds = await getTeamIds(classId, userId);
+      List<int> teamIds = await getTeamIds(projectId);
 
       for (var i = 0; i < users.length; i++) {
         if (!teamIds.contains(users[i].id) && users[i].id != loggedUserId) {
-          Uri cardUri = Uri.https(
-              connectionString, 'api/Answers/$classId/${users[i].id}');
-          var cardRes = await get(cardUri);
+          Uri cardUri = Uri.https(connectionString,
+              'api/Answers/GetAnswersByProjectIdAndUserId/$projectId/${users[i].id}');
+          var cardRes = await get(cardUri, headers: authHeader);
           if (cardRes.statusCode == 200) {
             List<dynamic> cardBody = jsonDecode(cardRes.body);
+
+            if (cardBody.isEmpty) {
+              continue;
+            }
 
             List<String> mornings = [];
             List<String> afternoons = [];
@@ -113,6 +177,8 @@ class HttpService {
                 interests: users[i].interests,
                 expectedGrade: grade,
                 weeklyHours: hours));
+          } else {
+            throw "Could not get answers for iterated user";
           }
         }
       }
@@ -123,9 +189,8 @@ class HttpService {
     }
   }
 
-  Future<List<int>> getTeamIds(classId, userId) async {
-    Uri uri = Uri.https(
-        connectionString, 'api/Teams/ByStudentAndProject/$classId/$userId');
+  Future<List<int>> getTeamIds(int projectId) async {
+    Uri uri = Uri.https(connectionString, 'api/Teams/byproject/$projectId');
     var res = await get(uri);
     List<int> teamIds = [];
     if (res.statusCode == 200) {
@@ -139,75 +204,15 @@ class HttpService {
     return teamIds;
   }
 
-  Future<List<CardInfo>> getTeam(classId, userId) async {
-    Uri uri = Uri.https(
-        connectionString, 'api/Teams/ByStudentAndProject/$classId/$userId');
+  Future<List<CardInfo>> getTeam(int projectId) async {
+    Uri uri = Uri.https(connectionString, 'api/Teams/byproject/$projectId');
     Response res;
     List<CardInfo> teamMates = [];
+
     try {
-      res = await get(uri);
+      res = await get(uri, headers: authHeader);
     } catch (e) {
       print(e);
-      return teamMates;
-    }
-
-    // Occurs if no teammates exist
-    if (res.statusCode == 404) {
-      Uri uri = Uri.https(connectionString, 'api/Users/profile/$userId');
-
-      Response res = await get(uri);
-
-      int loggedInUserId;
-      User loggedInUser;
-
-      if (res.statusCode == 200) {
-        dynamic body = jsonDecode(res.body);
-        loggedInUser = User.fromJson(body);
-        loggedInUserId = loggedInUser.id;
-      } else {
-        throw "Unable to retrieve user.";
-      }
-
-      Uri cardUri =
-          Uri.https(connectionString, 'api/Answers/$classId/$loggedInUserId');
-
-      var cardRes = await get(cardUri);
-      if (cardRes.statusCode == 200) {
-        List<dynamic> cardBody = jsonDecode(cardRes.body);
-
-        List<String> mornings = [];
-        List<String> afternoons = [];
-        List<String> evenings = [];
-        List<String> skillsList = cardBody[2]["answerText"].split(',');
-        String grade = cardBody[1]["answerText"];
-        String hours = cardBody[3]["answerText"];
-
-        var times = cardBody[0]["answerText"].split('`');
-
-        for (var j = 0; j < times.length; j++) {
-          var cur = times[j].split(':');
-          if (cur[0] == 'Morning') {
-            mornings = cur[1].split(',');
-          } else if (cur[0] == 'Afternoon') {
-            afternoons = cur[1].split(',');
-          } else if (cur[0] == 'Evening') {
-            evenings = cur[1].split(',');
-          }
-        }
-
-        teamMates.add(CardInfo(
-            id: loggedInUser.id,
-            name: loggedInUser.name,
-            major: loggedInUser.major,
-            availableMornings: mornings,
-            availableAfternoons: afternoons,
-            availableEvenings: evenings,
-            skills: skillsList,
-            interests: loggedInUser.interests,
-            expectedGrade: grade,
-            weeklyHours: hours));
-      }
-
       return teamMates;
     }
 
@@ -216,53 +221,55 @@ class HttpService {
 
       for (var i = 0; i < body[0]["members"].length; i++) {
         var curMember = body[0]["members"][i];
-        Uri cardUri = Uri.https(
-            connectionString, 'api/Answers/$classId/${curMember["id"]}');
-        var cardRes = await get(cardUri);
-        if (cardRes.statusCode == 200) {
-          List<dynamic> cardBody = jsonDecode(cardRes.body);
+        if (curMember["id"] != loggedUserId) {
+          Uri cardUri = Uri.https(connectionString,
+              'api/Answers/GetAnswersByProjectIdAndUserId/$projectId/${curMember["id"]}');
+          var cardRes = await get(cardUri, headers: authHeader);
+          if (cardRes.statusCode == 200) {
+            List<dynamic> cardBody = jsonDecode(cardRes.body);
 
-          List<String> mornings = [];
-          List<String> afternoons = [];
-          List<String> evenings = [];
-          List<String> skillsList = cardBody[2]["answerText"].split(',');
-          String grade = cardBody[1]["answerText"];
-          String hours = cardBody[3]["answerText"];
+            List<String> mornings = [];
+            List<String> afternoons = [];
+            List<String> evenings = [];
+            List<String> skillsList = cardBody[2]["answerText"].split(',');
+            String grade = cardBody[1]["answerText"];
+            String hours = cardBody[3]["answerText"];
 
-          var times = cardBody[0]["answerText"].split('`');
+            var times = cardBody[0]["answerText"].split('`');
 
-          for (var j = 0; j < times.length; j++) {
-            var cur = times[j].split(':');
-            if (cur[0] == 'Morning') {
-              mornings = cur[1].split(',');
-            } else if (cur[0] == 'Afternoon') {
-              afternoons = cur[1].split(',');
-            } else if (cur[0] == 'Evening') {
-              evenings = cur[1].split(',');
+            for (var j = 0; j < times.length; j++) {
+              var cur = times[j].split(':');
+              if (cur[0] == 'Morning') {
+                mornings = cur[1].split(',');
+              } else if (cur[0] == 'Afternoon') {
+                afternoons = cur[1].split(',');
+              } else if (cur[0] == 'Evening') {
+                evenings = cur[1].split(',');
+              }
             }
-          }
 
-          teamMates.add(CardInfo(
-              id: curMember["id"],
-              name: curMember["name"],
-              major: curMember["major"],
-              availableMornings: mornings,
-              availableAfternoons: afternoons,
-              availableEvenings: evenings,
-              skills: skillsList,
-              interests: curMember["interests"].split(","),
-              expectedGrade: grade,
-              weeklyHours: hours));
+            teamMates.add(CardInfo(
+                id: curMember["id"],
+                name: curMember["name"],
+                major: curMember["major"],
+                availableMornings: mornings,
+                availableAfternoons: afternoons,
+                availableEvenings: evenings,
+                skills: skillsList,
+                interests: curMember["interests"].split(","),
+                expectedGrade: grade,
+                weeklyHours: hours));
+          }
         }
       }
     }
     return teamMates;
   }
 
-  inviteToTeam(int projectId, int inviterId, int inviteeId) async {
-    Uri uri = Uri.https(
-        connectionString, "api/Teams/invite/$projectId/$inviterId/$inviteeId");
-    await post(uri);
+  acceptInviteNotification(int notificationId) async {
+    Uri uri =
+        Uri.https(connectionString, "api/Teams/AcceptInvite/$notificationId");
+    await post(uri, headers: authHeader);
   }
 
   Future<bool> login(String email, String password) async {
@@ -524,63 +531,168 @@ class HttpService {
     }
   }
 
-  Future<CardInfo> getQuestionnaireAnswersByClassIdAndUserId(
-      classId, userId) async {
-    Uri uri = Uri.https(connectionString, 'api/Users/profile/$userId');
+  Future<List<AnswerDTO>> getProjectAnswers(int projectId) async {
+    Uri uriAnswers = Uri.https(connectionString,
+        'api/Answers/GetCurrentUserAnswersByProjectId/$projectId');
 
-    Response res = await get(uri);
+    List<AnswerDTO> answersToQuestionnaire;
 
-    int loggedInUserId;
-    User loggedInUser;
+    Response resAnswers = await get(uriAnswers, headers: authHeader);
+
+    if (resAnswers.statusCode == 200) {
+      answersToQuestionnaire = (json.decode(resAnswers.body) as List)
+          .map((i) => AnswerDTO.fromJson(i))
+          .toList();
+
+      return answersToQuestionnaire;
+    } else {
+      throw "Unable to retrieve current user answers for project";
+    }
+  }
+
+  Future<List<QuestionDTO>> getQuestionnaireQuestions(int projectId) async {
+    Uri uri = Uri.https(connectionString,
+        'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
+
+    List<QuestionDTO> questionsToQuestionnaire;
+
+    Response res = await get(uri, headers: authHeader);
+
+    QuestionnaireInfo questionnaireInfo;
 
     if (res.statusCode == 200) {
-      dynamic body = jsonDecode(res.body);
-      loggedInUser = User.fromJson(body);
-      loggedInUserId = loggedInUser.id;
+      var questionnaireBody = jsonDecode(res.body);
+
+      questionnaireInfo = QuestionnaireInfo(
+          id: questionnaireBody["id"],
+          projectId: questionnaireBody["projectID"]);
+
+      Uri uriQuestions = Uri.https(connectionString,
+          'api/Questions/GetQuestionsByQuestionnaireId/${questionnaireInfo.id}');
+
+      Response resQuestions = await get(uriQuestions, headers: authHeader);
+
+      if (resQuestions.statusCode == 200) {
+        questionsToQuestionnaire = (json.decode(resQuestions.body) as List)
+            .map((i) => QuestionDTO.fromJson(i))
+            .toList();
+
+        return questionsToQuestionnaire;
+      } else {
+        throw "Unable to retrieve Questions";
+      }
     } else {
-      throw "Unable to retrieve user.";
+      throw "Unable to retrieve Questionnaire";
     }
+  }
 
-    Uri cardUri =
-        Uri.https(connectionString, 'api/Answers/$classId/$loggedInUserId');
+  Future<List<AnswerDTO>> getQuestionnaireAnswers(int projectId) async {
+    Uri uri = Uri.https(connectionString,
+        'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
 
-    var cardRes = await get(cardUri);
-    if (cardRes.statusCode == 200) {
-      List<dynamic> cardBody = jsonDecode(cardRes.body);
+    List<AnswerDTO> answersToQuestionnaire;
 
-      List<String> mornings = [];
-      List<String> afternoons = [];
-      List<String> evenings = [];
-      List<String> skillsList = cardBody[2]["answerText"].split(',');
-      String grade = cardBody[1]["answerText"];
-      String hours = cardBody[3]["answerText"];
+    Response res = await get(uri, headers: authHeader);
 
-      var times = cardBody[0]["answerText"].split('`');
+    QuestionnaireInfo questionnaireInfo;
 
-      for (var j = 0; j < times.length; j++) {
-        var cur = times[j].split(':');
-        if (cur[0] == 'Morning') {
-          mornings = cur[1].split(',');
-        } else if (cur[0] == 'Afternoon') {
-          afternoons = cur[1].split(',');
-        } else if (cur[0] == 'Evening') {
-          evenings = cur[1].split(',');
-        }
+    if (res.statusCode == 200) {
+      var questionnaireBody = jsonDecode(res.body);
+
+      questionnaireInfo = QuestionnaireInfo(
+          id: questionnaireBody["id"],
+          projectId: questionnaireBody["projectID"]);
+
+      Uri uriAnswers = Uri.https(connectionString,
+          'api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/${questionnaireInfo.id}');
+
+      Response resAnswers = await get(uriAnswers, headers: authHeader);
+
+      if (resAnswers.statusCode == 200) {
+        answersToQuestionnaire = (json.decode(resAnswers.body) as List)
+            .map((i) => AnswerDTO.fromJson(i))
+            .toList();
+
+        return answersToQuestionnaire;
+      } else {
+        throw "Unable to retrieve Answers";
+      }
+    } else {
+      throw "Unable to retrieve Questionnaire";
+    }
+  }
+
+  Future<bool> postQuestionnaireAnswers(
+      int projectId, List<AnswerDTO> answers) async {
+    Uri uriQuestionnaire = Uri.https(connectionString,
+        'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
+
+    List<AnswerDTO> answersToQuestionnaire;
+
+    Response resQuestionnaire =
+        await get(uriQuestionnaire, headers: authHeader);
+
+    QuestionnaireInfo questionnaireInfo;
+
+    if (resQuestionnaire.statusCode == 200) {
+      var questionnaireBody = jsonDecode(resQuestionnaire.body);
+
+      questionnaireInfo = QuestionnaireInfo(
+          id: questionnaireBody["id"],
+          projectId: questionnaireBody["projectID"]);
+
+      String body =
+          jsonEncode(answers.map((i) => i.toJson()).toList()).toString();
+
+      Uri uri = Uri.https(connectionString,
+          'api/Answers/PostAnswersFromQuestionnaireForCurrentUser/${questionnaireInfo.id}');
+
+      Response res = await post(uri, headers: authHeader, body: body);
+
+      if (res.statusCode == 200) {
+        return true;
       }
 
-      return (CardInfo(
-          id: loggedInUser.id,
-          name: loggedInUser.name,
-          major: loggedInUser.major,
-          availableMornings: mornings,
-          availableAfternoons: afternoons,
-          availableEvenings: evenings,
-          skills: skillsList,
-          interests: loggedInUser.interests,
-          expectedGrade: grade,
-          weeklyHours: hours));
+      return false;
     } else {
-      throw "unable to get user questionnaire answers with $classId and $userId";
+      throw "Unable to retrieve Questionnaire";
+    }
+  }
+
+  Future<bool> putQuestionnaireAnswers(
+      int projectId, List<AnswerDTO> answers) async {
+    Uri uriQuestionnaire = Uri.https(connectionString,
+        'api/Questionnaires/GetQuestionnaireByProjectId/$projectId');
+
+    List<AnswerDTO> answersToQuestionnaire;
+
+    Response resQuestionnaire =
+        await get(uriQuestionnaire, headers: authHeader);
+
+    QuestionnaireInfo questionnaireInfo;
+
+    if (resQuestionnaire.statusCode == 200) {
+      var questionnaireBody = jsonDecode(resQuestionnaire.body);
+
+      questionnaireInfo = QuestionnaireInfo(
+          id: questionnaireBody["id"],
+          projectId: questionnaireBody["projectID"]);
+
+      String body =
+          jsonEncode(answers.map((i) => i.toJson()).toList()).toString();
+
+      Uri uri = Uri.https(connectionString,
+          'api/Answers/PutAnswersFromQuestionnaireForCurrentUser/${questionnaireInfo.id}');
+
+      Response res = await put(uri, headers: authHeader, body: body);
+
+      if (res.statusCode == 200) {
+        return true;
+      }
+
+      return false;
+    } else {
+      throw "Unable to retrieve Questionnaire";
     }
   }
 }
