@@ -119,6 +119,8 @@ class HttpService {
     Uri uri =
         Uri.https(connectionString, 'api/Users/studentsbyclassID/$classId');
 
+    List<CardInfo> cardInfo = [];
+
     var res = await get(uri);
 
     if (res.statusCode == 200) {
@@ -130,7 +132,6 @@ class HttpService {
           )
           .toList();
 
-      List<CardInfo> cardInfo = [];
       List<int> teamIds = await getTeamIds(projectId);
 
       for (var i = 0; i < users.length; i++) {
@@ -140,6 +141,10 @@ class HttpService {
           var cardRes = await get(cardUri, headers: authHeader);
           if (cardRes.statusCode == 200) {
             List<dynamic> cardBody = jsonDecode(cardRes.body);
+
+            if (cardBody.isEmpty) {
+              continue;
+            }
 
             List<String> mornings = [];
             List<String> afternoons = [];
@@ -172,6 +177,8 @@ class HttpService {
                 interests: users[i].interests,
                 expectedGrade: grade,
                 weeklyHours: hours));
+          } else {
+            throw "Could not get answers for iterated user";
           }
         }
       }
