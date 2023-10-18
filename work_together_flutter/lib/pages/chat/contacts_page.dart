@@ -177,7 +177,7 @@ class _ConversationPageState extends State<ConversationPage> {
                               children: const [
                                 Icon(
                                   Icons.delete,
-                                  size: 15.0,
+                                  size: 13.0,
                                 ),
                               ],
                             ),
