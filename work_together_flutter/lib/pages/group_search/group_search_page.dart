@@ -124,6 +124,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                             className: widget.className,
                             projectId: widget.projectId,
                             projectName: widget.projectName,
+                            onLoggedUserTeam: true,
                           );
                         }),
                     const Padding(
@@ -179,6 +180,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                             className: widget.className,
                             projectId: widget.projectId,
                             projectName: widget.projectName,
+                            onLoggedUserTeam: true,
                           );
                         }),
                     const Padding(
@@ -273,6 +275,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                           className: widget.className,
                           projectId: widget.projectId,
                           projectName: widget.projectName,
+                          onLoggedUserTeam: false,
                         );
                       });
                 } else {
@@ -300,6 +303,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                           className: widget.className,
                           projectId: widget.projectId,
                           projectName: widget.projectName,
+                          onLoggedUserTeam: false,
                         );
                       });
                 }
