@@ -214,53 +214,55 @@ class HttpService {
 
       for (var i = 0; i < body[0]["members"].length; i++) {
         var curMember = body[0]["members"][i];
-        Uri cardUri = Uri.https(connectionString,
-            'api/Answers/GetAnswersByProjectIdAndUserId/$projectId/${curMember["id"]}');
-        var cardRes = await get(cardUri, headers: authHeader);
-        if (cardRes.statusCode == 200) {
-          List<dynamic> cardBody = jsonDecode(cardRes.body);
+        if (curMember["id"] != loggedUserId) {
+          Uri cardUri = Uri.https(connectionString,
+              'api/Answers/GetAnswersByProjectIdAndUserId/$projectId/${curMember["id"]}');
+          var cardRes = await get(cardUri, headers: authHeader);
+          if (cardRes.statusCode == 200) {
+            List<dynamic> cardBody = jsonDecode(cardRes.body);
 
-          List<String> mornings = [];
-          List<String> afternoons = [];
-          List<String> evenings = [];
-          List<String> skillsList = cardBody[2]["answerText"].split(',');
-          String grade = cardBody[1]["answerText"];
-          String hours = cardBody[3]["answerText"];
+            List<String> mornings = [];
+            List<String> afternoons = [];
+            List<String> evenings = [];
+            List<String> skillsList = cardBody[2]["answerText"].split(',');
+            String grade = cardBody[1]["answerText"];
+            String hours = cardBody[3]["answerText"];
 
-          var times = cardBody[0]["answerText"].split('`');
+            var times = cardBody[0]["answerText"].split('`');
 
-          for (var j = 0; j < times.length; j++) {
-            var cur = times[j].split(':');
-            if (cur[0] == 'Morning') {
-              mornings = cur[1].split(',');
-            } else if (cur[0] == 'Afternoon') {
-              afternoons = cur[1].split(',');
-            } else if (cur[0] == 'Evening') {
-              evenings = cur[1].split(',');
+            for (var j = 0; j < times.length; j++) {
+              var cur = times[j].split(':');
+              if (cur[0] == 'Morning') {
+                mornings = cur[1].split(',');
+              } else if (cur[0] == 'Afternoon') {
+                afternoons = cur[1].split(',');
+              } else if (cur[0] == 'Evening') {
+                evenings = cur[1].split(',');
+              }
             }
-          }
 
-          teamMates.add(CardInfo(
-              id: curMember["id"],
-              name: curMember["name"],
-              major: curMember["major"],
-              availableMornings: mornings,
-              availableAfternoons: afternoons,
-              availableEvenings: evenings,
-              skills: skillsList,
-              interests: curMember["interests"].split(","),
-              expectedGrade: grade,
-              weeklyHours: hours));
+            teamMates.add(CardInfo(
+                id: curMember["id"],
+                name: curMember["name"],
+                major: curMember["major"],
+                availableMornings: mornings,
+                availableAfternoons: afternoons,
+                availableEvenings: evenings,
+                skills: skillsList,
+                interests: curMember["interests"].split(","),
+                expectedGrade: grade,
+                weeklyHours: hours));
+          }
         }
       }
     }
     return teamMates;
   }
 
-  inviteToTeam(int projectId, int inviterId, int inviteeId) async {
-    Uri uri = Uri.https(
-        connectionString, "api/Teams/invite/$projectId/$inviterId/$inviteeId");
-    await post(uri);
+  acceptInviteNotification(int notificationId) async {
+    Uri uri =
+        Uri.https(connectionString, "api/Teams/AcceptInvite/$notificationId");
+    await post(uri, headers: authHeader);
   }
 
   Future<bool> login(String email, String password) async {
