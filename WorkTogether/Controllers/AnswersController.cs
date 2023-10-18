@@ -105,15 +105,16 @@ namespace WorkTogether.Controllers
         }
 
         // GET: api/Answers/1/5
-        [HttpGet("{classID}/{StudentID}")]
-        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersForStudentProject(int classID, int StudentID)
+        [HttpGet("GetAnswersByProjectIdAndUserId/{projectId}/{userId}")]
+        [Authorize]
+        public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByProjectIdAndUserId(int projectId, int userId)
         {
             var result = await (from p in _context.Projects
                    join q in _context.Questionnaires on p.Id equals q.Project.Id
                    join que in _context.Questions on q equals que.Questionnaire
                    join a in _context.Answers on que equals a.Question
-                   where a.Answerer.UserId == StudentID && p.ClassId == classID
-                   select new { Id = a.Id, AnswerStr = a.AnswerStr, Question = a.Question, Answerer = a.Answerer }).ToListAsync();
+                   where a.Answerer.UserId == userId && p.Id == projectId
+                                select new { Id = a.Id, AnswerStr = a.AnswerStr, Question = a.Question, Answerer = a.Answerer }).ToListAsync();
 
             List<AnswerDTO> answerList = new List<AnswerDTO>();
 

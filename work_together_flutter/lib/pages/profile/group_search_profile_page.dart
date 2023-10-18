@@ -22,7 +22,8 @@ class GroupSearchProfilePage extends ConsumerStatefulWidget {
       required this.classId,
       required this.className,
       required this.projectId,
-      required this.projectName})
+      required this.projectName,
+      required this.onLoggedUserTeam})
       : super(key: key);
 
   final int id;
@@ -36,6 +37,7 @@ class GroupSearchProfilePage extends ConsumerStatefulWidget {
   final String className;
   final int projectId;
   final String projectName;
+  final bool onLoggedUserTeam;
 
   @override
   ConsumerState<GroupSearchProfilePage> createState() =>
@@ -108,56 +110,62 @@ class _GroupProfileProfilePageState
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (userdata.id == loggedUserId) {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return QuestionnairePage(
-                                loggedUserId: loggedUserId,
-                                classId: widget.classId,
-                                className: widget.className,
-                                projectId: widget.projectId,
-                                projectName: widget.projectName);
-                          },
-                        ));
-                      } else {
-                        NotificationDTO teamInviteNotificationDTO = NotificationDTO(
-                            id: -1,
-                            title: "$loggedUserName Invited You To a Team",
-                            description:
-                                "$loggedUserName Invited You To a Team. Would you like to join?",
-                            isInvite: true,
-                            projectID: widget.projectId,
-                            projectName: widget.projectName,
-                            classID: widget.classId,
-                            className: widget.className,
-                            fromID: loggedUserId,
-                            fromName: loggedUserName,
-                            toID: userdata.id,
-                            toName: userdata.name,
-                            sentAt: DateTime.now(),
-                            read: false);
+              Visibility(
+                visible:
+                    !widget.onLoggedUserTeam || userdata.id == loggedUserId,
+                child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (userdata.id == loggedUserId) {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return QuestionnairePage(
+                                  loggedUserId: loggedUserId,
+                                  classId: widget.classId,
+                                  className: widget.className,
+                                  projectId: widget.projectId,
+                                  projectName: widget.projectName);
+                            },
+                          ));
+                        } else {
+                          NotificationDTO teamInviteNotificationDTO =
+                              NotificationDTO(
+                                  id: -1,
+                                  title:
+                                      "$loggedUserName Invited You To a Team",
+                                  description:
+                                      "$loggedUserName Invited You To a Team. Would you like to join?",
+                                  isInvite: true,
+                                  projectID: widget.projectId,
+                                  projectName: widget.projectName,
+                                  classID: widget.classId,
+                                  className: widget.className,
+                                  fromID: loggedUserId,
+                                  fromName: loggedUserName,
+                                  toID: userdata.id,
+                                  toName: userdata.name,
+                                  sentAt: DateTime.now(),
+                                  read: false);
 
-                        HttpService().sendInviteNotificationToUser(
-                            teamInviteNotificationDTO);
-                        // HttpService().inviteToTeam(1, loggedUserId, widget.id);
-                        // Navigator.pop(context);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(125, 35),
-                        backgroundColor: const Color(0xFF1192dc)),
-                    child: Text(
-                      inviteToGroupOrEdit,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
+                          HttpService().sendInviteNotificationToUser(
+                              teamInviteNotificationDTO);
+                          // HttpService().inviteToTeam(1, loggedUserId, widget.id);
+                          // Navigator.pop(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(125, 35),
+                          backgroundColor: const Color(0xFF1192dc)),
+                      child: Text(
+                        inviteToGroupOrEdit,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                  )),
+                    )),
+              ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
