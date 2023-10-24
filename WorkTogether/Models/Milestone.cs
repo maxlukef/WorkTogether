@@ -10,7 +10,8 @@
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime Deadline { get;set; }
-        public ICollection<TaskItem> tasks { get; set; }
+
+        public ICollection<Team> CompleteTeams { get; set; }
     }
 
     public class MilestoneDTO
@@ -20,6 +21,40 @@
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime Deadline { get; set; }
+
+    }
+
+    public class MilestoneDTOWithComplete
+    {
+        public int Id { get; set; }
+        public int ProjectID { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public DateTime Deadline { get; set; }
+        public bool Complete { get; set; }
+
+    }
+
+    public class CreateMilestoneDTO
+    {
+        public int ProjectID { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public DateTime Deadline { get; set; }
+
+    }
+
+    public class CompleteRatioDTO
+    {
+        public int complete { get; set; }
+        public int numteams { get; set; }
+
+    }
+
+    public class CompleteIncompleteTeamsDTO
+    {
+        public List<TeamDTO> complete { get; set; }
+        public List<TeamDTO> incomplete { get; set; }
 
     }
 }

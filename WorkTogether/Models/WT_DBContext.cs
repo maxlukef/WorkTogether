@@ -641,6 +641,7 @@ namespace WorkTogether.Models
                 t1.Id = 1;
                 t1.Complete = true;
                 t1.Members = new List<User>{newUser, newUser16, newUser15, newUser14};
+                t1.CompleteMilestones = new List<Milestone>();
                 Teams.Add(t1);
                 this.SaveChanges();
 

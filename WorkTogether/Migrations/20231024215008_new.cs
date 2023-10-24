@@ -452,6 +452,31 @@ namespace WorkTogether.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "MilestoneTeam",
+                columns: table => new
+                {
+                    CompleteMilestonesId = table.Column<int>(type: "int", nullable: false),
+                    CompleteTeamsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MilestoneTeam", x => new { x.CompleteMilestonesId, x.CompleteTeamsId });
+                    table.ForeignKey(
+                        name: "FK_MilestoneTeam_Milestones_CompleteMilestonesId",
+                        column: x => x.CompleteMilestonesId,
+                        principalTable: "Milestones",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MilestoneTeam_Teams_CompleteTeamsId",
+                        column: x => x.CompleteTeamsId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Tasks",
                 columns: table => new
                 {
@@ -644,6 +669,11 @@ namespace WorkTogether.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MilestoneTeam_CompleteTeamsId",
+                table: "MilestoneTeam",
+                column: "CompleteTeamsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Questionnaires_ProjectID",
                 table: "Questionnaires",
                 column: "ProjectID",
@@ -736,6 +766,9 @@ namespace WorkTogether.Migrations
 
             migrationBuilder.DropTable(
                 name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "MilestoneTeam");
 
             migrationBuilder.DropTable(
                 name: "Notification");

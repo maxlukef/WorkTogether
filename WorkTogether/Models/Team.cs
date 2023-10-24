@@ -18,6 +18,8 @@ namespace WorkTogether.Models
 
         public Project Project { get; set; }
 
+        public ICollection<Milestone> CompleteMilestones { get; set; }
+
         public Chat? TeamChat { get; set; }
     }
 

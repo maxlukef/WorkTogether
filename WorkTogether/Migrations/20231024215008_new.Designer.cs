@@ -11,7 +11,7 @@ using WorkTogether.Models;
 namespace WorkTogether.Migrations
 {
     [DbContext(typeof(WT_DBContext))]
-    [Migration("20231012174301_new")]
+    [Migration("20231024215008_new")]
     partial class @new
     {
         /// <inheritdoc />
@@ -163,6 +163,21 @@ namespace WorkTogether.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("MilestoneTeam", b =>
+                {
+                    b.Property<int>("CompleteMilestonesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompleteTeamsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CompleteMilestonesId", "CompleteTeamsId");
+
+                    b.HasIndex("CompleteTeamsId");
+
+                    b.ToTable("MilestoneTeam");
                 });
 
             modelBuilder.Entity("TaskItemUser", b =>
@@ -712,6 +727,21 @@ namespace WorkTogether.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MilestoneTeam", b =>
+                {
+                    b.HasOne("WorkTogether.Models.Milestone", null)
+                        .WithMany()
+                        .HasForeignKey("CompleteMilestonesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkTogether.Models.Team", null)
+                        .WithMany()
+                        .HasForeignKey("CompleteTeamsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TaskItemUser", b =>
                 {
                     b.HasOne("WorkTogether.Models.User", null)
@@ -849,7 +879,7 @@ namespace WorkTogether.Migrations
             modelBuilder.Entity("WorkTogether.Models.TaskItem", b =>
                 {
                     b.HasOne("WorkTogether.Models.Milestone", "ParentMilestone")
-                        .WithMany("tasks")
+                        .WithMany()
                         .HasForeignKey("ParentMilestoneId");
 
                     b.HasOne("WorkTogether.Models.TaskItem", "ParentTask")
@@ -896,11 +926,6 @@ namespace WorkTogether.Migrations
                     b.Navigation("StudentClasses");
 
                     b.Navigation("TAClasses");
-                });
-
-            modelBuilder.Entity("WorkTogether.Models.Milestone", b =>
-                {
-                    b.Navigation("tasks");
                 });
 
             modelBuilder.Entity("WorkTogether.Models.Project", b =>

@@ -287,7 +287,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).FirstOrDefaultAsync();
+            var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
@@ -328,7 +328,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).FirstOrDefaultAsync();
+            var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
@@ -368,7 +368,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
+            var ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
             if (ms == null) { 
                 
                 return NotFound();
@@ -413,7 +413,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).FirstOrDefaultAsync();
+            var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
