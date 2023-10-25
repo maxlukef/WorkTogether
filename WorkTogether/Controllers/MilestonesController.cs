@@ -35,6 +35,7 @@ namespace WorkTogether.Controllers
             md.Title = ms.Title;
             md.Description = ms.Description;
             md.Deadline = ms.Deadline;
+            md.Id = ms.Id;
             return md;
         }
 
@@ -62,13 +63,13 @@ namespace WorkTogether.Controllers
             {
                 return BadRequest();
             }
-            Class c = await _context.Classes.Where(c=>c.Id == p.ClassId).FirstOrDefaultAsync();
+            Class c = await _context.Classes.Where(c=>c.Id == p.ClassId).Include(c=>c.Professor).FirstOrDefaultAsync();
             if(c == null)
             {
                 return Problem();
             }
             Team t = await _context.Teams.Include(t => t.Members).Include(t => t.Project).Where(t => t.Members.Contains(curr) && t.Project == p).FirstOrDefaultAsync();
-            if(t == null && c.ProfessorUserID != curr.UserId)
+            if(t == null && c.Professor.UserId != curr.UserId)
             {
                 return Unauthorized();
             }
@@ -196,7 +197,7 @@ namespace WorkTogether.Controllers
         public async Task<ActionResult> EditMilestone(MilestoneDTO milestoneDTO)
         {
             User curr = GetCurrentUser(HttpContext);
-            Milestone m = await _context.Milestones.Where(m => m.Id == milestoneDTO.ProjectID).FirstOrDefaultAsync();
+            Milestone m = await _context.Milestones.Where(m => m.Id == milestoneDTO.Id).FirstOrDefaultAsync();
             if (m == null)
             {
                 return NotFound();
@@ -241,7 +242,7 @@ namespace WorkTogether.Controllers
             Class c = await _context.Classes.Where(c => c.Id == m.Project.ClassId).Include(c => c.Professor).FirstOrDefaultAsync();
             Team t =  await _context.Teams.Include(t => t.Project).Include(t => t.Members).Where(t => t.Members.Contains(curr) && t.Project == m.Project).FirstOrDefaultAsync();
 
-            if(t == null && c.ProfessorUserID != curr.UserId)
+            if(t == null && c.Professor.UserId != curr.UserId)
             {
                 return Unauthorized();
             }
@@ -296,7 +297,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
             Class c = _context.Classes.Find(p.ClassId);
-            if (curr.UserId != c.ProfessorUserID)
+            if (curr.UserId != c.Professor.UserId)
             {
                 return Unauthorized();
             }
@@ -305,6 +306,7 @@ namespace WorkTogether.Controllers
             int countteams = await _context.Teams.Include(t => t.Project).Where(t => t.Project == p).CountAsync();
 
             CompleteRatioDTO toret = new CompleteRatioDTO();
+            toret.md = MilestoneToDTO(m);
             toret.complete = complete;
             toret.numteams = countteams;
             return toret;
@@ -324,7 +326,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
             Class c = _context.Classes.Find(p.ClassId);
-            if (curr.UserId != c.ProfessorUserID)
+            if (curr.UserId != c.Professor.UserId)
             {
                 return Unauthorized();
             }
@@ -336,6 +338,7 @@ namespace WorkTogether.Controllers
                 int countteams = await _context.Teams.Include(t => t.Project).Where(t => t.Project == p).CountAsync();
 
                 CompleteRatioDTO toret = new CompleteRatioDTO();
+                toret.md = MilestoneToDTO(m);
                 toret.complete = complete;
                 toret.numteams = countteams;
                 clist.Add(toret);
@@ -361,7 +364,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
             Class c = _context.Classes.Find(p.ClassId);
-            if (curr.UserId != c.ProfessorUserID)
+            if (curr.UserId != c.Professor.UserId)
             {
                 return Unauthorized();
             }
@@ -403,7 +406,7 @@ namespace WorkTogether.Controllers
             {
                 return Problem();
             }
-            if(c.ProfessorUserID != curr.UserId)
+            if(c.Professor.UserId != curr.UserId)
             {
                 return Unauthorized();
             }

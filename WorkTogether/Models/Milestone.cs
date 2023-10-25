@@ -46,6 +46,7 @@
 
     public class CompleteRatioDTO
     {
+        public MilestoneDTO md { get; set; }
         public int complete { get; set; }
         public int numteams { get; set; }
 
@@ -53,6 +54,7 @@
 
     public class CompleteIncompleteTeamsDTO
     {
+        
         public List<TeamDTO> complete { get; set; }
         public List<TeamDTO> incomplete { get; set; }
 
