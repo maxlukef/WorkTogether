@@ -257,6 +257,7 @@ namespace WorkTogether.Controllers
                 team.Name = sender.Name + ", " + curr.Name;
                 team.Members = new List<User>() { sender, curr };
                 team.Complete = false;
+                team.CompleteMilestones = new List<Milestone>();
                 
 
                 Chat newTeamChat = new Chat();
