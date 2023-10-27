@@ -287,11 +287,9 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-<<<<<<< 8b677cf922b60caaf698974ebe9a4ff803da2411
-            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
-=======
-            var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
->>>>>>> eec9145afee436fe5a259cddb27754b2c3e7bb32
+
+            var ms = await _context.Milestones.Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
@@ -332,11 +330,8 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-<<<<<<< 8b677cf922b60caaf698974ebe9a4ff803da2411
-            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
-=======
-            var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
->>>>>>> eec9145afee436fe5a259cddb27754b2c3e7bb32
+            var ms = await _context.Milestones.Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
@@ -421,11 +416,9 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-<<<<<<< 8b677cf922b60caaf698974ebe9a4ff803da2411
-            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
-=======
-            var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
->>>>>>> eec9145afee436fe5a259cddb27754b2c3e7bb32
+
+            var ms = await _context.Milestones.Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
