@@ -1,42 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:work_together_flutter/pages/create_tasks/components/task_drop_down.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:work_together_flutter/http_request.dart';
+import 'package:work_together_flutter/models/milestone_models/milestone.dart';
+import 'package:work_together_flutter/models/task_models/create_task_dto.dart';
+import 'package:work_together_flutter/models/team_dto.dart';
+import 'package:work_together_flutter/models/user_models/user.dart';
 import '../../global_components/custom_app_bar.dart';
+import 'components/milestone_drop_down.dart';
 
 class CreateTaskPage extends StatefulWidget {
-  const CreateTaskPage({
-    Key? key,
-  }) : super(key: key);
+  const CreateTaskPage(
+      {Key? key,
+      required this.studentsInGroup,
+      required this.milestones,
+      required this.team})
+      : super(key: key);
+  final TeamDTO team;
+  final List<User> studentsInGroup;
+  final List<Milestone> milestones;
 
   @override
   State<CreateTaskPage> createState() => _CreateTaskPageState();
 }
 
 class _CreateTaskPageState extends State<CreateTaskPage> {
-  List<List<String>> conversations = [];
   TextEditingController taskName = TextEditingController();
-  TextEditingController taskLabel = TextEditingController();
   TextEditingController taskDescription = TextEditingController();
   TextEditingController taskDeadline = TextEditingController();
 
+  // For submitting dto
+  String dateForDTO = "";
+
+  // Milestone selection.
+  Milestone? selectedMilestone;
+
+  // Student selections.
+  List<User> selectedStudents = [];
+  List<MultiSelectItem<User>> studentsDropdownList = [];
+  bool initialized = false;
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
-      appBar: const CustomAppBar(
-        title: "Create Task",
-      ),
-      body: SingleChildScrollView(
-        child: Column(children: [
-          createMilestoneHeader(
-              "Milestone 1: Build a Chat Server", "04/19/2023"),
-          createTaskInputs(taskName, taskLabel, taskDescription, taskDeadline),
-        ]),
-      ),
-    );
+  void initState() {
+    super.initState();
+    setupMultiselect();
   }
 
-  Widget createMilestoneHeader(String milestoneName, String mileStoneDeadline) {
+  void setupMultiselect() {
+    for (User student in widget.studentsInGroup) {
+      studentsDropdownList.add(MultiSelectItem(student, student.name));
+    }
+    initialized = true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return initialized == false
+        ? const CircularProgressIndicator()
+        : Scaffold(
+            backgroundColor: const Color(0xFFFFFFFF),
+            appBar: const CustomAppBar(
+              title: "Create Task",
+            ),
+            body: SingleChildScrollView(
+              child: Column(children: [
+                createTaskInputs(),
+              ]),
+            ),
+          );
+  }
+
+  Widget createMilestoneHeader(String milestoneName, String milestoneDeadline) {
     return Column(
       children: [
         Padding(
@@ -60,7 +95,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                 ),
               ),
               Text(
-                mileStoneDeadline,
+                milestoneDeadline,
                 style: const TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.w600,
@@ -74,15 +109,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     );
   }
 
-  Widget createTaskInputs(
-    TextEditingController name,
-    TextEditingController label,
-    TextEditingController description,
-    TextEditingController deadline,
-  ) {
-    // This will be used for the api call.
-    String selectedUser = "No User";
-
+  Widget createTaskInputs() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -102,39 +129,50 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                 border: OutlineInputBorder(),
                 hintText: "Enter Task Name",
               ),
-              controller: name,
+              controller: taskName,
             ),
           ),
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Assignee:",
+              "Milestone",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TaskDropDown(
-              dropdownValueSetter: (String value) {
-                selectedUser = value;
+            child: MilestoneDropDown(
+              milestones: widget.milestones,
+              dropdownValueSetter: (Milestone value) {
+                selectedMilestone = value;
               },
             ),
           ),
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Label:",
+              "Assignee(s):",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Enter Task Label",
+            child: MultiSelectDialogField(
+              items: studentsDropdownList,
+              title: const Text(
+                "Select students",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
-              controller: label,
+              buttonText: const Text(
+                "Select Users to Assign To Task",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              onConfirm: (results) async {
+                selectedStudents = results;
+              },
+              searchable: true,
             ),
           ),
           const Padding(
@@ -152,7 +190,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                 hintText: "Enter Task Deadline",
                 icon: Icon(Icons.calendar_today),
               ),
-              controller: deadline,
+              controller: taskDeadline,
               readOnly: true,
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
@@ -163,7 +201,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                 if (pickedDate != null) {
                   String formattedDate = DateFormat.yMd().format(pickedDate);
                   setState(() {
-                    deadline.text = formattedDate;
+                    taskDeadline.text = formattedDate;
                   });
                 }
               },
@@ -183,7 +221,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                 border: OutlineInputBorder(),
                 hintText: "Enter Task Description",
               ),
-              controller: description,
+              controller: taskDescription,
               maxLines: 5,
             ),
           ),
@@ -192,7 +230,29 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 // Send task to backend.
-                onPressed: () {},
+                onPressed: () async {
+                  if (selectedMilestone != null) {
+                    List<int> studentIDs = [];
+                    for (User student in selectedStudents) {
+                      studentIDs.add(student.id);
+                    }
+
+                    CreateTaskDTO dto = CreateTaskDTO(
+                        taskName.text,
+                        taskDescription.text,
+                        widget.team.id,
+                        null,
+                        selectedMilestone!.id,
+                        studentIDs,
+                        taskDeadline.text,
+                        false);
+
+                    await HttpService().createTask(dto);
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
+                },
                 child: const Padding(
                   padding: EdgeInsets.fromLTRB(1, 4, 12, 8),
                   child: Text(

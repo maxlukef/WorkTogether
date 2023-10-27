@@ -177,8 +177,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 } else {
                                   Navigator.push(context, MaterialPageRoute(
                                     builder: (context) {
-                                      return const GroupHome(
-                                        groupName: 'Task Force 141',
+                                      return GroupHome(
+                                        project: projectNameValue,
                                       );
                                     },
                                   ));

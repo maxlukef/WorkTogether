@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../models/task_models/task.dart';
 import '../../global_components/custom_app_bar.dart';
+import '../../models/task_models/return_task_dto.dart';
+import '../../models/user_models/user.dart';
 
 class TaskDescriptionPage extends StatefulWidget {
   const TaskDescriptionPage({super.key, required this.task});
-  final Task task;
+  final ReturnTaskDTO task;
 
   @override
   State<TaskDescriptionPage> createState() => _TaskDescriptionPageState();
@@ -13,6 +14,14 @@ class TaskDescriptionPage extends StatefulWidget {
 class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
   @override
   Widget build(BuildContext context) {
+    List<Text> assignedUsers = [];
+    for (User assignee in widget.task.assignees) {
+      assignedUsers.add(Text(
+        assignee.name,
+        style: const TextStyle(fontSize: 16, color: Colors.blue),
+      ));
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       appBar: const CustomAppBar(
@@ -25,16 +34,13 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
             child: Row(
               children: [
                 const Text(
-                  "Assigned User: ",
+                  "Assigned User(s): ",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
                 ),
-                Text(
-                  widget.task.assignedUser,
-                  style: const TextStyle(fontSize: 16, color: Colors.blue),
-                )
+                Row(children: assignedUsers)
               ],
             ),
           ),

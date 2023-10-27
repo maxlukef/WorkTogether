@@ -1,147 +1,189 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:work_together_flutter/http_request.dart';
+import 'package:work_together_flutter/models/project_models/project_in_class.dart';
+import 'package:work_together_flutter/models/task_models/return_task_dto.dart';
+import 'package:work_together_flutter/models/team_dto.dart';
 import 'package:work_together_flutter/pages/all_tasks/all_tasks.dart';
 import 'package:work_together_flutter/pages/create_tasks/create_tasks.dart';
 import 'package:work_together_flutter/pages/milestone%20description/milestone_description.dart';
 
 import '../../global_components/custom_app_bar.dart';
 import '../../models/milestone_models/milestone.dart';
-import '../../models/task_models/task.dart';
 import '../task description/task_description.dart';
 
-class GroupHome extends StatelessWidget {
-  const GroupHome({super.key, required this.groupName});
-  final String groupName;
+class GroupHome extends StatefulWidget {
+  const GroupHome({super.key, required this.project});
+  final ProjectInClass project;
+
+  @override
+  State<GroupHome> createState() => _GroupHomeState();
+}
+
+class _GroupHomeState extends State<GroupHome> {
+  List<ReturnTaskDTO>? userTasks;
+  TeamDTO? team;
+  List<Milestone>? milestones;
+  List<Widget> milestoneWidgets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    setup();
+  }
+
+  Future<void> setup() async {
+    getUserTasksApiCall();
+    getProjectMilestones();
+  }
+
+  Future<void> getUserTasksApiCall() async {
+    team = await getTeam();
+    if (team != null) {
+      userTasks = await HttpService().getAllUserGroupTasks(team!.id);
+      userTasks ??= [];
+      userTasks!.removeWhere((element) => element.completed == true);
+      setState(() {});
+    }
+  }
+
+  Future<void> getProjectMilestones() async {
+    milestones = await HttpService().getMilestonesForProject(widget.project.id);
+    milestones ??= [];
+    milestoneWidgets = [];
+    setState(() {});
+  }
+
+  Future<TeamDTO?> getTeam() async {
+    TeamDTO? t = await HttpService().getTeamByProjectId(widget.project.id);
+    return t;
+  }
 
   @override
   Widget build(BuildContext context) {
-    Milestone m1 = Milestone(
-        "Milestone 1", "A milestone description.", "02/01/2023", 10, 10);
+    DateFormat format = DateFormat("yyyy-MM-dd");
+    String formattedProjectDeadline = format.format(widget.project.deadline);
 
-    Milestone m2 = Milestone("Milestone 2",
-        "A different milestone description.", "02/14/2023", 12, 12);
+    Milestone? currentMilestone;
 
-    Milestone m3 = Milestone("Milestone 3", "Yet another milestone description",
-        "02/22/2023", 7, 10);
+    if (milestones != null) {
+      for (Milestone m in milestones!) {
+        milestoneWidgets.add(createMilestoneTile(m, context));
+      }
+      if (milestones!.isNotEmpty) {
+        currentMilestone = milestones!.last;
+      }
+    }
 
-    Milestone m4 = Milestone(
-        "Milestone 4",
-        "Build a chat server that supports multiple clients. Each client should be able to select a display name when joining so that they can be identified by that name. You will need to utilize multithreading to support multiple clients. Lorem ipsum dolor sit amet. Cum quasi facilis et voluptas temporibus quo incidunt accusamus? Qui error obcaecati sed adipisci voluptas est tempora molestiae. Vel quaerat quas id eligendi quibusdam ut molestiae natus ex quia provident sit eaque sunt. Cum similique quia et dolorem quia At mollitia maxime vel omnis sequi non omnis temporibus ea consequatur numquam.",
-        "04/19/2023",
-        2,
-        4);
-
-    List<Widget> milestones = [];
-    milestones.add(createMilestoneTile(m1, context));
-    milestones.add(createMilestoneTile(m2, context));
-    milestones.add(createMilestoneTile(m3, context));
-    milestones.add(createMilestoneTile(m4, context));
-
-    Task t1 = Task(
-        "Draft a home screen UI",
-        "Create a rough blockout of the home screen.",
-        "09/12/11",
-        "Rory Donald");
-    Task t2 = Task("Go outside", "Leave the abode", "09/12/11", "Rory Donald");
-    Task t3 = Task(
-        "Create a custom networking socket",
-        "Create a socket to allow network connections.",
-        "09/12/11",
-        "Rory Donald");
-    List<Task> tasks = [];
-
-    tasks.add(t1);
-    tasks.add(t2);
-    tasks.add(t3);
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
-      appBar: CustomAppBar(title: groupName),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return (userTasks == null || team == null || milestones == null)
+        ? const CircularProgressIndicator()
+        : Scaffold(
+            backgroundColor: const Color(0xFFFFFFFF),
+            appBar: CustomAppBar(title: team!.name),
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                    child: createMilestoneDueDate("Dec 22"),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Wrap(children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                            child: currentMilestone == null
+                                ? createMilestoneDueDate("No active milestone")
+                                : createMilestoneDueDate(
+                                    currentMilestone.deadline),
+                          ),
+                          createProjectDueDate(formattedProjectDeadline),
+                        ]),
+                      ],
+                    ),
                   ),
-                  createProjectDueDate("Dec 31"),
+                  Center(
+                      child: currentMilestone == null
+                          ? createMilestoneProgressMeter(0)
+                          : createMilestoneProgressMeter(
+                              currentMilestone.percentOfTasksComplete())),
+                  createTaskSection(userTasks!, context),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue),
+                            // Bring user to create task page.
+                            onPressed: () async {
+                              await Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return CreateTaskPage(
+                                    team: team!,
+                                    milestones: milestones!,
+                                    studentsInGroup: team!.members,
+                                  );
+                                },
+                              ));
+                              await setup();
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                              child: Text(
+                                "Create Task",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue),
+                            // Bring user to create task page.
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return AllTasksPage(
+                                    milestones: milestones!,
+                                    team: team!,
+                                  );
+                                },
+                              ));
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                              child: Text(
+                                "All Tasks",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )),
+                      ),
+                    ],
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(24, 8, 8, 8),
+                    child: Text(
+                      "Milestones",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Wrap(
+                    children: milestoneWidgets,
+                  ),
                 ],
               ),
             ),
-            Center(child: createMilestoneProgressMeter(0.7)),
-            createTaskSection(tasks, context),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue),
-                      // Bring user to create task page.
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return const CreateTaskPage();
-                          },
-                        ));
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                        child: Text(
-                          "Create Task",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue),
-                      // Bring user to create task page.
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return const AllTasksPage();
-                          },
-                        ));
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                        child: Text(
-                          "All Tasks",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )),
-                ),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(24, 8, 8, 8),
-              child: Text(
-                "Milestones",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Wrap(
-              children: milestones,
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   Widget createMilestoneDueDate(String dueDate) {
@@ -225,7 +267,7 @@ class GroupHome extends StatelessWidget {
     );
   }
 
-  Widget createTaskSection(List<Task> tasks, BuildContext context) {
+  Widget createTaskSection(List<ReturnTaskDTO> tasks, BuildContext context) {
     List<Widget> taskWidgets = [];
 
     // Add header.
@@ -294,6 +336,7 @@ class GroupHome extends StatelessWidget {
                 builder: (context) {
                   return MilestoneDescriptionPage(
                     milestone: milestone,
+                    team: team!,
                   );
                 },
               ));
@@ -306,7 +349,7 @@ class GroupHome extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      milestone.name,
+                      milestone.title,
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     if (milestone.tasksCompleted == milestone.totalTasks)
