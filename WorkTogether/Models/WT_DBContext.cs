@@ -645,6 +645,16 @@ namespace WorkTogether.Models
                 Teams.Add(t1);
                 this.SaveChanges();
 
+
+                Team t2 = new Team();
+                t2.Name = "John Coder's HashMap Crew";
+                t2.Project = newProject;
+                t2.Id = 2;
+                t2.Complete = true;
+                t2.Members = new List<User> { newUser, newUser16, newUser15, newUser14 };
+                Teams.Add(t2);
+                this.SaveChanges();
+
                 Questionnaire default_questionnaire = new Questionnaire();
                 default_questionnaire.Project = newProject3;
                 default_questionnaire.ProjectID = newProject3.Id;

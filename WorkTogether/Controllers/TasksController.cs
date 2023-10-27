@@ -287,7 +287,11 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
+<<<<<<< 8b677cf922b60caaf698974ebe9a4ff803da2411
+            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+=======
             var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
+>>>>>>> eec9145afee436fe5a259cddb27754b2c3e7bb32
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
@@ -328,7 +332,11 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
+<<<<<<< 8b677cf922b60caaf698974ebe9a4ff803da2411
+            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+=======
             var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
+>>>>>>> eec9145afee436fe5a259cddb27754b2c3e7bb32
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
@@ -342,7 +350,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t=>t.Team).Include(t=>t.Assignees).Where(t => t.ParentMilestone == ms).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t=>t.Team).Include(t=>t.Assignees).Where(t => t.ParentMilestone == ms && !t.Assignees.Contains(curr_user)).ToListAsync();
 
             List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
@@ -413,7 +421,11 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
+<<<<<<< 8b677cf922b60caaf698974ebe9a4ff803da2411
+            var ms = await _context.Milestones.Include(m => m.tasks).Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+=======
             var ms = await _context.Milestones.Include(m => m.Project).FirstOrDefaultAsync();
+>>>>>>> eec9145afee436fe5a259cddb27754b2c3e7bb32
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
 
@@ -465,7 +477,7 @@ namespace WorkTogether.Controllers
 
             if (t == null)
             {
-                return NotFound(t.Id);
+                return NotFound(taskDTO.TeamID);
             }
 
             if (!t.Members.Contains(curr))
@@ -847,8 +859,8 @@ namespace WorkTogether.Controllers
 
         private static DateTime StrToDate(string date)
         {
-            var splitdate = date.Split('-');
-            DateTime d = new DateTime(int.Parse(splitdate[0]), int.Parse(splitdate[1]), int.Parse(splitdate[2]));
+            var splitdate = date.Split('/');
+            DateTime d = new DateTime(int.Parse(splitdate[2]), int.Parse(splitdate[0]), int.Parse(splitdate[1]));
             return d;
         }
 

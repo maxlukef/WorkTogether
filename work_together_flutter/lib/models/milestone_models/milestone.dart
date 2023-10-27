@@ -1,24 +1,20 @@
-import 'package:json_annotation/json_annotation.dart';
-part 'milestone.g.dart';
-
-@JsonSerializable(explicitToJson: true)
 class Milestone {
-  @JsonKey()
-  String name = "";
-  @JsonKey()
-  String description = "";
-  @JsonKey()
-  String deadline = "";
-  @JsonKey()
-  int tasksCompleted = 0;
-  @JsonKey()
-  int totalTasks = 0;
+  int id;
+  int projectId;
+  String title;
+  String description;
+  String deadline;
+  int tasksCompleted;
+  int totalTasks;
+  bool completed;
 
-  Milestone(this.name, this.description, this.deadline, this.tasksCompleted,
-      this.totalTasks);
+  Milestone(this.id, this.projectId, this.title, this.description,
+      this.deadline, this.tasksCompleted, this.totalTasks, this.completed);
 
-  factory Milestone.fromJson(Map<String, dynamic> json) =>
-      _$MilestoneFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MilestoneToJson(this);
+  double percentOfTasksComplete() {
+    if (totalTasks == 0) {
+      return 0.0;
+    }
+    return tasksCompleted / totalTasks;
+  }
 }

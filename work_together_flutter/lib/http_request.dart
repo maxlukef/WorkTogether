@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
 import 'package:work_together_flutter/models/chat_models/chat_message_dto.dart';
 import 'package:work_together_flutter/models/chat_models/chat_rename_dto.dart';
@@ -9,7 +10,13 @@ import 'package:work_together_flutter/models/chat_models/send_message_dto.dart';
 import 'package:work_together_flutter/models/classes_models/classes_dto.dart';
 import 'package:work_together_flutter/models/login_models/login_request.dart';
 import 'package:work_together_flutter/models/login_models/login_results.dart';
+import 'package:work_together_flutter/models/milestone_models/milestone.dart';
+import 'package:work_together_flutter/models/milestone_models/milestone_dto.dart';
 import 'package:work_together_flutter/models/user_models/new_user.dart';
+import 'package:work_together_flutter/models/task_models/basic_task_dto.dart';
+import 'package:work_together_flutter/models/task_models/create_task_dto.dart';
+import 'package:work_together_flutter/models/task_models/return_task_dto.dart';
+import 'package:work_together_flutter/models/team_dto.dart';
 
 import 'main.dart';
 import 'models/answer_models/answer_dto.dart';
@@ -373,6 +380,255 @@ class HttpService {
     } else {
       return null;
     }
+  }
+
+  Future<TeamDTO?> getTeamByProjectId(int projectId) async {
+    Uri uri = Uri.https(connectionString, "api/Teams/byproject/$projectId");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      Map<String, dynamic> temp = jsonDecode(res.body);
+      TeamDTO team = TeamDTO.fromJson(temp);
+
+      return team;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ReturnTaskDTO>?> getAllUserGroupTasks(int teamID) async {
+    Uri uri =
+        Uri.https(connectionString, "api/Tasks/AllUserGroupTasks/$teamID");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ReturnTaskDTO> userGroupTasks;
+
+      userGroupTasks = (json.decode(res.body) as List)
+          .map((i) => ReturnTaskDTO.fromJson(i))
+          .toList();
+      return userGroupTasks;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ReturnTaskDTO>?> getAllGroupTasks(int teamID) async {
+    Uri uri = Uri.https(connectionString, "api/Tasks/AllGroupTasks/$teamID");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ReturnTaskDTO> groupTasks;
+
+      groupTasks = (json.decode(res.body) as List)
+          .map((i) => ReturnTaskDTO.fromJson(i))
+          .toList();
+      return groupTasks;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ReturnTaskDTO>?> getEveryMilestoneTask(int milestoneID) async {
+    Uri uri =
+        Uri.https(connectionString, "api/Tasks/AllMilestoneTasks/$milestoneID");
+    Response res = await get(uri, headers: authHeader);
+
+    Uri uri2 = Uri.https(
+        connectionString, "api/Tasks/AllUserMilestoneTasks/$milestoneID");
+    Response res2 = await get(uri2, headers: authHeader);
+
+    if (res.statusCode == 200 && res2.statusCode == 200) {
+      List<ReturnTaskDTO> milestoneTasks;
+      List<ReturnTaskDTO> userMilestoneTasks;
+
+      milestoneTasks = (json.decode(res.body) as List)
+          .map((i) => ReturnTaskDTO.fromJson(i))
+          .toList();
+
+      userMilestoneTasks = (json.decode(res2.body) as List)
+          .map((i) => ReturnTaskDTO.fromJson(i))
+          .toList();
+
+      milestoneTasks.addAll(userMilestoneTasks);
+      return milestoneTasks;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<Milestone>?> getMilestonesForProject(int projectID) async {
+    Uri uri = Uri.https(
+        connectionString, "api/Milestones/ProjectMilestones/$projectID");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<MilestoneDTO> milestones = [];
+      List<dynamic> milestoneBody = jsonDecode(res.body);
+
+      for (dynamic milestone in milestoneBody) {
+        int iD = milestone["id"];
+        int pID = milestone["projectID"];
+        String title = milestone["title"];
+        String description = milestone["description"];
+        DateTime date = DateTime.parse((milestone["deadline"]));
+
+        MilestoneDTO milestoneToAdd = MilestoneDTO(
+            id: iD,
+            projectId: pID,
+            title: title,
+            description: description,
+            deadline: date);
+
+        milestones.add(milestoneToAdd);
+      }
+
+      List<Milestone> returnMilestones = [];
+      DateFormat format = DateFormat("yyyy-MM-dd");
+
+      for (MilestoneDTO dto in milestones) {
+        List<ReturnTaskDTO>? tasks = await getEveryMilestoneTask(dto.id);
+        tasks ??= [];
+
+        int completedTasks = 0;
+        for (ReturnTaskDTO task in tasks) {
+          if (task.completed) {
+            completedTasks++;
+          }
+        }
+
+        // Convert milestones to the data structure used in the pages.
+        // TODO: Add this field to the dto's in the future.
+        bool completed = true;
+        returnMilestones.add(Milestone(
+            dto.id,
+            dto.projectId,
+            dto.title,
+            dto.description,
+            format.format(dto.deadline),
+            completedTasks,
+            tasks.length,
+            completed));
+      }
+      return returnMilestones;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ReturnTaskDTO>?> getAllMilestoneTasks(int milestoneID) async {
+    Uri uri =
+        Uri.https(connectionString, "api/Tasks/AllMilestoneTasks/$milestoneID");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ReturnTaskDTO> milestoneTasks;
+
+      milestoneTasks = (json.decode(res.body) as List)
+          .map((i) => ReturnTaskDTO.fromJson(i))
+          .toList();
+      return milestoneTasks;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ReturnTaskDTO>?> getAllUserMilestoneTasks(int milestoneID) async {
+    Uri uri = Uri.https(
+        connectionString, "api/Tasks/AllUserMilestoneTasks/$milestoneID");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<ReturnTaskDTO> userMilestoneTasks;
+
+      userMilestoneTasks = (json.decode(res.body) as List)
+          .map((i) => ReturnTaskDTO.fromJson(i))
+          .toList();
+      return userMilestoneTasks;
+    } else {
+      return null;
+    }
+  }
+
+  Future<bool> createTask(CreateTaskDTO dto) async {
+    String body = jsonEncode(dto);
+
+    Uri uri = Uri.https(connectionString, "api/Tasks/create");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> editTask(BasicTaskDTO dto) async {
+    String body = jsonEncode(dto);
+
+    Uri uri = Uri.https(connectionString, "api/Tasks/edit");
+    Response res = await post(uri, headers: authHeader, body: body);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> assignToTask(int taskId, int userID) async {
+    Uri uri = Uri.https(connectionString, "api/tasks/assign/$taskId/$userID");
+    Response res = await post(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> unassignFromTask(int taskId, int userID) async {
+    Uri uri = Uri.https(connectionString, "api/Tasks/unassign/$taskId/$userID");
+    Response res = await post(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> markTaskAsComplete(int taskId) async {
+    Uri uri = Uri.https(connectionString, "api/Tasks/markcomplete/$taskId");
+    Response res = await post(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> markTaskAsIncomplete(int taskId) async {
+    Uri uri = Uri.https(connectionString, "api/Tasks/markincomplete/$taskId");
+    Response res = await post(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> deleteTask(int taskId) async {
+    Uri uri = Uri.https(connectionString, "api/Tasks/$taskId");
+    Response res = await delete(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+
+    return false;
   }
 
   Future<List<ChatMessage>?> getMessages(int chatID) async {

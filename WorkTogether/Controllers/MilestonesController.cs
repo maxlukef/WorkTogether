@@ -31,6 +31,7 @@ namespace WorkTogether.Controllers
         private MilestoneDTO MilestoneToDTO(Milestone ms)
         {
             MilestoneDTO md = new MilestoneDTO();
+            md.Id = ms.Id;
             md.ProjectID = ms.Project.Id;
             md.Title = ms.Title;
             md.Description = ms.Description;
