@@ -21,23 +21,11 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
-        // GET: api/Projects
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        private User GetCurrentUser(HttpContext httpContext)
         {
-            if (_context.Projects == null)
-            {
-                return NotFound();
-            }
-
-            var projects = await _context.Projects.ToListAsync();
-            var projectDTOs = new List<ProjectDTO>();
-            foreach(Project p in projects)
-            {
-                projectDTOs.Append(projectToDTO(p));
-            }
-
-            return Ok(projectDTOs);
+            string userEmail = httpContext.User.Identity.Name;
+            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
+            return u1;
         }
 
         // GET: api/Projects/5
@@ -89,65 +77,9 @@ namespace WorkTogether.Controllers
             return Ok(projects);
         }
 
-        // PUT: api/Projects/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(int id, ProjectDTO projectDTO)
-        {
-            Project project = DTOtoProject(projectDTO);
-            if(project == null)
-            {
-                return BadRequest();
-            }
 
-            if (id != project.Id)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(project).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProjectExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Projects
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(ProjectDTO projectDTO)
-        {
-            Project project = DTOtoProject(projectDTO);
-
-            if (project == null) 
-            {
-                return BadRequest();
-            }
-            
-            if (_context.Projects == null)
-            {
-                return Problem("Entity set 'WT_DBContext.Projects'  is null.");
-            }
-            
-            _context.Projects.Add(project);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetProject", new { id = project.Id }, project);
-        }
 
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
@@ -212,6 +144,88 @@ namespace WorkTogether.Controllers
                 TeamFormationDeadline = p.TeamFormationDeadline,
                 Questionnaire = q,
             };
+
+            /*
+            // POST: api/Projects
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPost]
+            public async Task<ActionResult<Project>> PostProject(ProjectDTO projectDTO)
+            {
+                Project project = DTOtoProject(projectDTO);
+
+                if (project == null)
+                {
+                    return BadRequest();
+                }
+
+                if (_context.Projects == null)
+                {
+                    return Problem("Entity set 'WT_DBContext.Projects'  is null.");
+                }
+
+                _context.Projects.Add(project);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetProject", new { id = project.Id }, project);
+            }
+            
+             
+                     // PUT: api/Projects/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProject(int id, ProjectDTO projectDTO)
+        {
+            Project project = DTOtoProject(projectDTO);
+            if(project == null)
+            {
+                return BadRequest();
+            }
+
+            if (id != project.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(project).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProjectExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+
+                    // GET: api/Projects
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        {
+            if (_context.Projects == null)
+            {
+                return NotFound();
+            }
+
+            var projects = await _context.Projects.ToListAsync();
+            var projectDTOs = new List<ProjectDTO>();
+            foreach(Project p in projects)
+            {
+                projectDTOs.Append(projectToDTO(p));
+            }
+
+            return Ok(projectDTOs);
+        }
+        }*/
+
         }
     }
 }

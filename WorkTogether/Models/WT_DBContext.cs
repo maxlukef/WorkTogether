@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Permissions;
 using WorkTogether.Models;
 using System.Diagnostics;
+using System.Reflection.Emit;
 
 namespace WorkTogether.Models
 {
@@ -29,6 +30,9 @@ namespace WorkTogether.Models
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
             base.OnModelCreating(modelbuilder);
+
+            modelbuilder.Entity<Class>()
+                .HasAlternateKey(c => c.InviteCode);
         }
 
 
