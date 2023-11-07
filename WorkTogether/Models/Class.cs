@@ -16,6 +16,12 @@ namespace WorkTogether.Models
         public string? Description { get; set; }
         public ICollection<StudentClass>? StudentClasses { get; set; }
         public ICollection<TAClass>? TAClasses { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
+        public string InviteCode { get; set; }
+
+        
     }
 
     public class ClassDTO

@@ -85,6 +85,48 @@ namespace WorkTogether.Controllers
             return classList;
         }
 
+        [HttpGet("getinvitecode/{classid}")]
+        [Authorize]
+        public async Task<ActionResult<string>> GetInviteCode(int classid)
+        {
+            User curr = GetCurrentUser(HttpContext);
+            Class c = await _context.Classes.Where(c => c.Id == classid).Include(c => c.Professor).FirstOrDefaultAsync();
+            if(c==null)
+            {
+                return NotFound();
+            }
+            if(c.Professor != curr)
+            {
+                return Unauthorized();
+            }
+            return c.InviteCode;
+        }
+
+        [HttpGet("joinclass/{invcode}")]
+        [Authorize]
+        public async Task<ActionResult<ClassDTO>> Join(string invcode)
+        {
+            User curr = GetCurrentUser(HttpContext);
+            Class c = await _context.Classes.Where(c => c.InviteCode == invcode).FirstOrDefaultAsync();
+            if (c == null)
+            {
+                return NotFound();
+            }
+            if (c.Professor == curr)
+            {
+                return Unauthorized();
+            }
+            if(await _context.StudentClasses.Include(sc=>sc.Student).Include(sc=>sc.Class).Where(sc => sc.Class == c && sc.Student == curr).CountAsync() > 0)
+            {
+                return BadRequest("Student already in this class");
+            }
+            StudentClass n = new StudentClass();
+            n.Student = curr;
+            n.Class = c;
+            _context.StudentClasses.Add(n);
+            _context.SaveChanges();
+            return ClassToDTO(c);
+        }
 
         /// <summary>
         /// This gets all the students in the given class.
