@@ -30,7 +30,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var classList = await _context.Classes.ToListAsync();
+            var classList = await _context.Classes.Include(c=>c.Professor).ToListAsync();
             var classDTOList = new List<ClassDTO>();
             foreach (Class c in classList) 
             {
@@ -48,7 +48,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var @class = ClassToDTO(await _context.Classes.FindAsync(id));
+            var @class = ClassToDTO(await _context.Classes.Include(c=>c.Professor).Where(c=>c.Id==id).FirstOrDefaultAsync());
 
             if (@class == null)
             {
@@ -58,32 +58,7 @@ namespace WorkTogether.Controllers
             return @class;
         }
 
-        //GET: api/Classes/getbystudentid/10
-        [HttpGet("getbystudentID/{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClassesByStudentID(int id)
-        {
-            string userEmail = HttpContext.User.Identity.Name;
-            User u1 = await _context.Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
-
-            if (u1.UserId != id)
-            {
-                return Unauthorized();
-            }
-
-            var result = await (from studentClass in _context.StudentClasses
-                                join course in _context.Classes on studentClass.Class.Id equals course.Id
-                                where studentClass.Student.UserId == id
-                                select new { Id = course.Id, ProfessorID = course.ProfessorUserID, Name = course.Name, Description = course.Description }).ToListAsync();
-
-            List<ClassDTO> classList = new List<ClassDTO>();
-
-            foreach (var c in result) {
-                classList.Add(ClassToDTO(new Class { Id = c.Id, ProfessorUserID = c.ProfessorID, Name = c.Name,  Description = c.Description}));
-            }
-
-            return classList;
-        }
+  
 
         [HttpGet("getinvitecode/{classid}")]
         [Authorize]
@@ -185,6 +160,149 @@ namespace WorkTogether.Controllers
             return classes;
         }
 
+        //get classes that the current user is prof of
+        [Authorize]
+        [HttpGet("profclasses")]
+        public async Task<ActionResult<IEnumerable<ClassDTO>>> GetUserProfessorClasses()
+        {
+            User u = GetCurrentUser(HttpContext);
+            var classes = await _context.Classes.Include(c => c.Professor).Where(c => c.Professor == u).ToListAsync(); 
+            List<ClassDTO> classesdto = new List<ClassDTO>();
+            foreach (var cl in classes)
+            {
+                classesdto.Add(ClassToDTO(cl));
+            }
+            return classesdto;
+        }
+
+        [HttpPost("create")]
+        [Authorize]
+        public async Task<ActionResult<ClassDTO>> CreateClass(CreateClassDTO cd)
+        {
+            User curr = GetCurrentUser(HttpContext);
+            Class c = new Class();
+            c.Name = cd.Name;
+            c.Description = cd.Description;
+            c.Professor = curr;
+            _context.Classes.Add(c);
+            _context.SaveChanges();
+            return ClassToDTO(c);
+        }
+
+        [HttpPost("edit")]
+        [Authorize]
+        public async Task<ActionResult<ClassDTO>> EditClass(EditClassDTO cd)
+        {
+            User curr = GetCurrentUser(HttpContext);
+            Class c = await _context.Classes.Where(c => c.Id == cd.Id).Include(c => c.Professor).FirstOrDefaultAsync();
+            if(c == null)
+            {
+                return NotFound(cd);
+            }
+            if(c.Professor != curr)
+            {
+                return Unauthorized();
+            }
+            c.Name = cd.Name;
+            c.Description = cd.Description;
+            _context.SaveChanges();
+            return ClassToDTO(c);
+        }
+
+
+
+
+        // DELETE: api/Classes/5
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteClass(int id)
+        {
+            User curr = GetCurrentUser(HttpContext);
+            if (_context.Classes == null)
+            {
+                return NotFound();
+            }
+            var @class = await _context.Classes.Include(c=>c.Professor).Where(c=>c.Id==id).FirstOrDefaultAsync();
+            if (@class == null)
+            {
+                return NotFound();
+            }
+            if(@class.Professor != curr)
+            {
+                return Unauthorized();
+            }
+
+            _context.Classes.Remove(@class);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ClassExists(int id)
+        {
+            return (_context.Classes?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private User GetCurrentUser(HttpContext httpContext)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
+            return u1;
+        }
+
+        private static ClassDTO ClassToDTO(Class curClass) =>
+            new ClassDTO
+            { 
+                Id = curClass.Id,
+                Name = curClass.Name,
+                ProfessorID = curClass.Professor.UserId,
+                Description = curClass.Description
+            };
+
+        private static UserProfileDTO UsertoProfileDTO(User user) =>
+    new UserProfileDTO
+    {
+        Id = user.UserId,
+        Name = user.Name,
+        Email = user.Email,
+        Bio = user.Bio,
+        Major = user.Major,
+        EmploymentStatus = user.EmploymentStatus,
+        StudentStatus = user.StudentStatus,
+        Interests = user.Interests
+    };
+
+        /*
+  //GET: api/Classes/getbystudentid/10
+  [HttpGet("getbystudentID/{id}")]
+  [Authorize]
+  public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClassesByStudentID(int id)
+  {
+      string userEmail = HttpContext.User.Identity.Name;
+      User u1 = await _context.Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
+
+      if (u1.UserId != id)
+      {
+          return Unauthorized();
+      }
+
+      var result = await (from studentClass in _context.StudentClasses
+                          join course in _context.Classes on studentClass.Class.Id equals course.Id
+                          where studentClass.Student.UserId == id
+                          select new { Id = course.Id, ProfessorID = course.Professor.UserID, Name = course.Name, Description = course.Description }).ToListAsync();
+
+      List<ClassDTO> classList = new List<ClassDTO>();
+
+      foreach (var c in result) {
+          classList.Add(ClassToDTO(new Class { Id = c.Id, ProfessorUserID = c.ProfessorID, Name = c.Name,  Description = c.Description}));
+      }
+
+      return classList;
+  }
+        
+         
+         
+         
         // PUT: api/Classes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -215,8 +333,10 @@ namespace WorkTogether.Controllers
 
             return NoContent();
         }
-
-        // POST: api/Classes
+        
+         
+         
+                 // POST: api/Classes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Class>> PostClass(ClassDTO classDTO)
@@ -238,61 +358,7 @@ namespace WorkTogether.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetClass", new { id = @class.Id }, @class);
-        }
-
-        // DELETE: api/Classes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClass(int id)
-        {
-            if (_context.Classes == null)
-            {
-                return NotFound();
-            }
-            var @class = await _context.Classes.FindAsync(id);
-            if (@class == null)
-            {
-                return NotFound();
-            }
-
-            _context.Classes.Remove(@class);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ClassExists(int id)
-        {
-            return (_context.Classes?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        private User GetCurrentUser(HttpContext httpContext)
-        {
-            string userEmail = httpContext.User.Identity.Name;
-            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
-            return u1;
-        }
-
-        private static ClassDTO ClassToDTO(Class curClass) =>
-            new ClassDTO
-            { 
-                Id = curClass.Id,
-                Name = curClass.Name,
-                ProfessorID = curClass.ProfessorUserID,
-                Description = curClass.Description
-            };
-
-        private static UserProfileDTO UsertoProfileDTO(User user) =>
-    new UserProfileDTO
-    {
-        Id = user.UserId,
-        Name = user.Name,
-        Email = user.Email,
-        Bio = user.Bio,
-        Major = user.Major,
-        EmploymentStatus = user.EmploymentStatus,
-        StudentStatus = user.StudentStatus,
-        Interests = user.Interests
-    };
+        }*/
 
 
     }
