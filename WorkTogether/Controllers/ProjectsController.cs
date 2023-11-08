@@ -28,6 +28,67 @@ namespace WorkTogether.Controllers
             return u1;
         }
 
+
+        // GET: api/Projects/5
+        [HttpPost("create")]
+        [Authorize]
+        public async Task<ActionResult<ProjectDTO>> CreateProject(CreateProjectDTO p)
+        {
+            User curr = GetCurrentUser(HttpContext);
+            Class c = await _context.Classes.Where(c=>c.Id == p.ClassId).Include(c=>c.Professor).FirstOrDefaultAsync();
+            if (c == null)
+            {
+                return NotFound("class id not found");
+            }
+            if(c.Professor != curr)
+            {
+                return Unauthorized("Must be the classes professor to create a project");
+            }
+            Project pr = new Project();
+            pr.ClassId = c.Id;
+            pr.Deadline = p.Deadline;
+            pr.Name = p.Name;
+            pr.Description = p.Description;
+            pr.MaxTeamSize = p.MaxTeamSize;
+            pr.MinTeamSize = p.MinTeamSize;
+            pr.TeamFormationDeadline = p.TeamFormationDeadline;
+            CreateQuestionnaire(pr);
+            _context.SaveChanges();
+            return projectToDTO(pr);
+        }
+
+        // GET: api/Projects/5
+        [HttpPost("edit")]
+        [Authorize]
+        public async Task<ActionResult<ProjectDTO>> EditProject(EditProjectDTO p)
+        {
+            User curr = GetCurrentUser(HttpContext);
+            Project pr = await _context.Projects.Where(pr => pr.Id == p.Id).Include(pr=>pr.Questionnaire).FirstOrDefaultAsync();
+            if(pr == null)
+            {
+                return NotFound("Project does not exist");
+            }
+            Class c = await _context.Classes.Include(c=>c.Professor).Where(c=>c.Id == pr.ClassId).FirstOrDefaultAsync();
+           
+            if (c == null)
+            {
+                return NotFound("class id not found");
+            }
+            if (c.Professor != curr)
+            {
+                return Unauthorized("Must be the classes professor to create a project");
+            }
+            pr.Deadline = p.Deadline;
+            pr.Name = p.Name;
+            pr.Description = p.Description;
+            pr.MaxTeamSize = p.MaxTeamSize;
+            pr.TeamFormationDeadline = p.TeamFormationDeadline;
+            pr.MinTeamSize= p.MinTeamSize;
+            _context.SaveChanges();
+            return projectToDTO(pr);
+         
+        }
+
         // GET: api/Projects/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectDTO>> GetProject(int id)
@@ -36,7 +97,7 @@ namespace WorkTogether.Controllers
           {
               return NotFound();
           }
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _context.Projects.Where(p=>p.Id==id).Include(p=>p.Questionnaire).FirstOrDefaultAsync();
 
             if (project == null)
             {
@@ -77,14 +138,63 @@ namespace WorkTogether.Controllers
             return Ok(projects);
         }
 
+        private void CreateQuestionnaire(Project p)
+        {
+            Questionnaire default_questionnaire = new Questionnaire();
+            default_questionnaire.Project = p;
+            default_questionnaire.ProjectID = p.Id;
+            p.Questionnaire = default_questionnaire;
+            _context.Questionnaires.Add(default_questionnaire);
 
+
+            Question q1 = new Question();
+            q1.Questionnaire = default_questionnaire;
+            q1.Prompt = "Add Available Times";
+            q1.Type = "Time";
+            _context.Questions.Add(q1);
+
+
+            Question q2 = new Question();
+            q2.Questionnaire = default_questionnaire;
+            q2.Prompt = "Expected Project Quality";
+            q2.Type = "Select";
+            _context.Questions.Add(q2);
+
+           
+
+            Question q3 = new Question();
+            q3.Questionnaire = default_questionnaire;
+            q3.Prompt = "Relevant Skills";
+            q3.Type = "Tag";
+            _context.Questions.Add(q3);
+
+           
+
+            Question q4 = new Question();
+            q4.Questionnaire = default_questionnaire;
+            q4.Prompt = "Expected Hours Weekly";
+            q4.Type = "Number";
+            _context.Questions.Add(q4);
+
+           
+
+            Question q5 = new Question();
+            q5.Questionnaire = default_questionnaire;
+            q5.Prompt = "Additional Notes";
+            q5.Type = "Text";
+            _context.Questions.Add(q5);
+
+            _context.SaveChanges();
+        }
 
 
 
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProject(int id)
         {
+            User curr = GetCurrentUser(HttpContext);
             if (_context.Projects == null)
             {
                 return NotFound();
@@ -94,6 +204,8 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
+            Class c= await _context.Classes.Where(c=>c.Id == project.ClassId).Include(c=>c.Professor).FirstOrDefaultAsync();
+
 
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
