@@ -15,9 +15,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 4.0,
       title: Text(
         title,
-        style: const TextStyle(color: Colors.black),
+        overflow: TextOverflow.ellipsis,
+        style:
+            const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       ),
-      centerTitle: true,
     );
   }
 }

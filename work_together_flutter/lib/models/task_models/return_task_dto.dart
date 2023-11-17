@@ -39,4 +39,13 @@ class ReturnTaskDTO {
       _$ReturnTaskDTOFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReturnTaskDTOToJson(this);
+
+  bool containsStudentName(String name) {
+    for (User student in assignees) {
+      if (student.name == name) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

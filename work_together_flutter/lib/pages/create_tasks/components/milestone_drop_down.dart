@@ -6,9 +6,15 @@ class MilestoneDropDown extends StatefulWidget {
     super.key,
     required this.dropdownValueSetter,
     required this.milestones,
+    required this.initialValue,
+    this.initialMilestone,
+    this.initialMilestoneID,
   });
   final ValueSetter<Milestone> dropdownValueSetter;
   final List<Milestone> milestones;
+  final bool initialValue;
+  final Milestone? initialMilestone;
+  final int? initialMilestoneID;
   @override
   State<MilestoneDropDown> createState() => _MilestoneDropDownState();
 }
@@ -23,8 +29,20 @@ class _MilestoneDropDownState extends State<MilestoneDropDown> {
   }
 
   Future<void> getUsersMilestonesCall() async {
-    // Initialize to the first milestone.
+    // Initialize milestone.
     dropdownValue = widget.milestones.first;
+    if (widget.initialValue) {
+      if (widget.initialMilestone != null) {
+        dropdownValue = widget.initialMilestone!;
+      }
+      if (widget.initialMilestoneID != null) {
+        for (Milestone m in widget.milestones) {
+          if (m.id == widget.initialMilestoneID) {
+            dropdownValue = m;
+          }
+        }
+      }
+    }
 
     // Callback to sync the initial value to the parent widget.
     widget.dropdownValueSetter(dropdownValue);

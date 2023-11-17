@@ -151,7 +151,11 @@ namespace WorkTogether.Controllers
         public async Task<ActionResult<IEnumerable<ClassDTO>>> GetCurrentUserClasses()
         {
             User u = GetCurrentUser(HttpContext);
+<<<<<<< 7f8b84a37e901df01f37f226a984ff48c5442b00
             var studentClasses = await _context.StudentClasses.Where(r => r.Student.UserId == u.UserId).Include(r=> r.Class) .ToListAsync();
+=======
+            var studentClasses = await _context.StudentClasses.Where(r => r.Student.UserId == u.UserId).Include(r => r.Class.Professor).ToListAsync(); 
+>>>>>>> d5892e156ef2466408d25f231c5805a64fadc275
             List<ClassDTO> classes = new List<ClassDTO>();
             foreach (var studentClass in studentClasses)
             {
