@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:work_together_flutter/global_components/date_time_converter.dart';
 import 'package:work_together_flutter/models/milestone_models/milestone.dart';
 import 'package:work_together_flutter/models/task_models/return_task_dto.dart';
 import 'package:work_together_flutter/models/team_dto.dart';
+import 'package:work_together_flutter/pages/task%20description/task_description.dart';
 
 import '../../global_components/custom_app_bar.dart';
-import '../../global_components/tag.dart';
 import '../../http_request.dart';
-import '../../models/user_models/user.dart';
 import '../create_tasks/create_tasks.dart';
 
 class AllTasksPage extends StatefulWidget {
@@ -34,6 +34,10 @@ class _AllTasksPageState extends State<AllTasksPage> {
   }
 
   Future<void> getUserTasks() async {
+    groupTasks = [];
+    yourTasks = [];
+    completedTasks = [];
+
     // Add user tasks.
     List<ReturnTaskDTO>? results =
         await HttpService().getAllUserGroupTasks(widget.team.id);
@@ -72,55 +76,60 @@ class _AllTasksPageState extends State<AllTasksPage> {
             backgroundColor: const Color(0xFFFFFFFF),
             appBar: const CustomAppBar(title: "All Tasks"),
             body: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          createTaskInProgressSection(
-                              groupTasks, "Group Tasks"),
-                          createTaskInProgressSection(yourTasks, "Your Tasks"),
-                          createCompletedTaskSection(
-                              completedTasks, "Completed Tasks"),
-                        ],
-                      ),
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        createTaskInProgressSection(groupTasks, "Group Tasks"),
+                        createTaskInProgressSection(yourTasks, "Your Tasks"),
+                        createCompletedTaskSection(
+                            completedTasks, "Completed Tasks"),
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 10, 8, 8),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue),
-                              // Bring user to create task page.
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) {
-                                    return CreateTaskPage(
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 10, 8, 8),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue),
+                                // Bring user to create task page.
+                                onPressed: () async {
+                                  await Navigator.push(context,
+                                      MaterialPageRoute(
+                                    builder: (context) {
+                                      return CreateTaskPage(
                                         team: widget.team,
                                         milestones: widget.milestones,
-                                        studentsInGroup: widget.team.members);
-                                  },
-                                ));
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                                child: Text(
-                                  "Create Task",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white,
+                                        studentsInGroup: widget.team.members,
+                                        hasInitialMilestone: false,
+                                        isEditing: false,
+                                      );
+                                    },
+                                  ));
+                                  await getUserTasks();
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                                  child: Text(
+                                    "Create Task",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                              )),
-                        ),
-                      ],
+                                )),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 ],
@@ -148,12 +157,23 @@ class _AllTasksPageState extends State<AllTasksPage> {
         padding: const EdgeInsets.fromLTRB(24, 4, 16, 4),
         child: SizedBox(
           height: 35,
-          width: double.infinity,
+          width: 675,
           child: Material(
             color: Colors.grey.shade200,
             child: InkWell(
                 // Bring user to relavant page regarding the task.
-                onTap: () {},
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return TaskDescriptionPage(
+                        team: widget.team,
+                        milestones: widget.milestones,
+                        task: tasks[i],
+                      );
+                    },
+                  ));
+                  await getUserTasks();
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -188,7 +208,6 @@ class _AllTasksPageState extends State<AllTasksPage> {
   Widget createTaskInProgressSection(
       List<ReturnTaskDTO> tasks, String headerText) {
     List<Widget> taskWidgets = [];
-    Map<int, List<Widget>> assignedUsers = {};
 
     // Add header.
     taskWidgets.add(Padding(
@@ -199,65 +218,58 @@ class _AllTasksPageState extends State<AllTasksPage> {
       ),
     ));
 
-    for (int i = 0; i < tasks.length; i++) {
-      List<Widget> nameTags = [];
-
-      for (User assignee in tasks[i].assignees) {
-        nameTags.add(Tag(
-          text: assignee.name,
-        ));
-      }
-
-      assignedUsers[i] = nameTags;
-    }
-
     // Add dynamic tasks.
     for (int i = 0; i < tasks.length; i++) {
       taskWidgets.add(Padding(
         padding: const EdgeInsets.fromLTRB(24, 4, 16, 4),
         child: SizedBox(
           height: 75,
-          width: double.infinity,
+          width: 675,
           child: Material(
             color: Colors.grey.shade200,
             child: InkWell(
                 // Bring user to relavant page regarding the task.
-                onTap: () {},
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return TaskDescriptionPage(
+                        team: widget.team,
+                        milestones: widget.milestones,
+                        task: tasks[i],
+                      );
+                    },
+                  ));
+                  await getUserTasks();
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        children: [
-                          Text(
-                            tasks[i].name,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Row(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.calendar_month_outlined,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              Text(
-                                tasks[i].dueDate,
-                                style: const TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          )
-                        ],
+                      Text(
+                        tasks[i].name,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600),
                       ),
                       Row(
-                        children: assignedUsers[i]!,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.calendar_month_outlined,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          Text(
+                            formatDatePretty(tasks[i].dueDate),
+                            style: const TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
                       ),
                     ],
                   ),
