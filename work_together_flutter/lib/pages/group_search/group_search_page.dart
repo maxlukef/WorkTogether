@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/pages/group_search/components/student_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:work_together_flutter/pages/group_search_swipe/group_search_swipe_page.dart';
 
 import '../../global_components/custom_app_bar.dart';
 import '../../global_components/tag.dart';
@@ -61,15 +62,44 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                   child: Column(children: [
                 Row(
                   children: [
-                    const Padding(
-                        padding: EdgeInsets.only(left: 5, top: 15, bottom: 20),
+                    Padding(
+                        padding:
+                            const EdgeInsets.only(left: 5, top: 15, bottom: 20),
                         child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("CS4400",
-                                style: TextStyle(
+                            child: Text(widget.className,
+                                style: const TextStyle(
                                     fontSize: 32,
                                     fontWeight: FontWeight.w700)))),
                     const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 5, right: 15, top: 15, bottom: 20),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          child: const Icon(Icons.app_shortcut),
+                          onTap: () async {
+                            await httpService
+                                .getUsers(widget.classId, widget.projectId)
+                                .then((value) => {
+                                      Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) {
+                                          return GroupSearchSwipePage(
+                                            users: value,
+                                            userId: widget.userId,
+                                            classId: widget.classId,
+                                            className: widget.className,
+                                            projectId: widget.projectId,
+                                            projectName: widget.projectName,
+                                          );
+                                        },
+                                      ))
+                                    });
+                          },
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 5, right: 15, top: 15, bottom: 20),
