@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/http_request.dart';
 import 'package:work_together_flutter/models/project_models/project_in_class.dart';
 import 'package:work_together_flutter/models/task_models/return_task_dto.dart';
@@ -9,6 +11,7 @@ import 'package:work_together_flutter/pages/create_tasks/create_tasks.dart';
 import 'package:work_together_flutter/pages/milestone%20description/milestone_description.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../global_components/date_time_converter.dart';
 import '../../models/milestone_models/milestone.dart';
 import '../task description/task_description.dart';
 
@@ -61,12 +64,15 @@ class _GroupHomeState extends State<GroupHome> {
 
   @override
   Widget build(BuildContext context) {
-    DateFormat format = DateFormat("yyyy-MM-dd");
-    String formattedProjectDeadline = format.format(widget.project.deadline);
+    String formattedProjectDeadline =
+        DateFormat.MMMd().format(widget.project.deadline);
 
     Milestone? currentMilestone;
 
     if (milestones != null) {
+      if (milestoneWidgets.isNotEmpty) {
+        milestoneWidgets.clear();
+      }
       for (Milestone m in milestones!) {
         milestoneWidgets.add(createMilestoneTile(m, context));
       }
@@ -76,111 +82,143 @@ class _GroupHomeState extends State<GroupHome> {
     }
 
     return (userTasks == null || team == null || milestones == null)
-        ? const CircularProgressIndicator()
+        ? const Center(
+            child: SizedBox(
+                height: 50, width: 50, child: CircularProgressIndicator()),
+          )
         : Scaffold(
             backgroundColor: const Color(0xFFFFFFFF),
             appBar: CustomAppBar(title: team!.name),
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Wrap(children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                            child: currentMilestone == null
-                                ? createMilestoneDueDate("No active milestone")
-                                : createMilestoneDueDate(
-                                    currentMilestone.deadline),
-                          ),
-                          createProjectDueDate(formattedProjectDeadline),
-                        ]),
-                      ],
-                    ),
-                  ),
-                  Center(
-                      child: currentMilestone == null
-                          ? createMilestoneProgressMeter(0)
-                          : createMilestoneProgressMeter(
-                              currentMilestone.percentOfTasksComplete())),
-                  createTaskSection(userTasks!, context),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            body: Align(
+              alignment: Alignment.topCenter,
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  width: 675,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue),
-                            // Bring user to create task page.
-                            onPressed: () async {
-                              await Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return CreateTaskPage(
-                                    team: team!,
-                                    milestones: milestones!,
-                                    studentsInGroup: team!.members,
-                                  );
-                                },
-                              ));
-                              await setup();
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                              child: Text(
-                                "Create Task",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.white,
-                                ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Wrap(children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                                child: currentMilestone == null
+                                    ? createMilestoneDueDate(
+                                        "No active milestone")
+                                    : createMilestoneDueDate(
+                                        currentMilestone.deadline),
                               ),
-                            )),
+                              createProjectDueDate(formattedProjectDeadline),
+                            ]),
+                          ],
+                        ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue),
-                            // Bring user to create task page.
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return AllTasksPage(
-                                    milestones: milestones!,
-                                    team: team!,
-                                  );
+                      Center(
+                          child: currentMilestone == null
+                              ? createMilestoneName("No Current Milestone")
+                              : createMilestoneName(currentMilestone.title)),
+                      Center(
+                          child: currentMilestone == null
+                              ? createMilestoneProgressMeter(0, null)
+                              : createMilestoneProgressMeter(
+                                  currentMilestone.percentOfTasksComplete(),
+                                  currentMilestone)),
+                      createTaskSection(userTasks!, context),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: ourLightColor()),
+                                // Bring user to create task page.
+                                onPressed: () async {
+                                  await Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (BuildContext context,
+                                            Animation<double> animation1,
+                                            Animation<double> animation2) {
+                                          return CreateTaskPage(
+                                            team: team!,
+                                            milestones: milestones!,
+                                            studentsInGroup: team!.members,
+                                            hasInitialMilestone: false,
+                                            isEditing: false,
+                                          );
+                                        },
+                                        transitionDuration: Duration.zero,
+                                        reverseTransitionDuration:
+                                            Duration.zero,
+                                      ));
+                                  await setup();
                                 },
-                              ));
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                              child: Text(
-                                "All Tasks",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )),
+                                child: const Padding(
+                                  padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                                  child: Text(
+                                    "Create Task",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: ourLightColor()),
+                                // Bring user to create task page.
+                                onPressed: () async {
+                                  await Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (BuildContext context,
+                                            Animation<double> animation1,
+                                            Animation<double> animation2) {
+                                          return AllTasksPage(
+                                            milestones: milestones!,
+                                            team: team!,
+                                          );
+                                        },
+                                        transitionDuration: Duration.zero,
+                                        reverseTransitionDuration:
+                                            Duration.zero,
+                                      ));
+                                  await setup();
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                                  child: Text(
+                                    "All Tasks",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )),
+                          ),
+                        ],
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(24, 8, 8, 8),
+                        child: Text(
+                          "Milestones",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Wrap(
+                        children: milestoneWidgets,
                       ),
                     ],
                   ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(24, 8, 8, 8),
-                    child: Text(
-                      "Milestones",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Wrap(
-                    children: milestoneWidgets,
-                  ),
-                ],
+                ),
               ),
             ),
           );
@@ -197,8 +235,30 @@ class _GroupHomeState extends State<GroupHome> {
           ),
         ),
         Text(
-          dueDate,
+          formatDatePretty(dueDate),
           style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  Widget createMilestoneName(String milestoneName) {
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            "Current Milestone Name",
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        Wrap(
+          children: [
+            Text(
+              milestoneName,
+              style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+            )
+          ],
         ),
       ],
     );
@@ -223,47 +283,35 @@ class _GroupHomeState extends State<GroupHome> {
   }
 
   // Expects a value between [0, 1].
-  Widget createMilestoneProgressMeter(double percentComplete) {
-    // Conversion to a 1-5 scale of completion.
-    int numFilledCircles = ((percentComplete * 10) / 2).floor();
-    List<Widget> circles = [];
-
-    // Add the 5 circles
-    for (int i = 0; i < 5; i++) {
-      // Default color is grey, represents uncompleted progress.
-      Color circleColor = Colors.grey.shade400;
-
-      // Fill the completed progress circles when applicable.
-      if (numFilledCircles > 0) {
-        circleColor = Colors.lightGreen;
-        numFilledCircles--;
-      }
-
-      circles.add(Padding(
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-        child: Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: circleColor),
-        ),
-      ));
+  Widget createMilestoneProgressMeter(
+      double percentComplete, Milestone? currentMilestone) {
+    String displayText = '0 / 0';
+    if (currentMilestone != null) {
+      displayText =
+          "${currentMilestone.tasksCompleted} / ${currentMilestone.totalTasks}";
     }
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              "Milestone Progress",
-              style: TextStyle(fontSize: 16),
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            "Milestone Progress",
+            style: TextStyle(fontSize: 16),
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: circles),
-        ],
-      ),
+        ),
+        CircularPercentIndicator(
+          radius: 40,
+          lineWidth: 10.0,
+          backgroundColor: Colors.grey.shade200,
+          progressColor: Colors.green,
+          percent: percentComplete,
+          center: Text(
+            displayText,
+            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+        )
+      ],
     );
   }
 
@@ -290,22 +338,35 @@ class _GroupHomeState extends State<GroupHome> {
             color: Colors.grey.shade200,
             child: InkWell(
                 // Bring user to relavant page regarding the task.
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return TaskDescriptionPage(
-                        task: tasks[i],
-                      );
-                    },
-                  ));
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (BuildContext context,
+                          Animation<double> animation1,
+                          Animation<double> animation2) {
+                        return TaskDescriptionPage(
+                          team: team!,
+                          milestones: milestones!,
+                          task: tasks[i],
+                        );
+                      },
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
+                  await setup();
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    tasks[i].name,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
+                child: Container(
+                  color: ourVeryLightColor(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      tasks[i].name,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 )),
@@ -331,62 +392,76 @@ class _GroupHomeState extends State<GroupHome> {
           color: Colors.grey.shade200,
           child: InkWell(
             // Brings user to relavant milestone page.
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return MilestoneDescriptionPage(
-                    milestone: milestone,
-                    team: team!,
-                  );
-                },
-              ));
+            onTap: () async {
+              await Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation1,
+                      Animation<double> animation2) {
+                    return MilestoneDescriptionPage(
+                      milestone: milestone,
+                      team: team!,
+                      allMilestones: milestones!,
+                    );
+                  },
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              );
+              await setup();
             },
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Container(
+              color: ourVeryLightColor(),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      milestone.title,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    if (milestone.tasksCompleted == milestone.totalTasks)
-                      const Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            milestone.title,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          if (milestone.tasksCompleted == milestone.totalTasks)
+                            const Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                            ),
+                        ],
                       ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                child: Text(
-                  "${milestone.tasksCompleted}/${milestone.totalTasks} Total Tasks",
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                       child: Text(
-                        "Deadline:",
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        "${milestone.tasksCompleted}/${milestone.totalTasks} Total Tasks",
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
-                    Text(
-                      milestone.deadline,
-                      style: const TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.w600),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                            child: Text(
+                              "Deadline:",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          Text(
+                            formatDatePretty(milestone.deadline),
+                            style: const TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ]),
+                  ]),
+            ),
           ),
         ),
       ),

@@ -25,25 +25,20 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
-        // GET: api/Answers
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Answer>>> GetAnswers()
-        {
-          if (_context.Answers == null)
-          {
-              return NotFound();
-          }
-            return await _context.Answers.ToListAsync();
-        }
 
-        // GET: api/Answers/5
+
+        /// <summary>
+        /// Gets a single Answer by its id
+        /// </summary>
+        /// <param name="id">The id of the Answer</param>
+        /// <returns>The Answer</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Answer>> GetAnswer(int id)
         {
-          if (_context.Answers == null)
-          {
-              return NotFound();
-          }
+            if (_context.Answers == null)
+            {
+                return NotFound();
+            }
             var answer = await _context.Answers.FindAsync(id);
 
             if (answer == null)
@@ -54,7 +49,11 @@ namespace WorkTogether.Controllers
             return answer;
         }
 
-        // GET: api/Answers/GetAnswersByQuestionnaireIdForCurrentUser/1
+        /// <summary>
+        /// Gets all the answers to the given Questionnaire for the current user
+        /// </summary>
+        /// <param name="questionnaireId">The ID of the Questionnaire</param>
+        /// <returns>A list of Answers</returns>
         [HttpGet("GetAnswersByQuestionnaireIdForCurrentUser/{questionnaireId}")]
         [Authorize]
         public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByQuestionnaireIdForCurrentUser(int questionnaireId)
@@ -66,7 +65,7 @@ namespace WorkTogether.Controllers
                                 join question in _context.Questions on questionnaire.Id equals question.Questionnaire.Id
                                 join answers in _context.Answers on question.Id equals answers.Question.Id
                                 where answers.Answerer.UserId == u.UserId && questionnaire.Id == questionnaireId
-                                select new { Id = answers.Id, AnswerStr =  answers.AnswerStr, Question = answers.Question, Answerer = answers.Answerer}).ToListAsync();
+                                select new { Id = answers.Id, AnswerStr = answers.AnswerStr, Question = answers.Question, Answerer = answers.Answerer }).ToListAsync();
 
             List<AnswerDTO> answerList = new List<AnswerDTO>();
 
@@ -79,7 +78,11 @@ namespace WorkTogether.Controllers
             return answerList;
         }
 
-        // GET: api/Answers/GetCurrentUserAnswersByProjectId/1
+        /// <summary>
+        /// Gets the current user's answers for the given Project
+        /// </summary>
+        /// <param name="projectId">The ID of the project</param>
+        /// <returns>A list of the Answers in DTO form</returns>
         [HttpGet("GetCurrentUserAnswersByProjectId/{projectId}")]
         [Authorize]
         public async Task<ActionResult<List<AnswerDTO>>> GetCurrentUserAnswersByProjectId(int projectId)
@@ -104,21 +107,26 @@ namespace WorkTogether.Controllers
             return answerList;
         }
 
-        // GET: api/Answers/1/5
+        /// <summary>
+        /// Gets the answers for a user for a project
+        /// </summary>
+        /// <param name="projectId">The ID of the project</param>
+        /// <param name="userId">The ID of the user</param>
+        /// <returns>A list of AnswerDTOs</returns>
         [HttpGet("GetAnswersByProjectIdAndUserId/{projectId}/{userId}")]
         [Authorize]
         public async Task<ActionResult<List<AnswerDTO>>> GetAnswersByProjectIdAndUserId(int projectId, int userId)
         {
             var result = await (from p in _context.Projects
-                   join q in _context.Questionnaires on p.Id equals q.Project.Id
-                   join que in _context.Questions on q equals que.Questionnaire
-                   join a in _context.Answers on que equals a.Question
-                   where a.Answerer.UserId == userId && p.Id == projectId
+                                join q in _context.Questionnaires on p.Id equals q.Project.Id
+                                join que in _context.Questions on q equals que.Questionnaire
+                                join a in _context.Answers on que equals a.Question
+                                where a.Answerer.UserId == userId && p.Id == projectId
                                 select new { Id = a.Id, AnswerStr = a.AnswerStr, Question = a.Question, Answerer = a.Answerer }).ToListAsync();
 
             List<AnswerDTO> answerList = new List<AnswerDTO>();
 
-            foreach(var answer in result)
+            foreach (var answer in result)
             {
                 answerList.Add(
                     AnswertoAnswerDTO(new Answer { Id = answer.Id, AnswerStr = answer.AnswerStr, Question = answer.Question, Answerer = answer.Answerer }));
@@ -127,6 +135,12 @@ namespace WorkTogether.Controllers
             return answerList;
         }
 
+        /// <summary>
+        /// Lets a user update their questionnaire answers
+        /// </summary>
+        /// <param name="questionnaireId">The ID of the Questionnaire</param>
+        /// <param name="answers">A list of AnswerDTOs containing the user's responses.</param>
+        /// <returns>200 OK if successful.</returns>
         [HttpPost("PostAnswersFromQuestionnaireForCurrentUser/{questionnaireId}")]
         [Authorize]
         public async Task<IActionResult> PostAnswersFromQuestionnaireForCurrentUser(int questionnaireId, List<AnswerDTO> answers)
@@ -154,6 +168,12 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Lets a user upload their answers to a questionnaire.
+        /// </summary>
+        /// <param name="questionnaireId">The ID of the Questionnaire</param>
+        /// <param name="answers">A list of AnswerDTOs containing the user's responses.</param>
+        /// <returns>200 OK if successful.</returns>
         [HttpPut("PutAnswersFromQuestionnaireForCurrentUser/{questionnaireId}")]
         [Authorize]
         public async Task<IActionResult> PutAnswersFromQuestionnaireForCurrentUser(int questionnaireId, List<AnswerDTO> answers)
@@ -177,77 +197,13 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
-        // PUT: api/Answers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAnswer(int id, Answer answer)
-        {
-            if (id != answer.Id)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(answer).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AnswerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Answers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Answer>> PostAnswer(Answer answer)
-        {
-          if (_context.Answers == null)
-          {
-              return Problem("Entity set 'WT_DBContext.Answers'  is null.");
-          }
-            _context.Answers.Add(answer);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAnswer", new { id = answer.Id }, answer);
-        }
-
-        // DELETE: api/Answers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAnswer(int id)
-        {
-            if (_context.Answers == null)
-            {
-                return NotFound();
-            }
-            var answer = await _context.Answers.FindAsync(id);
-            if (answer == null)
-            {
-                return NotFound();
-            }
-
-            _context.Answers.Remove(answer);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool AnswerExists(int id)
-        {
-            return (_context.Answers?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
+        /// <summary>
+        /// Gets the current authorized user
+        /// </summary>
+        /// <param name="httpContext">The HTTPContext for the calling endpoint</param>
+        /// <returns>the User represented in the bearer token</returns>
         private User GetCurrentUser(HttpContext httpContext)
         {
             string userEmail = httpContext.User.Identity.Name;
@@ -255,6 +211,11 @@ namespace WorkTogether.Controllers
             return u1;
         }
 
+        /// <summary>
+        /// Converts an Answer into DTO form to send to the frontend
+        /// </summary>
+        /// <param name="answer">The Answer</param>
+        /// <returns>the DTO</returns>
         private static AnswerDTO AnswertoAnswerDTO(Answer answer) =>
         new AnswerDTO
         {

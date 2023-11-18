@@ -21,6 +21,11 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Gets the current user calling the endpoint that is calling this function
+        /// </summary>
+        /// <param name="httpContext">The HttpContext of the endpoint</param>
+        /// <returns>the User</returns>
         private User GetCurrentUser(HttpContext httpContext)
         {
             string userEmail = httpContext.User.Identity.Name;
@@ -29,18 +34,22 @@ namespace WorkTogether.Controllers
         }
 
 
-        // GET: api/Projects/5
+        /// <summary>
+        /// Creates a project, if the current user is a professor for the class
+        /// </summary>
+        /// <param name="p">The CreateProjectDTO</param>
+        /// <returns>The ProjectDTO for the new project, if successful</returns>
         [HttpPost("create")]
         [Authorize]
         public async Task<ActionResult<ProjectDTO>> CreateProject(CreateProjectDTO p)
         {
             User curr = GetCurrentUser(HttpContext);
-            Class c = await _context.Classes.Where(c=>c.Id == p.ClassId).Include(c=>c.Professor).FirstOrDefaultAsync();
+            Class c = await _context.Classes.Where(c => c.Id == p.ClassId).Include(c => c.Professor).FirstOrDefaultAsync();
             if (c == null)
             {
                 return NotFound("class id not found");
             }
-            if(c.Professor != curr)
+            if (c.Professor != curr)
             {
                 return Unauthorized("Must be the classes professor to create a project");
             }
@@ -57,19 +66,23 @@ namespace WorkTogether.Controllers
             return projectToDTO(pr);
         }
 
-        // GET: api/Projects/5
+        /// <summary>
+        /// Edit a project's info, only for professors
+        /// </summary>
+        /// <param name="p">The EditProjectDTO</param>
+        /// <returns>The ProjectDTO for the project</returns>
         [HttpPost("edit")]
         [Authorize]
         public async Task<ActionResult<ProjectDTO>> EditProject(EditProjectDTO p)
         {
             User curr = GetCurrentUser(HttpContext);
-            Project pr = await _context.Projects.Where(pr => pr.Id == p.Id).Include(pr=>pr.Questionnaire).FirstOrDefaultAsync();
-            if(pr == null)
+            Project pr = await _context.Projects.Where(pr => pr.Id == p.Id).Include(pr => pr.Questionnaire).FirstOrDefaultAsync();
+            if (pr == null)
             {
                 return NotFound("Project does not exist");
             }
-            Class c = await _context.Classes.Include(c=>c.Professor).Where(c=>c.Id == pr.ClassId).FirstOrDefaultAsync();
-           
+            Class c = await _context.Classes.Include(c => c.Professor).Where(c => c.Id == pr.ClassId).FirstOrDefaultAsync();
+
             if (c == null)
             {
                 return NotFound("class id not found");
@@ -83,21 +96,25 @@ namespace WorkTogether.Controllers
             pr.Description = p.Description;
             pr.MaxTeamSize = p.MaxTeamSize;
             pr.TeamFormationDeadline = p.TeamFormationDeadline;
-            pr.MinTeamSize= p.MinTeamSize;
+            pr.MinTeamSize = p.MinTeamSize;
             _context.SaveChanges();
             return projectToDTO(pr);
-         
+
         }
 
-        // GET: api/Projects/5
+        /// <summary>
+        /// Gets a project by its id
+        /// </summary>
+        /// <param name="id">The id</param>
+        /// <returns>A ProjectDTO</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
-          if (_context.Projects == null)
-          {
-              return NotFound();
-          }
-            var project = await _context.Projects.Where(p=>p.Id==id).Include(p=>p.Questionnaire).FirstOrDefaultAsync();
+            if (_context.Projects == null)
+            {
+                return NotFound();
+            }
+            var project = await _context.Projects.Where(p => p.Id == id).Include(p => p.Questionnaire).FirstOrDefaultAsync();
 
             if (project == null)
             {
@@ -107,8 +124,11 @@ namespace WorkTogether.Controllers
             return projectToDTO(project);
         }
 
-        // GET: api/Projects/GetProjectsByClassId/5
-        // Get All projects in a class
+        /// <summary>
+        /// Get All projects in a class
+        /// </summary>
+        /// <param name="ClassID">The ID of the class</param>
+        /// <returns>A collection of ProjectDTOs</returns>
         [HttpGet("GetProjectsByClassId/{ClassID}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsByClassId(int ClassID)
@@ -118,8 +138,11 @@ namespace WorkTogether.Controllers
             return Ok(projects);
         }
 
-        // GET: api/Projects/GetProjectsInGroupSearchPhase/5
-        // Team search deadline has NOT passed
+        /// <summary>
+        /// Get the projects which are currently in the group search phase for a class
+        /// </summary>
+        /// <param name="ClassID">The ID of the class</param>
+        /// <returns>List of ProjectDTOs</returns>
         [HttpGet("GetProjectsInGroupSearchPhase/{ClassID}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsInGroupSearchPhase(int ClassID)
         {
@@ -128,8 +151,11 @@ namespace WorkTogether.Controllers
             return Ok(projects);
         }
 
-        // GET: api/Projects/GetProjectsNotInGroupSearchPhase/5
-        // Team search deadline has passed && Project deadline is not current time
+        /// <summary>
+        /// Get the active projects(Group search complete) for a class
+        /// </summary>
+        /// <param name="ClassID">The ID of the class</param>
+        /// <returns>List of ProjectDTOs</returns>
         [HttpGet("GetProjectsNotInGroupSearchPhase/{ClassID}")]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjectsNotInGroupSearchPhase(int ClassID)
         {
@@ -138,6 +164,10 @@ namespace WorkTogether.Controllers
             return Ok(projects);
         }
 
+        /// <summary>
+        /// Creates a default questionnaire for a project
+        /// </summary>
+        /// <param name="p">The project</param>
         private void CreateQuestionnaire(Project p)
         {
             Questionnaire default_questionnaire = new Questionnaire();
@@ -160,7 +190,7 @@ namespace WorkTogether.Controllers
             q2.Type = "Select";
             _context.Questions.Add(q2);
 
-           
+
 
             Question q3 = new Question();
             q3.Questionnaire = default_questionnaire;
@@ -168,7 +198,7 @@ namespace WorkTogether.Controllers
             q3.Type = "Tag";
             _context.Questions.Add(q3);
 
-           
+
 
             Question q4 = new Question();
             q4.Questionnaire = default_questionnaire;
@@ -176,7 +206,7 @@ namespace WorkTogether.Controllers
             q4.Type = "Number";
             _context.Questions.Add(q4);
 
-           
+
 
             Question q5 = new Question();
             q5.Questionnaire = default_questionnaire;
@@ -189,7 +219,11 @@ namespace WorkTogether.Controllers
 
 
 
-        // DELETE: api/Projects/5
+        /// <summary>
+        /// Professors Only: Delete a project
+        /// </summary>
+        /// <param name="id">The project ID</param>
+        /// <returns>200 OK if successful</returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteProject(int id)
@@ -204,7 +238,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            Class c= await _context.Classes.Where(c=>c.Id == project.ClassId).Include(c=>c.Professor).FirstOrDefaultAsync();
+            Class c = await _context.Classes.Where(c => c.Id == project.ClassId).Include(c => c.Professor).FirstOrDefaultAsync();
 
 
             _context.Projects.Remove(project);
@@ -213,11 +247,11 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
-        private bool ProjectExists(int id)
-        {
-            return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
+        /// <summary>
+        /// Converts a Project to DTO form
+        /// </summary>
+        /// <param name="p">The project</param>
+        /// <returns>the new ProjectDTO</returns>
         private ProjectDTO projectToDTO(Project p)
         {
             return new ProjectDTO
@@ -234,110 +268,8 @@ namespace WorkTogether.Controllers
             };
         }
 
-        private Project DTOtoProject(ProjectDTO p)
-        {
-            Class c = _context.Classes.Find(p.ClassId);
-            Questionnaire q = _context.Questionnaires.Find(p.QuestionnaireId);
 
-            if(c == null || q == null)
-            {
-                return null;
-            }
 
-            return new Project
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                ClassId = p.ClassId,
-                MinTeamSize = p.MinTeamSize,
-                MaxTeamSize = p.MaxTeamSize,
-                Deadline = p.Deadline,
-                TeamFormationDeadline = p.TeamFormationDeadline,
-                Questionnaire = q,
-            };
-
-            /*
-            // POST: api/Projects
-            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPost]
-            public async Task<ActionResult<Project>> PostProject(ProjectDTO projectDTO)
-            {
-                Project project = DTOtoProject(projectDTO);
-
-                if (project == null)
-                {
-                    return BadRequest();
-                }
-
-                if (_context.Projects == null)
-                {
-                    return Problem("Entity set 'WT_DBContext.Projects'  is null.");
-                }
-
-                _context.Projects.Add(project);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction("GetProject", new { id = project.Id }, project);
-            }
-            
-             
-                     // PUT: api/Projects/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(int id, ProjectDTO projectDTO)
-        {
-            Project project = DTOtoProject(projectDTO);
-            if(project == null)
-            {
-                return BadRequest();
-            }
-
-            if (id != project.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(project).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProjectExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-
-                    // GET: api/Projects
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
-        {
-            if (_context.Projects == null)
-            {
-                return NotFound();
-            }
-
-            var projects = await _context.Projects.ToListAsync();
-            var projectDTOs = new List<ProjectDTO>();
-            foreach(Project p in projects)
-            {
-                projectDTOs.Append(projectToDTO(p));
-            }
-
-            return Ok(projectDTOs);
-        }
-        }*/
-
-        }
     }
 }
+

@@ -21,13 +21,22 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Gets the current authorized user from the HttpContext
+        /// </summary>
+        /// <param name="httpContext">The HttpContext</param>
+        /// <returns>The user represented by the JWT token</returns>
         private User GetCurrentUser(HttpContext httpContext)
         {
             string userEmail = httpContext.User.Identity.Name;
             User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
             return u1;
         }
-
+        /// <summary>
+        /// Converts a Milestone to DTO form
+        /// </summary>
+        /// <param name="ms">The milestone</param>
+        /// <returns>a MilestoneDTO</returns>
         private MilestoneDTO MilestoneToDTO(Milestone ms)
         {
             MilestoneDTO md = new MilestoneDTO();
@@ -39,7 +48,12 @@ namespace WorkTogether.Controllers
             md.Id = ms.Id;
             return md;
         }
-
+        /// <summary>
+        /// Converts a milestone and whether its complete or not for the given team to a dto with the complete tag
+        /// </summary>
+        /// <param name="ms">The milestone</param>
+        /// <param name="complete">Whether or not it is complete</param>
+        /// <returns>a MilestoneDTOWithComplete</returns>
         private MilestoneDTOWithComplete MilestoneToDTOComp(Milestone ms, bool complete)
         {
             MilestoneDTOWithComplete md = new MilestoneDTOWithComplete();
@@ -100,29 +114,33 @@ namespace WorkTogether.Controllers
 
 
 
-        //Get all milestones for a project. This doesn't include the complete tag.
+        /// <summary>
+        /// Get all milestones for a project. This doesn't include the complete tag.
+        /// </summary>
+        /// <param name="pid">The project ID</param>
+        /// <returns>A list of MilestoneDTOs</returns>
         [HttpGet("ProjectMilestones/{pid}")]
         [Authorize]
         public async Task<ActionResult<List<MilestoneDTO>>> GetMilestonesForProject(int pid)
         {
             User curr = GetCurrentUser(HttpContext);
             Project p = await _context.Projects.Where(p => p.Id == pid).FirstOrDefaultAsync();
-            if(p == null)
+            if (p == null)
             {
                 return BadRequest();
             }
-            Class c = await _context.Classes.Where(c=>c.Id == p.ClassId).Include(c=>c.Professor).FirstOrDefaultAsync();
-            if(c == null)
+            Class c = await _context.Classes.Where(c => c.Id == p.ClassId).Include(c => c.Professor).FirstOrDefaultAsync();
+            if (c == null)
             {
                 return Problem();
             }
             Team t = await _context.Teams.Include(t => t.Members).Include(t => t.Project).Where(t => t.Members.Contains(curr) && t.Project == p).FirstOrDefaultAsync();
-            if(t == null && c.Professor.UserId != curr.UserId)
+            if (t == null && c.Professor.UserId != curr.UserId)
             {
                 return Unauthorized();
             }
             List<Milestone> ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Project.Id == pid).ToListAsync();
-            
+
             List<MilestoneDTO> md = new List<MilestoneDTO>();
             foreach (var msItem in ms)
             {
@@ -132,15 +150,18 @@ namespace WorkTogether.Controllers
 
         }
 
-        //Get all milestones for a project, including the complete tag (for the current users team for that project). This is to be used by students who are on a team.
-        //GET: /api/Milestones/ProjectMilestonesWithComplete/5
+        /// <summary>
+        /// Get all milestones for a project, including the complete tag (for the current users team for that project). This is to be used by students who are on a team.
+        /// </summary>
+        /// <param name="pid">The ID of the project</param>
+        /// <returns>List of MilestoneDTOWithComplete</returns>
         [HttpGet("ProjectMilestonesWithComplete/{pid}")]
         [Authorize]
         public async Task<ActionResult<List<MilestoneDTOWithComplete>>> GetMilestonesForProjectWithComplete(int pid)
         {
             User curr = GetCurrentUser(HttpContext);
-            Team t = await _context.Teams.Include(t => t.Members).Include(t => t.Project).Where(t => t.Project.Id == pid && t.Members.Contains(curr)).Include(t=>t.CompleteMilestones).FirstOrDefaultAsync();
-            if(t==null)
+            Team t = await _context.Teams.Include(t => t.Members).Include(t => t.Project).Where(t => t.Project.Id == pid && t.Members.Contains(curr)).Include(t => t.CompleteMilestones).FirstOrDefaultAsync();
+            if (t == null)
             {
                 return BadRequest();
             }
@@ -155,8 +176,12 @@ namespace WorkTogether.Controllers
 
         }
 
-        //Allows professors to create milestones
-        //POST: /api/Milestones/Create
+
+        /// <summary>
+        /// Allows professors to create milestones
+        /// </summary>
+        /// <param name="milestoneDTO">The CreateMilestoneDTO to create from</param>
+        /// <returns>200 OK if successful</returns>
         [HttpPost("Create")]
         [Authorize]
         public async Task<ActionResult> CreateMilestone(CreateMilestoneDTO milestoneDTO)
@@ -185,21 +210,23 @@ namespace WorkTogether.Controllers
             _context.SaveChanges();
             return Ok();
         }
-
-        //Mark a milestone complete for your team
-        //POST: /api/Milestones/MarkComplete/5
+        /// <summary>
+        /// Mark a milestone complete for your team
+        /// </summary>
+        /// <param name="id">The milestone's ID</param>
+        /// <returns>200 OK if successful</returns>
         [HttpPost("MarkComplete/{id}")]
         [Authorize]
         public async Task<ActionResult> MarkComplete(int id)
         {
             User curr = GetCurrentUser(HttpContext);
-            Milestone m = await _context.Milestones.Where(m=>m.Id == id).Include(m=> m.Project).FirstOrDefaultAsync();
+            Milestone m = await _context.Milestones.Where(m => m.Id == id).Include(m => m.Project).FirstOrDefaultAsync();
             if (m == null)
             {
                 return NotFound(m);
             }
-            Team t =await _context.Teams.Include(t => t.Project).Include(t => t.Members).Where(t => t.Project == m.Project && t.Members.Contains(curr)).Include(t=>t.CompleteMilestones).FirstOrDefaultAsync();
-            if(t==null)
+            Team t = await _context.Teams.Include(t => t.Project).Include(t => t.Members).Where(t => t.Project == m.Project && t.Members.Contains(curr)).Include(t => t.CompleteMilestones).FirstOrDefaultAsync();
+            if (t == null)
             {
                 return Unauthorized();
             }
@@ -212,8 +239,11 @@ namespace WorkTogether.Controllers
             return Ok();
         }
 
-        //Mark a milestone incomplete for your team
-        //POST: /api/Milestones/MarkIncomplete/5
+        /// <summary>
+        /// Mark a milestone incomplete for your team
+        /// </summary>
+        /// <param name="id">The milestone's ID</param>
+        /// <returns>200 OK if successful</returns>
         [HttpPost("MarkIncomplete/{id}")]
         [Authorize]
         public async Task<ActionResult> MarkIncomplete(int id)
@@ -238,8 +268,11 @@ namespace WorkTogether.Controllers
             return Ok();
         }
 
-        //Edit a milestone(for professor)
-        //POST: api/Milestones/Edit
+        /// <summary>
+        /// Edit a milestone(for professor)
+        /// </summary>
+        /// <param name="milestoneDTO"></param>
+        /// <returns></returns>
         [HttpPost("Edit")]
         [Authorize]
         public async Task<ActionResult> EditMilestone(MilestoneDTO milestoneDTO)
@@ -271,8 +304,11 @@ namespace WorkTogether.Controllers
             return Ok();
         }
 
-        //Get a milestone by its id
-        // GET: api/Milestones/ById/5
+        /// <summary>
+        /// Gets a milestone by ID
+        /// </summary>
+        /// <param name="id">The id</param>
+        /// <returns>The milestone in DTO form</returns>
         [HttpGet("ById/{id}")]
         [Authorize]
         public async Task<ActionResult<MilestoneDTO>> GetMilestone(int id)
@@ -282,25 +318,29 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            Milestone m = await _context.Milestones.Include(m=>m.Project).Where(m=>m.Id == id).FirstOrDefaultAsync();
+            Milestone m = await _context.Milestones.Include(m => m.Project).Where(m => m.Id == id).FirstOrDefaultAsync();
             if (m == null)
             {
                 return NotFound();
             }
             Class c = await _context.Classes.Where(c => c.Id == m.Project.ClassId).Include(c => c.Professor).FirstOrDefaultAsync();
-            Team t =  await _context.Teams.Include(t => t.Project).Include(t => t.Members).Where(t => t.Members.Contains(curr) && t.Project == m.Project).FirstOrDefaultAsync();
+            Team t = await _context.Teams.Include(t => t.Project).Include(t => t.Members).Where(t => t.Members.Contains(curr) && t.Project == m.Project).FirstOrDefaultAsync();
 
-            if(t == null && c.Professor.UserId != curr.UserId)
+            if (t == null && c.Professor.UserId != curr.UserId)
             {
                 return Unauthorized();
             }
-            
+
 
             return MilestoneToDTO(m);
         }
 
-        //Get a milestone by its id with its complete tag(have to be on a team for the project)
-        // GET: api/Milestones/ByIdWithComplete/5
+
+        /// <summary>
+        /// Get a milestone by its id with a complete tag(have to be on a team for the project)
+        /// </summary>
+        /// <param name="id">The id</param>
+        /// <returns>a MilestoneDTOWithComplete</returns>
         [HttpGet("ByIdWithComplete/{id}")]
         [Authorize]
         public async Task<ActionResult<MilestoneDTOWithComplete>> GetMilestoneWithComplete(int id)
@@ -316,7 +356,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
             Class c = await _context.Classes.Where(c => c.Id == m.Project.ClassId).Include(c => c.Professor).FirstOrDefaultAsync();
-            Team t = await _context.Teams.Include(t => t.Project).Include(t => t.Members).Include(t=>t.CompleteMilestones).Where(t => t.Members.Contains(curr) && t.Project == m.Project).FirstOrDefaultAsync();
+            Team t = await _context.Teams.Include(t => t.Project).Include(t => t.Members).Include(t => t.CompleteMilestones).Where(t => t.Members.Contains(curr) && t.Project == m.Project).FirstOrDefaultAsync();
 
             if (t == null)
             {
@@ -327,8 +367,12 @@ namespace WorkTogether.Controllers
             return MilestoneToDTOComp(m, t.CompleteMilestones.Contains(m));
         }
 
-        // Gets the number of teams that have marked a milestone complete, and all teams in the project. For the prof dashboard
-        // GET: api/NumComplete/5
+
+        /// <summary>
+        /// Gets the number of teams that have marked a milestone complete, and the number of teams in the project. For the prof dashboard
+        /// </summary>
+        /// <param name="id">The id of the milestone</param>
+        /// <returns>The number of teams that have completed the milestone</returns>
         [HttpGet("NumComplete/{id}")]
         [Authorize]
         public async Task<ActionResult<CompleteRatioDTO>> GetNumComplete(int id)
@@ -360,8 +404,12 @@ namespace WorkTogether.Controllers
             return toret;
         }
 
-        // Gets the number of teams that have marked a milestone complete, for all teams in the project, and all teams in the project. For the prof dashboard
-        // GET: api/NumCompleteForProj/5
+
+        /// <summary>
+        /// Gets the number of teams that have marked a milestone complete, for all milestones in the project, and the num of teams in the project. For the prof dashboard
+        /// </summary>
+        /// <param name="id">The ID of the project</param>
+        /// <returns>a list of CompleteRatioDTOs</returns>
         [HttpGet("NumCompleteForProj/{id}")]
         [Authorize]
         public async Task<ActionResult<List<CompleteRatioDTO>>> GetNumCompleteForProject(int id)
@@ -394,8 +442,12 @@ namespace WorkTogether.Controllers
             return clist;
         }
 
-        // Gets the number of teams that have marked a milestone complete, and all teams in the project. For the prof dashboard
-        // GET: api/NumComplete/5
+        //
+        /// <summary>
+        /// Gets the number of teams that have marked a milestone complete, and all teams in the project. For the prof dashboard
+        /// </summary>
+        /// <param name="id">The id of the milestone</param>
+        /// <returns>a CompleteIncompleteTeamsDTO, which has a list of teams that have completed and a list of those who haven't.</returns>
         [HttpGet("TeamsMilestoneComplete/{id}")]
         [Authorize]
         public async Task<ActionResult<CompleteIncompleteTeamsDTO>> GetCompleteIncompleteTeams(int id)
@@ -417,13 +469,14 @@ namespace WorkTogether.Controllers
                 return Unauthorized();
             }
 
-            List<Team> complete = await _context.Teams.Include(t => t.CompleteMilestones).Where(t => t.CompleteMilestones.Contains(m)).Include(t=>t.Members).Include(t=>t.Project).ToListAsync();
-            List<Team> incomplete = await _context.Teams.Include(t => t.Project).Include(t => t.CompleteMilestones).Where(t => t.Project == p && !t.CompleteMilestones.Contains(m)).Include(t=>t.Members).ToListAsync();
+            List<Team> complete = await _context.Teams.Include(t => t.CompleteMilestones).Where(t => t.CompleteMilestones.Contains(m)).Include(t => t.Members).Include(t => t.Project).ToListAsync();
+            List<Team> incomplete = await _context.Teams.Include(t => t.Project).Include(t => t.CompleteMilestones).Where(t => t.Project == p && !t.CompleteMilestones.Contains(m)).Include(t => t.Members).ToListAsync();
 
             CompleteIncompleteTeamsDTO toret = new CompleteIncompleteTeamsDTO();
             List<TeamDTO> comp = new List<TeamDTO>();
             List<TeamDTO> inc = new List<TeamDTO>();
-            foreach(Team t in complete) { 
+            foreach (Team t in complete)
+            {
                 comp.Add(TeamToDTO(t));
             }
             foreach (Team t in incomplete)
@@ -435,10 +488,11 @@ namespace WorkTogether.Controllers
             return toret;
         }
 
-
-
-        //Deletes a milestone, authed for professors only
-        // DELETE: api/Milestones/5
+        /// <summary>
+        /// Deletes a milestone, authed for professors only
+        /// </summary>
+        /// <param name="id">The ID of the milestone</param>
+        /// <returns>200 Ok if successful</returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteMilestone(int id)
@@ -449,12 +503,12 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            Class c = await _context.Classes.Where(c=>c.Id == m.Project.ClassId).FirstOrDefaultAsync();
+            Class c = await _context.Classes.Where(c => c.Id == m.Project.ClassId).FirstOrDefaultAsync();
             if (c == null)
             {
                 return Problem();
             }
-            if(c.Professor.UserId != curr.UserId)
+            if (c.Professor.UserId != curr.UserId)
             {
                 return Unauthorized();
             }
@@ -466,12 +520,12 @@ namespace WorkTogether.Controllers
             return Ok();
         }
 
-        private bool MilestoneExists(int id)
-        {
-            return (_context.Milestones?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
 
-
+        /// <summary>
+        /// Converts a team to a TeamDTO
+        /// </summary>
+        /// <param name="t">The team</param>
+        /// <returns>TeamDTO</returns>
         private static TeamDTO TeamToDTO(Team t)
         {
             TeamDTO td = new TeamDTO();
@@ -486,89 +540,23 @@ namespace WorkTogether.Controllers
             return td;
         }
 
+        /// <summary>
+        /// Converts a User to a UserProfileDTO
+        /// </summary>
+        /// <param name="user">The user</param>
+        /// <returns>UserProfileDTO</returns>
         private static UserProfileDTO UsertoProfileDTO(User user) =>
-    new UserProfileDTO
-    {
-        Id = user.UserId,
-        Name = user.Name,
-        Email = user.Email,
-        Bio = user.Bio,
-        Major = user.Major,
-        EmploymentStatus = user.EmploymentStatus,
-        StudentStatus = user.StudentStatus,
-        Interests = user.Interests
-    };
-
-        /*
-         * 
-         * 
-        // PUT: api/Milestones/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMilestone(int id, Milestone milestone)
-        {
-            if (id != milestone.Id)
+            new UserProfileDTO
             {
-                return BadRequest();
-            }
-
-            _context.Entry(milestone).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MilestoneExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        
-        // GET: api/Milestones
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Milestone>>> GetMilestones()
-        {
-            if (_context.Milestones == null)
-            {
-                return NotFound();
-            }
-            return await _context.Milestones.ToListAsync();
-        }
-
-                // POST: api/Milestones
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<MilestoneDTO>> PostMilestone(MilestoneDTO milestoneDTO)
-        {
-            if (_context.Milestones == null)
-            {
-                return Problem("Entity set 'WT_DBContext.Milestones'  is null.");
-            }
-
-            var milestone = new Milestone
-            {
-                Id = milestoneDTO.Id,
-                Project = await _context.Projects.FindAsync(milestoneDTO.ProjectID),
-                Title = milestoneDTO.Title,
-                Description = milestoneDTO.Description,
-                Deadline = milestoneDTO.Deadline,
+                Id = user.UserId,
+                Name = user.Name,
+                Email = user.Email,
+                Bio = user.Bio,
+                Major = user.Major,
+                EmploymentStatus = user.EmploymentStatus,
+                StudentStatus = user.StudentStatus,
+                Interests = user.Interests
             };
 
-            _context.Milestones.Add(milestone);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetMilestone", new { id = milestoneDTO.Id }, milestoneDTO);
-        }
-         */
     }
 }

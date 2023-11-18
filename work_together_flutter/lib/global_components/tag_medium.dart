@@ -12,16 +12,17 @@ class _TagState extends State<Tag> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 16.0,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10.0)),
         color: ourLightPrimaryColor(),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 2, 12, 2),
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
         child: Text(
           widget.text,
           style: const TextStyle(
-            fontSize: 8,
+            fontSize: 12,
             color: Colors.white,
           ),
         ),

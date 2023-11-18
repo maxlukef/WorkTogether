@@ -31,7 +31,29 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Confirms a user's email address. Made to be called from an emailed link.
+        /// </summary>
+        /// <param name="token">The confirmation token embedded in the link</param>
+        /// <param name="email">The user's email address, also embedded in the link</param>
+        /// <returns>200 OK if successful</returns>
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return NotFound(email);
 
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            User u = _context.Users.Where(u => u.Email == email).FirstOrDefault();
+            if (result.Succeeded)
+            {
+                u.EmailConfirmed = true;
+                _context.SaveChanges();
+                return Ok("Email confirmed!");
+            }
+            return Problem("Confirmation Failed!");
+        }
         /// <summary>
         /// Generates a JWT bearer token
         /// </summary>
@@ -101,7 +123,18 @@ namespace WorkTogether.Controllers
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
             await _userManager.AddToRoleAsync(user, UserRoles.User);
 
+            //semd a verification email 
+            if (result.Succeeded)
+            {
+                var emailtoken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string emailParams = user.Email + "/" + emailtoken;
+                var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { token = emailtoken, email = user.Email }, Request.Scheme);
 
+                EmailHelper emailHelper = new EmailHelper();
+                string message = "<a href=\"" + confirmationLink + "\">Click here to confirm your email</a>";
+                bool emailResponse = emailHelper.SendEmail(user.Email, message, "Confirm your email!");
+
+            }
 
 
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -171,7 +204,11 @@ namespace WorkTogether.Controllers
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
-        
+        /// <summary>
+        /// Gets the auth token for signing in a User
+        /// </summary>
+        /// <param name="authClaims">The user's claims</param>
+        /// <returns>the JwtSecurityToken</returns>
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
 
