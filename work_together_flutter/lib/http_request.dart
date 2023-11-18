@@ -28,8 +28,8 @@ import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
 class HttpService {
-  // String connectionString = 'localhost:7277';
-  String connectionString = 'worktogether.site';
+  String connectionString = 'localhost:7277';
+  //String connectionString = 'worktogether.site';
 
   var authHeader = {
     'Content-Type': 'application/json',
@@ -209,6 +209,54 @@ class HttpService {
     }
 
     return teamIds;
+  }
+
+  Future<List<TeamDTO>> getTeamsInProject(int projectId) async {
+    Uri uri = Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
+
+    var res = await get(uri);
+    List<TeamDTO> teams = [];
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+
+      for (var i = 0; i < body.length; i++) {
+        teams.add(TeamDTO.fromJson(body[i]));
+      }
+    }
+
+    return teams;
+  }
+
+  Future<MilestoneDTO?> getNextMilestoneDue(int projectId) async {
+    Uri uri = Uri.https(connectionString, 'api/Milestones/NextMilestoneDue/$projectId');
+    Response res;
+    MilestoneDTO milestone;
+
+    res = await get(uri);
+
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+
+      int iD = body[0]["id"];
+      int pID = body[0]["projectID"];
+      String title = body[0]["title"];
+      String description = body[0]["description"];
+      DateTime date = DateTime.parse((body[0]["deadline"]));
+
+      milestone = MilestoneDTO(
+          id: iD,
+          projectId: pID,
+          title: title,
+          description: description,
+          deadline: date);
+
+      return milestone;
+    }
+    else {
+      return null;
+    }
+
+
   }
 
   Future<List<CardInfo>> getTeam(int projectId) async {
@@ -949,6 +997,21 @@ class HttpService {
       return false;
     } else {
       throw "Unable to retrieve Questionnaire";
+    }
+  }
+
+  Future<ClassesDTO> getClassByID(int classId)  async {
+    Uri ClassesURI = Uri.https(connectionString, 'api/Classes/$classId');
+    ClassesDTO returnedClass;
+
+    Response res = await get(ClassesURI, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      dynamic body = jsonDecode(res.body);
+      returnedClass = ClassesDTO.fromJson(body);
+      return returnedClass;
+    } else {
+      throw "Unable to retrieve class.";
     }
   }
 }

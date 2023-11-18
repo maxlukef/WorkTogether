@@ -23,7 +23,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
   Future<void> getNotificationsApiCall() async {
     currentUserNotifications =
-        (await httpService.getCurrentUserNotifications())!;
+        (await httpService?.getCurrentUserNotifications())!;
     setState(() {});
   }
 

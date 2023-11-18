@@ -10,6 +10,7 @@ import '../../http_request.dart';
 import '../../main.dart';
 import '../../models/project_models/project_in_class.dart';
 import '../group_search/group_search_page.dart';
+import '../professor_dashboard/dashboard.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({
@@ -126,63 +127,73 @@ class _HomePageState extends ConsumerState<HomePage> {
                             child: InkWell(
                               splashColor: Colors.blue.withAlpha(30),
                               onTap: () async {
-                                if (projectNameValue.teamFormationDeadline
-                                    .isAfter(DateTime.now())) {
-                                  await httpService
-                                      .getProjectAnswers(projectNameValue.id)
-                                      .then((value) => {
-                                            if (value.isNotEmpty)
-                                              {
-                                                Navigator.push(context,
-                                                    MaterialPageRoute(
-                                                  builder: (context) {
-                                                    return GroupSearchPage(
-                                                        userId: loggedUserId,
-                                                        classId:
-                                                            projectNameValue
-                                                                .classId,
-                                                        className:
-                                                            projectNameValue
-                                                                .className,
-                                                        projectId:
-                                                            projectNameValue.id,
-                                                        projectName:
-                                                            projectNameValue
-                                                                .name);
-                                                  },
-                                                ))
-                                              }
-                                            else
-                                              {
-                                                Navigator.push(context,
-                                                    MaterialPageRoute(
-                                                  builder: (context) {
-                                                    return QuestionnairePage(
-                                                      loggedUserId:
-                                                          loggedUserId,
-                                                      classId: projectNameValue
+                                await httpService.getClassByID(projectNameValue.classId).then((value) async {
+                                  if (value != null && loggedUserId == value.professorID) {
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return Dashboard(projectId: projectNameValue.id);
+                                      },
+                                    ));
+                                  }
+                                  else if (projectNameValue.teamFormationDeadline
+                                      .isAfter(DateTime.now())) {
+                                    await httpService
+                                        .getProjectAnswers(projectNameValue.id)
+                                        .then((value) => {
+                                      if (value.isNotEmpty)
+                                        {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                builder: (context) {
+                                                  return GroupSearchPage(
+                                                      userId: loggedUserId,
+                                                      classId:
+                                                      projectNameValue
                                                           .classId,
                                                       className:
-                                                          projectNameValue
-                                                              .className,
+                                                      projectNameValue
+                                                          .className,
                                                       projectId:
-                                                          projectNameValue.id,
+                                                      projectNameValue.id,
                                                       projectName:
-                                                          projectNameValue.name,
-                                                    );
-                                                  },
-                                                ))
-                                              }
-                                          });
-                                } else {
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) {
-                                      return GroupHome(
-                                        project: projectNameValue,
-                                      );
-                                    },
-                                  ));
-                                }
+                                                      projectNameValue
+                                                          .name);
+                                                },
+                                              ))
+                                        }
+                                      else
+                                        {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                builder: (context) {
+                                                  return QuestionnairePage(
+                                                    loggedUserId:
+                                                    loggedUserId,
+                                                    classId: projectNameValue
+                                                        .classId,
+                                                    className:
+                                                    projectNameValue
+                                                        .className,
+                                                    projectId:
+                                                    projectNameValue.id,
+                                                    projectName:
+                                                    projectNameValue.name,
+                                                  );
+                                                },
+                                              ))
+                                        }
+                                    });
+                                  } else {
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return GroupHome(
+                                          project: projectNameValue,
+                                        );
+                                      },
+                                    ));
+                                  }
+                                });
+
                               },
                               child: SizedBox(
                                 width: 300,
