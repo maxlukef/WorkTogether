@@ -22,32 +22,19 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
-        // GET: api/Questions
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
-        {
-          if (_context.Questions == null)
-          {
-              return NotFound();
-          }
-            List<Question> questions = await _context.Questions.ToListAsync();
-            List<QuestionDTO> questionDTOs = new List<QuestionDTO>();
-            foreach(Question q in questions)
-            {
-                questionDTOs.Add(QuestionToDTO(q));   
-            }
-
-            return Ok(questionDTOs);
-        }
-
-        // GET: api/Questions/5
+        /// <summary>
+        /// Gets a question by its ID
+        /// </summary>
+        /// <param name="id">The Question's ID</param>
+        /// <returns>a QuestionDTO</returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<QuestionDTO>> GetQuestion(int id)
         {
-          if (_context.Questions == null)
-          {
-              return NotFound();
-          }
+            if (_context.Questions == null)
+            {
+                return NotFound();
+            }
             var question = await _context.Questions.FindAsync(id);
             QuestionDTO questionDTO = QuestionToDTO(question);
 
@@ -59,7 +46,11 @@ namespace WorkTogether.Controllers
             return questionDTO;
         }
 
-        // GET: api/Questions/GetQuestionsByQuestionnaireId/5
+        /// <summary>
+        /// Gets all questions in a Questionnaire
+        /// </summary>
+        /// <param name="questionnaireId"></param>
+        /// <returns></returns>
         [HttpGet("GetQuestionsByQuestionnaireId/{questionnaireId}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetQuestionsByQuestionnaireId(int questionnaireId)
@@ -95,99 +86,11 @@ namespace WorkTogether.Controllers
             return questionDTOs;
         }
 
-        // PUT: api/Questions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutQuestion(int id, Question question)
-        {
-            if (id != question.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(question).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!QuestionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Questions
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Question>> PostQuestion(QuestionDTO questionDTO)
-        {
-          if (_context.Questions == null)
-          {
-              return Problem("Entity set 'WT_DBContext.Questions'  is null.");
-          }
-            Questionnaire questionnaire = await _context.Questionnaires.FindAsync(questionDTO.QuestionnaireID);
-            Question question = new Question
-            {
-                Id = questionDTO.Id,
-                Prompt = questionDTO.Prompt,
-                Type = questionDTO.Type,
-                Questionnaire = questionnaire,
-            };
-            _context.Questions.Add(question);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetQuestion", new { id = question.Id }, questionDTO);
-        }
-
-        // DELETE: api/Questions/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteQuestion(int id)
-        {
-            if (_context.Questions == null)
-            {
-                return NotFound();
-            }
-            var question = await _context.Questions.FindAsync(id);
-            if (question == null)
-            {
-                return NotFound();
-            }
-
-            _context.Questions.Remove(question);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool QuestionExists(int id)
-        {
-            return (_context.Questions?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        //private async Question DTOToQuestion(QuestionDTO questionDTO)
-        //{
-        //    Questionnaire questionnaire = await _context.Questionnaires.FindAsync(questionDTO.QuestionnaireID);
-        //    Question question = new Question
-        //    {
-        //        Id = questionDTO.Id,
-        //        Prompt = questionDTO.Prompt,
-        //        Type = questionDTO.Type,
-        //        Questionnaire = questionnaire,
-        //    };
-
-        //    return question;
-        //}
-        
+        /// <summary>
+        /// Turns a Question into a QuestionDTO
+        /// </summary>
+        /// <param name="question">The Question</param>
+        /// <returns>the QuestionDTO</returns>
         private QuestionDTO QuestionToDTO(Question question)
         {
             return new QuestionDTO

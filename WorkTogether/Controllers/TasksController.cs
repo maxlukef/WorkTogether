@@ -78,10 +78,11 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t=>t.Team).Include(t => t.ParentMilestone).Where(t => t.Assignees.Contains(curr_user) && !t.Completed).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t => t.Team).Include(t => t.ParentMilestone).Where(t => t.Assignees.Contains(curr_user) && !t.Completed).ToListAsync();
 
             List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
-            foreach (TaskItem task in tasks) {
+            foreach (TaskItem task in tasks)
+            {
                 tasks_dto.Add(TaskToReturnDTO(task));
             }
 
@@ -102,7 +103,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t=> t.ParentMilestone).Include(t => t.Team).Where(t => t.Assignees.Contains(curr_user)).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.Assignees).Include(t => t.ParentMilestone).Include(t => t.Team).Where(t => t.Assignees.Contains(curr_user)).ToListAsync();
 
             List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
@@ -288,7 +289,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
 
-            var ms = await _context.Milestones.Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+            var ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
 
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
@@ -303,7 +304,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t=>t.Team).Include(t=>t.Assignees).Where(t => t.ParentMilestone == ms && !t.Completed).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t => t.Team).Include(t => t.Assignees).Where(t => t.ParentMilestone == ms && !t.Completed).ToListAsync();
 
 
             List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
@@ -330,7 +331,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var ms = await _context.Milestones.Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+            var ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
 
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
@@ -345,7 +346,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t=>t.Team).Include(t=>t.Assignees).Where(t => t.ParentMilestone == ms && !t.Assignees.Contains(curr_user)).ToListAsync();
+            var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t => t.Team).Include(t => t.Assignees).Where(t => t.ParentMilestone == ms && !t.Assignees.Contains(curr_user)).ToListAsync();
 
             List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
             foreach (TaskItem task in tasks)
@@ -372,10 +373,11 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
             var ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
-            if (ms == null) { 
-                
+            if (ms == null)
+            {
+
                 return NotFound();
-            
+
             }
             var team = await _context.Teams.Include(te => te.Project).Include(te => te.Members).Where(te => te.Project.Id == ms.Project.Id && te.Members.Contains(curr_user)).FirstOrDefaultAsync();
 
@@ -417,7 +419,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
 
-            var ms = await _context.Milestones.Include(m => m.Project).Where(m=>m.Id == msid).FirstOrDefaultAsync();
+            var ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
 
             if (ms == null) { return NotFound(); }
             var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
@@ -782,24 +784,26 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
-        private bool TaskExists(int id)
+        /// <summary>
+        /// Converts a Task to a DTO
+        /// </summary>
+        /// <param name="task">the Task</param>
+        /// <returns>the BasicTaskDTO</returns>
+        private static BasicTaskDTO TaskToBasicDTO(TaskItem task)
         {
-            return (_context.Tasks?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        private static BasicTaskDTO TaskToBasicDTO(TaskItem task) {
             int? ptid = null;
             int? pmid = null;
-            if(task.ParentTask != null)
+            if (task.ParentTask != null)
             {
                 ptid = task.ParentTask.Id;
             }
-            if(task.ParentMilestone != null)
+            if (task.ParentMilestone != null)
             {
                 pmid = task.ParentMilestone.Id;
             }
             List<int> assgids = new List<int>();
-            foreach(User u in task.Assignees ){
+            foreach (User u in task.Assignees)
+            {
                 assgids.Add(u.UserId);
             }
             return new BasicTaskDTO
@@ -810,14 +814,18 @@ namespace WorkTogether.Controllers
                 TeamID = task.Team.Id,
                 ParentTaskID = ptid,
                 ParentMilestoneID = pmid,
-                Assignees = assgids ,
+                Assignees = assgids,
                 DueDate = DateToStr(task.DueDate),
                 Completed = task.Completed,
 
             };
         }
 
-
+        /// <summary>
+        /// Cibverts a task to a ReturnTaskDTO
+        /// </summary>
+        /// <param name="task">the Task</param>
+        /// <returns>the ReturnTaskDTO</returns>
         private static ReturnTaskDTO TaskToReturnDTO(TaskItem task)
         {
             int? ptid = null;
@@ -831,7 +839,7 @@ namespace WorkTogether.Controllers
                 pmid = task.ParentMilestone.Id;
             }
             List<UserProfileDTO> assgd = new List<UserProfileDTO>();
-            foreach(User u in task.Assignees)
+            foreach (User u in task.Assignees)
             {
                 assgd.Add(UsertoProfileDTO(u));
             }
@@ -850,6 +858,11 @@ namespace WorkTogether.Controllers
             };
         }
 
+        /// <summary>
+        /// Converts a string date (month/day/year(
+        /// </summary>
+        /// <param name="date">The date in month/day/year string format</param>
+        /// <returns>a DateTime representing that date</returns>
         private static DateTime StrToDate(string date)
         {
             var splitdate = date.Split('/');
@@ -857,130 +870,33 @@ namespace WorkTogether.Controllers
             return d;
         }
 
+        /// <summary>
+        /// Converts a DateTime to a string representation of the date (year-month-day)
+        /// </summary>
+        /// <param name="d">The DateTime</param>
+        /// <returns>a string in year-month-day format</returns>
         private static string DateToStr(DateTime d)
         {
             return "" + d.Year + "-" + d.Month + "-" + d.Day;
         }
 
-
+        /// <summary>
+        /// Converts a User to a UserProfileDTO
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>a UserProfileDTO</returns>
         private static UserProfileDTO UsertoProfileDTO(User user) =>
         new UserProfileDTO
         {
-        Id = user.UserId,
-        Name = user.Name,
-        Email = user.Email,
-        Bio = user.Bio,
-        Major = user.Major,
-        EmploymentStatus = user.EmploymentStatus,
-        StudentStatus = user.StudentStatus,
-        Interests = user.Interests
-           };
-        /*
+            Id = user.UserId,
+            Name = user.Name,
+            Email = user.Email,
+            Bio = user.Bio,
+            Major = user.Major,
+            EmploymentStatus = user.EmploymentStatus,
+            StudentStatus = user.StudentStatus,
+            Interests = user.Interests
+        };
 
-// PUT: api/Tasks/5
-// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-[HttpPut("{id}")]
-public async Task<IActionResult> PutTask(int id, BasicTaskDTO taskDTO)
-{
-    if (id != taskDTO.Id)
-    {
-        return BadRequest();
-    }
-
-    TaskItem task = await _context.Tasks.FindAsync(id);
-    if (task == null)
-    {
-        return NotFound();
-    }
-
-    task.DueDate = StrToDate(taskDTO.DueDate);
-    task.Description = taskDTO.Description;
-    task.Completed = taskDTO.Completed;
-    task.Name = taskDTO.Name;
-
-
-
-    ICollection<User> taskAsignees = new List<User>();
-    foreach(int userID in taskDTO.Assignees)
-    {
-        var curUser = await _context.Users.FindAsync(userID);
-        taskAsignees.Add(curUser);
-    }
-
-    task.Assignees = taskAsignees;
-
-
-    try
-    {
-        await _context.SaveChangesAsync();
-    }
-    catch (DbUpdateConcurrencyException)
-    {
-        if (!TaskExists(id))
-        {
-            return NotFound();
-        }
-        else
-        {
-            throw;
-        }
-    }
-
-    return NoContent();
-}*/
-
-        /*
-        // POST: api/Tasks
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<BasicTaskDTO>> PostTask(BasicTaskDTO taskDTO)
-        {
-            ICollection<User> taskAssignees = new List<User>();
-            foreach (int userID in taskDTO.Assignees)
-            {
-                var curUser = await _context.Users.FindAsync(userID);
-                taskAssignees.Add(curUser);
-            }
-
-            var task = new TaskItem
-            {
-                Id = taskDTO.Id,
-                DueDate = StrToDate(taskDTO.DueDate),
-                Description = taskDTO.Description,
-                Completed = taskDTO.Completed,
-                Name = taskDTO.Name,
-                Team = await _context.Teams.FindAsync(taskDTO.TeamID),
-                ParentMilestone = await _context.Milestones.FindAsync(taskDTO.ParentMilestoneID),
-                ParentTask = await _context.Tasks.FindAsync(taskDTO.ParentTaskID),
-                CreatedAt = DateTime.Now,
-                Assignees = taskAssignees,
-            };
-
-            if (_context.Tasks == null)
-            {
-                return Problem("Entity set 'WT_DBContext.Tasks'  is null.");
-            }
-            _context.Tasks.Add(task);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTask", new { id = task.Id }, task);
-        }*/
-        /*
-
-// GET: api/Tasks
-[HttpGet]
-public async Task<ActionResult<IEnumerable<BasicTaskDTO>>> GetTasks()
-{
-  if (_context.Tasks == null)
-  {
-      return NotFound();
-  }
-    var all_tasks = await _context.Tasks.ToListAsync();
-
-    IEnumerable<BasicTaskDTO> all_tasks_dto = from task in all_tasks select TaskToBasicDTO(task);
-
-    return new ObjectResult(all_tasks_dto);
-}
-*/
     }
 }

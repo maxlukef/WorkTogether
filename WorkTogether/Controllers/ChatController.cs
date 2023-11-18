@@ -23,8 +23,8 @@ namespace WorkTogether.Controllers
             User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
             return u1;
         }
-        
-        
+
+
         /// <summary>
         /// Creates a new chat with the user in it
         /// </summary>
@@ -35,16 +35,17 @@ namespace WorkTogether.Controllers
         public async Task<ActionResult<ChatInfoDTO>> NewChat([FromBody] CreateChatDTO info)
         {
             List<int> userIds = info.UserIDs;
-            if(userIds.Count == 0)
+            if (userIds.Count == 0)
             {
                 return BadRequest("Did not specify users");
             }
             User curr = GetCurrentUser(HttpContext);
             User u;
             Chat chat = new Chat();
-            chat.Users = new List<User>{curr};
+            chat.Users = new List<User> { curr };
             string cname = curr.Name;
-            foreach (int id in userIds){
+            foreach (int id in userIds)
+            {
                 u = await this._context.Users.Where(s => s.UserId == id).FirstOrDefaultAsync();
                 if (u == null)
                 {
@@ -53,7 +54,7 @@ namespace WorkTogether.Controllers
                 chat.Users.Add(u);
                 cname += (", " + u.Name);
             }
-            if(info.Name == "")
+            if (info.Name == "")
                 chat.Name = cname;
             else
             {
@@ -74,12 +75,12 @@ namespace WorkTogether.Controllers
         public async Task<ActionResult> SendMessage([FromBody] SendMessageDTO msg)
         {
             User u = GetCurrentUser(HttpContext);
-            Chat c = await _context.Chats.Where(c => c.Id == msg.ChatID).Include(c=>c.Users).FirstOrDefaultAsync();
-            if(c == null)
+            Chat c = await _context.Chats.Where(c => c.Id == msg.ChatID).Include(c => c.Users).FirstOrDefaultAsync();
+            if (c == null)
             {
                 return NotFound();
             }
-            if(!c.Users.Contains(u))
+            if (!c.Users.Contains(u))
             {
                 return Unauthorized();
             }
@@ -116,7 +117,7 @@ namespace WorkTogether.Controllers
             }
             List<Message> msgs = await _context.Messages.Where(m => m.chat == c).Include(m => m.Sender).OrderByDescending(c => c.Sent).ToListAsync();
             List<MessageDTO> toreturn = new List<MessageDTO>();
-            foreach(Message m in msgs)
+            foreach (Message m in msgs)
             {
                 toreturn.Add(MessageToDTO(m));
             }
@@ -135,8 +136,8 @@ namespace WorkTogether.Controllers
         public async Task<ActionResult> Rename([FromBody] ChatRenameDTO rename)
         {
             User u = GetCurrentUser(HttpContext);
-            Chat c = await _context.Chats.Where(c => c.Id == rename.Id).Include(c=> c.Users).FirstOrDefaultAsync();
-            if(c == null)
+            Chat c = await _context.Chats.Where(c => c.Id == rename.Id).Include(c => c.Users).FirstOrDefaultAsync();
+            if (c == null)
             {
                 return NotFound();
             }
@@ -175,7 +176,7 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            if(c.Users.Contains(toAdd))
+            if (c.Users.Contains(toAdd))
             {
                 return Ok();
             }
@@ -203,7 +204,8 @@ namespace WorkTogether.Controllers
                 return Unauthorized();
             }
             c.Users.Remove(u);
-            if(c.Users.Count == 1) {
+            if (c.Users.Count == 1)
+            {
                 _context.Chats.Remove(c);
             }
             _context.SaveChanges();
@@ -222,7 +224,7 @@ namespace WorkTogether.Controllers
             User u1 = await _context.Users.Where(u => u.Email == userEmail).Include(u => u.Chats).FirstOrDefaultAsync();
             var userchats = await _context.Chats.Include(c => c.Users).Where(c => c.Users.Contains(u1)).ToListAsync();
             List<ChatInfoDTO> toreturn = new List<ChatInfoDTO>();
-            foreach(Chat chat in u1.Chats)
+            foreach (Chat chat in u1.Chats)
             {
                 toreturn.Add(ChatToDto(chat));
             }
@@ -230,32 +232,47 @@ namespace WorkTogether.Controllers
             return toreturn;
         }
 
+        /// <summary>
+        /// Converts a chat to a DTO to get the info to the frontend
+        /// </summary>
+        /// <param name="chat">The chat</param>
+        /// <returns>the ChatInfoDTO</returns>
         private static ChatInfoDTO ChatToDto(Chat chat)
         {
             ChatInfoDTO chatInfo = new ChatInfoDTO();
             chatInfo.Id = chat.Id;
             chatInfo.Name = chat.Name;
             chatInfo.Users = new List<UserProfileDTO>();
-            foreach(User u in chat.Users) {
+            foreach (User u in chat.Users)
+            {
                 chatInfo.Users.Add(UsertoProfileDTO(u));
             }
             return chatInfo;
         }
 
+        /// <summary>
+        /// Converts a User to a UserProfileDTO
+        /// </summary>
+        /// <param name="user">The user</param>
+        /// <returns>The DTO</returns>
         private static UserProfileDTO UsertoProfileDTO(User user) =>
-    new UserProfileDTO
-    {
-        Id = user.UserId,
-        Name = user.Name,
-        Email = user.Email,
-        Bio = user.Bio,
-        Major = user.Major,
-        EmploymentStatus = user.EmploymentStatus,
-        StudentStatus = user.StudentStatus,
-        Interests = user.Interests
-    };
+            new UserProfileDTO
+            {
+                Id = user.UserId,
+                Name = user.Name,
+                Email = user.Email,
+                Bio = user.Bio,
+                Major = user.Major,
+                EmploymentStatus = user.EmploymentStatus,
+                StudentStatus = user.StudentStatus,
+                Interests = user.Interests
+            };
 
-
+        /// <summary>
+        /// Converts a single message to a DTO to send to the frontend
+        /// </summary>
+        /// <param name="msg">The message</param>
+        /// <returns>The DTO</returns>
         private static MessageDTO MessageToDTO(Message msg)
         {
             MessageDTO toret = new MessageDTO();
@@ -265,10 +282,8 @@ namespace WorkTogether.Controllers
             string dt = msg.Sent.Date.ToString().Split(" ")[0] + ", " + msg.Sent.Hour.ToString() + ", " + msg.Sent.Minute.ToString();
             toret.Sent = dt;
             return toret;
-
-
         }
-       
+
     }
 
 

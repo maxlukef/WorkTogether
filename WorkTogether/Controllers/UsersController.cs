@@ -1,5 +1,5 @@
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,37 +25,12 @@ namespace WorkTogether.Controllers
             _um = um;
         }
 
-        // GET: api/Users
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            return await _context.Users.ToListAsync();
-        }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
-
-        // GET: api/Users/profile/5
+        /// <summary>
+        /// Get a user's profile
+        /// </summary>
+        /// <param name="id">The user's ID</param>
+        /// <returns>a UserProfileDTO</returns>
         [HttpGet("profile/{id}")]
         public async Task<ActionResult<UserProfileDTO>> GetUserProfile(int id)
         {
@@ -73,7 +48,6 @@ namespace WorkTogether.Controllers
             return UsertoProfileDTO(user);
         }
 
-        //GET: api/Users/studentsbyclassid/10
         /// <summary>
         /// Gets a JSON array of all students in a class.
         /// </summary>
@@ -87,7 +61,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
             var @students = await _context.StudentClasses.Include(row => row.Student).Where<StudentClass>(row => row.Class.Id == id).Select(p => p.Student).ToListAsync();
-            
+
             var studentList = new List<UserProfileDTO>();
             for (int x = 0; x < students.Count; x++)
             {
@@ -99,95 +73,19 @@ namespace WorkTogether.Controllers
                 user.Bio = students[x].Bio;
                 user.Major = students[x].Major;
                 user.Id = students[x].UserId;
-                user.Name = students[x].Name; 
+                user.Name = students[x].Name;
                 studentList.Add(user);
             }
 
             return studentList;
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            if (id != user.UserId)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // PUT: api/Users/profile/5
-        [HttpPut("profile/{id}")]
-        public async Task<IActionResult> PutUserProfile(int id, UserProfileDTO userProfileDTO)
-        {
-            if (id != userProfileDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            user.Name = userProfileDTO.Name;
-            user.Email = userProfileDTO.Email;
-            user.Bio = userProfileDTO.Bio;
-            user.Major = userProfileDTO.Major;
-            user.EmploymentStatus = userProfileDTO.EmploymentStatus;
-            user.StudentStatus = userProfileDTO.StudentStatus;
-            user.Interests = userProfileDTO.Interests;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'WT_DBContext.Users'  is null.");
-          }
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
-        }
-
-        //Post :api/Users/profile
+        /// <summary>
+        /// Used for updating user profiles.
+        /// </summary>
+        /// <param name="userDTO">The UserProfileDTO</param>
+        /// <returns>the new User profile in DTO form</returns>
         [HttpPost("profile")]
         [Authorize]
         public async Task<ActionResult<UserProfileDTO>> PostUserProfile(UserProfileDTO userDTO)
@@ -196,13 +94,14 @@ namespace WorkTogether.Controllers
             try
             {
                 u2 = await _context.Users.Where(u => u.UserId == userDTO.Id).FirstOrDefaultAsync();
-            } catch
+            }
+            catch
             {
                 return BadRequest("User ID does not exist");
             }
             string userEmail = HttpContext.User.Identity.Name;
             User u1 = await _context.Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
-            if(u1.UserId != u2.UserId)
+            if (u1.UserId != u2.UserId)
             {
                 return Unauthorized();
             }
@@ -214,58 +113,21 @@ namespace WorkTogether.Controllers
             u2.Interests = userDTO.Interests;
 
             var result = _um.UpdateAsync(u2);
-            if(result.IsCompletedSuccessfully)
+            if (result.IsCompletedSuccessfully)
             {
                 return Ok();
-            } else
+            }
+            else
             {
                 return BadRequest();
             }
         }
 
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        [HttpGet("email/{email}")]
-        public async Task<ActionResult<UserProfileDTO>> GetUserProfile(String email)
-        {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-
-            var user = (from u in _context.Users where u.Email == email select u).First();
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return UsertoProfileDTO(user);
-        }
-
-        private bool UserExists(int id)
-        {
-            return (_context.Users?.Any(e => e.UserId == id)).GetValueOrDefault();
-        }
-
+        /// <summary>
+        /// Converts a User into a UserProfileDTO
+        /// </summary>
+        /// <param name="user">The user</param>
+        /// <returns>a UserProfileDTO</returns>
         private static UserProfileDTO UsertoProfileDTO(User user) =>
             new UserProfileDTO
             {
@@ -281,6 +143,5 @@ namespace WorkTogether.Controllers
     }
 }
 
-        
 
-  
+
