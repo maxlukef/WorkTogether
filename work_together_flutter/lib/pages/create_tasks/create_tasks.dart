@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/http_request.dart';
 import 'package:work_together_flutter/models/milestone_models/milestone.dart';
 import 'package:work_together_flutter/models/task_models/basic_task_dto.dart';
@@ -86,18 +87,23 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   @override
   Widget build(BuildContext context) {
     return initialized == false
-        ? const CircularProgressIndicator()
+        ? const Center(
+            child: SizedBox(
+                height: 50, width: 50, child: CircularProgressIndicator()),
+          )
         : Scaffold(
             backgroundColor: const Color(0xFFFFFFFF),
             appBar: const CustomAppBar(
               title: "Create Task",
             ),
             body: SingleChildScrollView(
-              child: SizedBox(
-                width: 675,
-                child: Column(children: [
-                  createTaskInputs(),
-                ]),
+              child: Center(
+                child: SizedBox(
+                  width: 675,
+                  child: Column(children: [
+                    createTaskInputs(),
+                  ]),
+                ),
               ),
             ),
           );
@@ -198,6 +204,9 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: MultiSelectDialogField(
+              dialogHeight: 300,
+              dialogWidth: 300,
+              isDismissible: false,
               items: studentsDropdownList,
               initialValue: selectedStudents,
               title: const Text(
@@ -273,7 +282,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: ourLightColor()),
                 // Send task to backend.
                 onPressed: () async {
                   if (selectedMilestone != null &&

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:work_together_flutter/global_components/date_time_converter.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import '../../global_components/custom_app_bar.dart';
 import '../../http_request.dart';
 import '../../models/milestone_models/milestone.dart';
@@ -176,11 +177,13 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                child: Row(
+                child: Wrap(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: ourLightColor()),
                           onPressed: () async {
                             if (widget.task.completed) {
                               await HttpService()
@@ -212,6 +215,8 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: ourLightColor()),
                           onPressed: () async {
                             await HttpService().deleteTask(widget.task.id);
 
@@ -227,51 +232,46 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
                             ),
                           )),
                     ),
-                  ],
-                ),
-              ),
-            ]),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 10, 8, 8),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue),
-                        // Bring user to create task page.
-                        onPressed: () async {
-                          await Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return CreateTaskPage(
-                                team: widget.team,
-                                milestones: widget.milestones,
-                                studentsInGroup: widget.team.members,
-                                hasInitialMilestone: false,
-                                isEditing: true,
-                                editingTask: widget.task,
-                              );
-                            },
-                          ));
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                          child: Text(
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: ourLightColor()),
+                          // Bring user to create task page.
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (BuildContext context,
+                                    Animation<double> animation1,
+                                    Animation<double> animation2) {
+                                  return CreateTaskPage(
+                                    team: widget.team,
+                                    milestones: widget.milestones,
+                                    studentsInGroup: widget.team.members,
+                                    hasInitialMilestone: false,
+                                    isEditing: true,
+                                    editingTask: widget.task,
+                                  );
+                                },
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+                          },
+                          child: const Text(
                             "Edit Task",
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.white,
                             ),
-                          ),
-                        )),
-                  ),
-                ],
+                          )),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          )
+            ]),
+          ),
         ],
       ),
     );

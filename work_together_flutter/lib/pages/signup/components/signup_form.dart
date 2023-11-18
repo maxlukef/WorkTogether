@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/models/user_models/new_user.dart';
 
 import '../../../http_request.dart';
@@ -43,132 +44,175 @@ class _SignupFormState extends State<SignupForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-        child: Column(
-      children: [
-        const Text(
-          "Welcome!",
-          style: TextStyle(
-            fontSize: 40,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            controller: nameController,
-            keyboardType: TextInputType.name,
-            textInputAction: TextInputAction.next,
-            onChanged: (name) {
-              validateInformation();
-            },
-            decoration: InputDecoration(
-                hintText: "name",
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                        color: Color(0xFF1192DC), width: 5.0))),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            controller: emailController,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            onChanged: (email) {
-              validateInformation();
-            },
-            decoration: InputDecoration(
-                hintText: "email",
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                        color: Color(0xFF1192DC), width: 5.0))),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            controller: passwordController,
-            keyboardType: TextInputType.visiblePassword,
-            textInputAction: TextInputAction.next,
-            onChanged: (password) {
-              validateInformation();
-            },
-            obscureText: true,
-            decoration: InputDecoration(
-                hintText: "password",
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                        color: Color(0xFF1192DC), width: 5.0))),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            controller: confirmPasswordController,
-            keyboardType: TextInputType.visiblePassword,
-            textInputAction: TextInputAction.next,
-            onChanged: (confirmedPassword) {
-              validateInformation();
-            },
-            obscureText: true,
-            decoration: InputDecoration(
-                hintText: "confirm password",
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                        color: Color(0xFF1192DC), width: 5.0))),
-          ),
-        ),
-        if (showErrorMessage)
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              "An error has occurred while registering.",
-              style: TextStyle(fontSize: 18),
+    return Align(
+      alignment: Alignment.topCenter,
+      child: SizedBox(
+        width: 675,
+        child: Form(
+            child: Column(
+          children: [
+            const Text(
+              "Welcome!",
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ElevatedButton(
-            onPressed: !isButtonActive
-                ? null
-                : () async {
-                    NewUser newUser = NewUser(
-                        name: nameController.text,
-                        password: passwordController.text,
-                        email: emailController.text,
-                        bio: "",
-                        employmentStatus: "Unemployed",
-                        studentStatus: "Full Time Student",
-                        interests: [],
-                        major: "Undeclared");
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: nameController,
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                onChanged: (name) {
+                  validateInformation();
+                },
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                    hintText: "name",
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ourSecondaryColor(), width: 3.0),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ourSecondaryColor(), width: 3.0),
+                    )),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                onChanged: (email) {
+                  validateInformation();
+                },
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                    hintText: "email",
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ourSecondaryColor(), width: 3.0),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ourSecondaryColor(), width: 3.0),
+                    )),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: passwordController,
+                keyboardType: TextInputType.visiblePassword,
+                textInputAction: TextInputAction.next,
+                onChanged: (password) {
+                  validateInformation();
+                },
+                obscureText: true,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                    hintText: "password",
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ourSecondaryColor(), width: 3.0),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ourSecondaryColor(), width: 3.0),
+                    )),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: confirmPasswordController,
+                keyboardType: TextInputType.visiblePassword,
+                textInputAction: TextInputAction.next,
+                onChanged: (confirmedPassword) {
+                  validateInformation();
+                },
+                obscureText: true,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                    hintText: "confirm password",
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ourSecondaryColor(), width: 3.0),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: ourSecondaryColor(), width: 3.0),
+                    )),
+              ),
+            ),
+            if (showErrorMessage)
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "An error has occurred while registering.",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ourLightColor()),
+                  onPressed: !isButtonActive
+                      ? null
+                      : () async {
+                          NewUser newUser = NewUser(
+                              name: nameController.text,
+                              password: passwordController.text,
+                              email: emailController.text,
+                              bio: "",
+                              employmentStatus: "Unemployed",
+                              studentStatus: "Full Time Student",
+                              interests: [],
+                              major: "Undeclared");
 
-                    if (await HttpService().registerUser(newUser)) {
-                      if (context.mounted) {
-                        Navigator.pushReplacement(context, MaterialPageRoute(
-                          builder: (context) {
-                            return const MainContainer();
-                          },
-                        ));
-                      }
-                    } else {
-                      showErrorMessage = true;
-                      setState(() {});
-                    }
-                  },
-            child: const Text(
-              "Create an Account",
-              style: TextStyle(fontSize: 24),
-            )),
-        TextButton(
-            onPressed: () => {Navigator.pop(context)},
-            child: const Text(
-              "Already Have an Account?",
-              style: TextStyle(fontSize: 24),
-            )),
-      ],
-    ));
+                          if (await HttpService().registerUser(newUser)) {
+                            if (context.mounted) {
+                              Navigator.pushReplacement(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (BuildContext context,
+                                      Animation<double> animation1,
+                                      Animation<double> animation2) {
+                                    return const MainContainer();
+                                  },
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
+                                ),
+                              );
+                            }
+                          } else {
+                            showErrorMessage = true;
+                            setState(() {});
+                          }
+                        },
+                  child: const Text(
+                    "Create an Account",
+                    style: TextStyle(fontSize: 24, color: Colors.white),
+                  )),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ourLightColor()),
+                  onPressed: () => {Navigator.pop(context)},
+                  child: const Text(
+                    "Already Have an Account?",
+                    style: TextStyle(fontSize: 24, color: Colors.white),
+                  )),
+            ),
+          ],
+        )),
+      ),
+    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/models/answer_models/answer_dto.dart';
 import 'package:work_together_flutter/provider/meeting_time_list.dart';
@@ -140,608 +141,659 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
     return Scaffold(
       appBar: const CustomAppBar(title: "Questionnaire"),
       backgroundColor: const Color(0xFFFFFFFF),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Center(
-              child: Column(
-                children: [
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                      child: Text(
-                        "Add Available Meeting Times",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                      ),
-                    ),
-                  ),
-                  ...meetingTimeList.map(
-                    (meetingTime) {
-                      IconData? selectedTime;
-
-                      switch (meetingTime.timeOfDay) {
-                        case "Morning":
-                          selectedTime = Icons.alarm;
-                          break;
-                        case "Afternoon":
-                          selectedTime = Icons.sunny;
-                          break;
-                        case "Evening":
-                          selectedTime = Icons.mode_night;
-                          break;
-                      }
-
-                      return Container(
-                        margin: const EdgeInsets.all(6.0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFF7AC8F5))),
-                        child: SizedBox(
-                          width: 330,
-                          height: 50,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(selectedTime),
-                              Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Text(meetingTime.timeOfDay),
-                              ),
-                              const Spacer(),
-                              Row(
-                                children: meetingTime.daysOfWeek
-                                    .map((day) => Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 4,
-                                                      horizontal: 4),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(18),
-                                                  border: Border.all(
-                                                      color: const Color(
-                                                          0xFF11DC5C),
-                                                      width: 2)),
-                                              child: Text(
-                                                day,
-                                                style: const TextStyle(
-                                                  fontSize: 10,
-                                                  fontFamily: 'SourceSansPro',
-                                                  fontWeight: FontWeight.w800,
-                                                ),
-                                              )),
-                                        ))
-                                    .toList(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  child:
-                                      const Icon(Icons.remove_circle_outline),
-                                  onTap: () {
-                                    ref
-                                        .read(meetingTimeListNotifierProvider
-                                            .notifier)
-                                        .removeMeetingTime(meetingTimeList
-                                            .indexOf(meetingTime));
-                                  },
-                                ),
-                              ),
-                            ],
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          width: 675,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                          child: Text(
+                            "Add Available Meeting Times",
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'SourceSansPro'),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  ElevatedButton(
-                    onPressed: () => {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (context) => const QuestionnairePopup())
-                    },
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(330, 50),
-                        backgroundColor: const Color(0xFF7AC8F5)),
-                    child: const Text(
-                      "+ Add A Time",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'SourceSansPro',
-                        fontWeight: FontWeight.w400,
                       ),
-                    ),
-                  ),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                      child: Text(
-                        "Expected Project Quality",
-                        style: TextStyle(
-                            fontSize: 24,
+                      ...meetingTimeList.map(
+                        (meetingTime) {
+                          IconData? selectedTime;
+
+                          switch (meetingTime.timeOfDay) {
+                            case "Morning":
+                              selectedTime = Icons.alarm;
+                              break;
+                            case "Afternoon":
+                              selectedTime = Icons.sunny;
+                              break;
+                            case "Evening":
+                              selectedTime = Icons.mode_night;
+                              break;
+                          }
+
+                          return Container(
+                            margin: const EdgeInsets.all(6.0),
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: const Color(0xFF7AC8F5))),
+                            child: SizedBox(
+                              width: 330,
+                              height: 50,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(selectedTime),
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Text(meetingTime.timeOfDay),
+                                  ),
+                                  const Spacer(),
+                                  Row(
+                                    children: meetingTime.daysOfWeek
+                                        .map((day) => Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4,
+                                                      horizontal: 4),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              18),
+                                                      border: Border.all(
+                                                          color: const Color(
+                                                              0xFF11DC5C),
+                                                          width: 2)),
+                                                  child: Text(
+                                                    day,
+                                                    style: const TextStyle(
+                                                      fontSize: 10,
+                                                      fontFamily:
+                                                          'SourceSansPro',
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                    ),
+                                                  )),
+                                            ))
+                                        .toList(),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      child: const Icon(
+                                          Icons.remove_circle_outline),
+                                      onTap: () {
+                                        ref
+                                            .read(
+                                                meetingTimeListNotifierProvider
+                                                    .notifier)
+                                            .removeMeetingTime(meetingTimeList
+                                                .indexOf(meetingTime));
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      ElevatedButton(
+                        onPressed: () => {
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (context) => const QuestionnairePopup())
+                        },
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(330, 50),
+                            backgroundColor: ourLightColor()),
+                        child: const Text(
+                          "+ Add A Time",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontFamily: 'SourceSansPro',
                             fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                          child: Text(
+                            "Expected Project Quality",
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'SourceSansPro'),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                        child: Column(
                           children: [
-                            Expanded(
-                              flex: 1,
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: ExpectedQuality.A,
-                                    groupValue: _quality,
-                                    onChanged: (ExpectedQuality? value) {
-                                      setState(() {
-                                        _quality = value;
-                                      });
-                                    },
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Row(
+                                    children: [
+                                      Radio(
+                                        value: ExpectedQuality.A,
+                                        groupValue: _quality,
+                                        onChanged: (ExpectedQuality? value) {
+                                          setState(() {
+                                            _quality = value;
+                                          });
+                                        },
+                                      ),
+                                      const Expanded(
+                                          child: Text(
+                                        'A',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'SourceSansPro'),
+                                      ))
+                                    ],
                                   ),
-                                  const Expanded(
-                                      child: Text(
-                                    'A',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'SourceSansPro'),
-                                  ))
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: ExpectedQuality.B,
-                                    groupValue: _quality,
-                                    onChanged: (ExpectedQuality? value) {
-                                      setState(() {
-                                        _quality = value;
-                                      });
-                                    },
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Row(
+                                    children: [
+                                      Radio(
+                                        value: ExpectedQuality.B,
+                                        groupValue: _quality,
+                                        onChanged: (ExpectedQuality? value) {
+                                          setState(() {
+                                            _quality = value;
+                                          });
+                                        },
+                                      ),
+                                      const Expanded(
+                                          child: Text(
+                                        'B',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'SourceSansPro'),
+                                      ))
+                                    ],
                                   ),
-                                  const Expanded(
-                                      child: Text(
-                                    'B',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'SourceSansPro'),
-                                  ))
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Row(
-                                children: [
-                                  Radio(
-                                    value: ExpectedQuality.C,
-                                    groupValue: _quality,
-                                    onChanged: (ExpectedQuality? value) {
-                                      setState(() {
-                                        _quality = value;
-                                      });
-                                    },
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Row(
+                                    children: [
+                                      Radio(
+                                        value: ExpectedQuality.C,
+                                        groupValue: _quality,
+                                        onChanged: (ExpectedQuality? value) {
+                                          setState(() {
+                                            _quality = value;
+                                          });
+                                        },
+                                      ),
+                                      const Expanded(
+                                          child: Text(
+                                        'C',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'SourceSansPro'),
+                                      ))
+                                    ],
                                   ),
-                                  const Expanded(
-                                      child: Text(
-                                    'C',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'SourceSansPro'),
-                                  ))
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                      child: Text(
-                        "Relevant Skills",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
                       ),
-                    ),
-                  ),
-                  Row(
-                    children: [
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                          child: Text(
+                            "Relevant Skills",
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'SourceSansPro'),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(40.0, 2.0, 2.0, 4.0),
+                            child: SizedBox(
+                              width: 280,
+                              height: 50,
+                              child: TextFormField(
+                                controller: skillsTextFieldController,
+                                style: const TextStyle(
+                                    color: Color(0xFF000000),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'SourceSansPro'),
+                                keyboardType: TextInputType.emailAddress,
+                                focusNode: skillsFocusNode,
+                                onFieldSubmitted: (e) {
+                                  ref
+                                      .read(skillListNotifierProvider.notifier)
+                                      .addSkill(e);
+                                  skillsTextFieldController.clear();
+                                  skillsFocusNode.requestFocus();
+                                },
+                                decoration: const InputDecoration(
+                                    filled: true,
+                                    fillColor: Color(0xFFFAFAFA),
+                                    hintText: "Type to Add a Skill",
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xFFD9D9D9),
+                                            width: 2.0))),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: IconButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: ourLightColor()),
+                                onPressed: () {
+                                  setState(() {
+                                    ref
+                                        .read(
+                                            skillListNotifierProvider.notifier)
+                                        .addSkill(
+                                            skillsTextFieldController.text);
+                                    skillsTextFieldController.clear();
+                                    skillsFocusNode.requestFocus();
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(40.0, 2.0, 2.0, 4.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                          child: Wrap(
+                            children: [
+                              ...skillList.map(
+                                (skill) {
+                                  return Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        0, 4.0, 4.0, 0),
+                                    child: Wrap(
+                                      children: [
+                                        Tag(text: skill.toString()),
+                                        GestureDetector(
+                                          child: const Icon(
+                                              Icons.remove_circle_outline),
+                                          onTap: () {
+                                            setState(() {
+                                              ref
+                                                  .read(
+                                                      skillListNotifierProvider)
+                                                  .remove(skill);
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          )),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                          child: Text(
+                            "Expected Hours Weekly",
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'SourceSansPro'),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
-                          width: 280,
+                          width: 330,
                           height: 50,
                           child: TextFormField(
-                            controller: skillsTextFieldController,
+                            controller: numberHoursTextFieldController,
                             style: const TextStyle(
                                 color: Color(0xFF000000),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'SourceSansPro'),
                             keyboardType: TextInputType.emailAddress,
-                            focusNode: skillsFocusNode,
-                            onFieldSubmitted: (e) {
-                              ref
-                                  .read(skillListNotifierProvider.notifier)
-                                  .addSkill(e);
-                              skillsTextFieldController.clear();
-                              skillsFocusNode.requestFocus();
-                            },
+                            textInputAction: TextInputAction.done,
+                            onSaved: (hours) {},
                             decoration: const InputDecoration(
                                 filled: true,
                                 fillColor: Color(0xFFFAFAFA),
-                                hintText: "Type to Add a Skill",
+                                hintText: "Type to Add Number of Hours",
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Color(0xFFD9D9D9), width: 2.0))),
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
-                        child: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: IconButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue),
-                            onPressed: () {
-                              setState(() {
-                                ref
-                                    .read(skillListNotifierProvider.notifier)
-                                    .addSkill(skillsTextFieldController.text);
-                                skillsTextFieldController.clear();
-                                skillsFocusNode.requestFocus();
-                              });
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                          child: ElevatedButton(
+                            onPressed: () async => {
+                              if (answers.isNotEmpty)
+                                {
+                                  for (int i = 0; i < answers.length; i++)
+                                    {
+                                      if (i == 0)
+                                        {
+                                          concatenatedMeetingTimes = "",
+                                          for (int i = 0;
+                                              i < meetingTimeList.length;
+                                              i++)
+                                            {
+                                              if (meetingTimeList[i]
+                                                      .timeOfDay ==
+                                                  "Morning")
+                                                {
+                                                  concatenatedMeetingTimes +=
+                                                      "Morning:",
+                                                  concatenatedMeetingTimes +=
+                                                      meetingTimeList[i]
+                                                          .daysOfWeek
+                                                          .join(','),
+                                                  concatenatedMeetingTimes +=
+                                                      '`'
+                                                }
+                                              else if (meetingTimeList[i]
+                                                      .timeOfDay ==
+                                                  "Afternoon")
+                                                {
+                                                  concatenatedMeetingTimes +=
+                                                      "Afternoon:",
+                                                  concatenatedMeetingTimes +=
+                                                      meetingTimeList[i]
+                                                          .daysOfWeek
+                                                          .join(','),
+                                                  concatenatedMeetingTimes +=
+                                                      '`'
+                                                }
+                                              else if (meetingTimeList[i]
+                                                      .timeOfDay ==
+                                                  "Evening")
+                                                {
+                                                  concatenatedMeetingTimes +=
+                                                      "Evening:",
+                                                  concatenatedMeetingTimes +=
+                                                      meetingTimeList[i]
+                                                          .daysOfWeek
+                                                          .join(','),
+                                                  concatenatedMeetingTimes +=
+                                                      '`'
+                                                }
+                                            },
+                                          answers[i].answerText =
+                                              concatenatedMeetingTimes
+                                        }
+                                      else if (i == 1)
+                                        {
+                                          if (_quality == ExpectedQuality.A)
+                                            {answers[i].answerText = "A"}
+                                          else if (_quality ==
+                                              ExpectedQuality.B)
+                                            {answers[i].answerText = "B"}
+                                          else if (_quality ==
+                                              ExpectedQuality.C)
+                                            {answers[i].answerText = "C"}
+                                        }
+                                      else if (i == 2)
+                                        {
+                                          answers[i].answerText =
+                                              skillList.join(',')
+                                        }
+                                      else if (i == 3)
+                                        {
+                                          answers[i].answerText =
+                                              numberHoursTextFieldController
+                                                  .text
+                                        }
+                                      else if (i == 4)
+                                        {
+                                          // Answer is not in use
+                                        }
+                                    },
+                                  await httpService
+                                      .putQuestionnaireAnswers(
+                                          widget.projectId, answers)
+                                      .then((loggedUserAnswers) => {
+                                            popCount = 0,
+                                            Navigator.popUntil(context,
+                                                (route) {
+                                              return popCount++ == 2;
+                                            })
+                                          })
+                                }
+                              else
+                                {
+                                  await httpService
+                                      .getQuestionnaireQuestions(
+                                          widget.projectId)
+                                      .then((questions) async => {
+                                            for (int i = 0;
+                                                i < questions.length;
+                                                i++)
+                                              {
+                                                if (i == 0)
+                                                  {
+                                                    concatenatedMeetingTimes =
+                                                        "",
+                                                    for (int i = 0;
+                                                        i <
+                                                            meetingTimeList
+                                                                .length;
+                                                        i++)
+                                                      {
+                                                        if (meetingTimeList[i]
+                                                                .timeOfDay ==
+                                                            "Morning")
+                                                          {
+                                                            concatenatedMeetingTimes +=
+                                                                "Morning:",
+                                                            concatenatedMeetingTimes +=
+                                                                meetingTimeList[
+                                                                        i]
+                                                                    .daysOfWeek
+                                                                    .join(','),
+                                                            concatenatedMeetingTimes +=
+                                                                '`'
+                                                          }
+                                                        else if (meetingTimeList[
+                                                                    i]
+                                                                .timeOfDay ==
+                                                            "Afternoon")
+                                                          {
+                                                            concatenatedMeetingTimes +=
+                                                                "Afternoon:",
+                                                            concatenatedMeetingTimes +=
+                                                                meetingTimeList[
+                                                                        i]
+                                                                    .daysOfWeek
+                                                                    .join(','),
+                                                            concatenatedMeetingTimes +=
+                                                                '`'
+                                                          }
+                                                        else if (meetingTimeList[
+                                                                    i]
+                                                                .timeOfDay ==
+                                                            "Evening")
+                                                          {
+                                                            concatenatedMeetingTimes +=
+                                                                "Evening:",
+                                                            concatenatedMeetingTimes +=
+                                                                meetingTimeList[
+                                                                        i]
+                                                                    .daysOfWeek
+                                                                    .join(','),
+                                                            concatenatedMeetingTimes +=
+                                                                '`'
+                                                          }
+                                                      },
+                                                    answers.add(AnswerDTO(
+                                                        -1,
+                                                        concatenatedMeetingTimes,
+                                                        questions[i].id,
+                                                        loggedUserId,
+                                                        loggedUserName)),
+                                                  }
+                                                else if (i == 1)
+                                                  {
+                                                    if (_quality ==
+                                                        ExpectedQuality.A)
+                                                      {
+                                                        answers.add(AnswerDTO(
+                                                            -1,
+                                                            "A",
+                                                            questions[i].id,
+                                                            loggedUserId,
+                                                            loggedUserName)),
+                                                      }
+                                                    else if (_quality ==
+                                                        ExpectedQuality.B)
+                                                      {
+                                                        answers.add(AnswerDTO(
+                                                            -1,
+                                                            "B",
+                                                            questions[i].id,
+                                                            loggedUserId,
+                                                            loggedUserName)),
+                                                      }
+                                                    else if (_quality ==
+                                                        ExpectedQuality.C)
+                                                      {
+                                                        answers.add(AnswerDTO(
+                                                            -1,
+                                                            "C",
+                                                            questions[i].id,
+                                                            loggedUserId,
+                                                            loggedUserName)),
+                                                      }
+                                                  }
+                                                else if (i == 2)
+                                                  {
+                                                    answers.add(AnswerDTO(
+                                                        -1,
+                                                        skillList.join(','),
+                                                        questions[i].id,
+                                                        loggedUserId,
+                                                        loggedUserName)),
+                                                  }
+                                                else if (i == 3)
+                                                  {
+                                                    answers.add(AnswerDTO(
+                                                        -1,
+                                                        numberHoursTextFieldController
+                                                            .text,
+                                                        questions[i].id,
+                                                        loggedUserId,
+                                                        loggedUserName)),
+                                                  }
+                                                else if (i == 4)
+                                                  {
+                                                    // Answer is not in use
+                                                  }
+                                              },
+                                            await httpService
+                                                .postQuestionnaireAnswers(
+                                                    widget.projectId, answers)
+                                                .then((loggedUserAnswers) => {
+                                                      Navigator.push(
+                                                        context,
+                                                        PageRouteBuilder(
+                                                          pageBuilder: (BuildContext
+                                                                  context,
+                                                              Animation<double>
+                                                                  animation1,
+                                                              Animation<double>
+                                                                  animation2) {
+                                                            return GroupSearchPage(
+                                                                userId: widget
+                                                                    .loggedUserId,
+                                                                classId: widget
+                                                                    .classId,
+                                                                className: widget
+                                                                    .className,
+                                                                projectId: widget
+                                                                    .projectId,
+                                                                projectName: widget
+                                                                    .projectName);
+                                                          },
+                                                          transitionDuration:
+                                                              Duration.zero,
+                                                          reverseTransitionDuration:
+                                                              Duration.zero,
+                                                        ),
+                                                      )
+                                                    })
+                                          })
+                                }
                             },
-                            icon: const Icon(
-                              Icons.add,
-                              color: Colors.blue,
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(150, 50),
+                                backgroundColor: const Color(0xFF7AC8F5)),
+                            child: const Text(
+                              "Submit",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontFamily: 'SourceSansPro',
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                      child: Wrap(
-                        children: [
-                          ...skillList.map(
-                            (skill) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0, 4.0, 4.0, 0),
-                                child: Wrap(
-                                  children: [
-                                    Tag(text: skill.toString()),
-                                    GestureDetector(
-                                      child: const Icon(
-                                          Icons.remove_circle_outline),
-                                      onTap: () {
-                                        setState(() {
-                                          ref
-                                              .read(skillListNotifierProvider)
-                                              .remove(skill);
-                                        });
-                                      },
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                          )
-                        ],
-                      )),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                      child: Text(
-                        "Expected Hours Weekly",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: 330,
-                      height: 50,
-                      child: TextFormField(
-                        controller: numberHoursTextFieldController,
-                        style: const TextStyle(
-                            color: Color(0xFF000000),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'SourceSansPro'),
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.done,
-                        onSaved: (hours) {},
-                        decoration: const InputDecoration(
-                            filled: true,
-                            fillColor: Color(0xFFFAFAFA),
-                            hintText: "Type to Add Number of Hours",
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color(0xFFD9D9D9), width: 2.0))),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                      child: ElevatedButton(
-                        onPressed: () async => {
-                          if (answers.isNotEmpty)
-                            {
-                              for (int i = 0; i < answers.length; i++)
-                                {
-                                  if (i == 0)
-                                    {
-                                      concatenatedMeetingTimes = "",
-                                      for (int i = 0;
-                                          i < meetingTimeList.length;
-                                          i++)
-                                        {
-                                          if (meetingTimeList[i].timeOfDay ==
-                                              "Morning")
-                                            {
-                                              concatenatedMeetingTimes +=
-                                                  "Morning:",
-                                              concatenatedMeetingTimes +=
-                                                  meetingTimeList[i]
-                                                      .daysOfWeek
-                                                      .join(','),
-                                              concatenatedMeetingTimes += '`'
-                                            }
-                                          else if (meetingTimeList[i]
-                                                  .timeOfDay ==
-                                              "Afternoon")
-                                            {
-                                              concatenatedMeetingTimes +=
-                                                  "Afternoon:",
-                                              concatenatedMeetingTimes +=
-                                                  meetingTimeList[i]
-                                                      .daysOfWeek
-                                                      .join(','),
-                                              concatenatedMeetingTimes += '`'
-                                            }
-                                          else if (meetingTimeList[i]
-                                                  .timeOfDay ==
-                                              "Evening")
-                                            {
-                                              concatenatedMeetingTimes +=
-                                                  "Evening:",
-                                              concatenatedMeetingTimes +=
-                                                  meetingTimeList[i]
-                                                      .daysOfWeek
-                                                      .join(','),
-                                              concatenatedMeetingTimes += '`'
-                                            }
-                                        },
-                                      answers[i].answerText =
-                                          concatenatedMeetingTimes
-                                    }
-                                  else if (i == 1)
-                                    {
-                                      if (_quality == ExpectedQuality.A)
-                                        {answers[i].answerText = "A"}
-                                      else if (_quality == ExpectedQuality.B)
-                                        {answers[i].answerText = "B"}
-                                      else if (_quality == ExpectedQuality.C)
-                                        {answers[i].answerText = "C"}
-                                    }
-                                  else if (i == 2)
-                                    {
-                                      answers[i].answerText =
-                                          skillList.join(',')
-                                    }
-                                  else if (i == 3)
-                                    {
-                                      answers[i].answerText =
-                                          numberHoursTextFieldController.text
-                                    }
-                                  else if (i == 4)
-                                    {
-                                      // Answer is not in use
-                                    }
-                                },
-                              await httpService
-                                  .putQuestionnaireAnswers(
-                                      widget.projectId, answers)
-                                  .then((loggedUserAnswers) => {
-                                        popCount = 0,
-                                        Navigator.popUntil(context, (route) {
-                                          return popCount++ == 2;
-                                        })
-                                      })
-                            }
-                          else
-                            {
-                              await httpService
-                                  .getQuestionnaireQuestions(widget.projectId)
-                                  .then((questions) async => {
-                                        for (int i = 0;
-                                            i < questions.length;
-                                            i++)
-                                          {
-                                            if (i == 0)
-                                              {
-                                                concatenatedMeetingTimes = "",
-                                                for (int i = 0;
-                                                    i < meetingTimeList.length;
-                                                    i++)
-                                                  {
-                                                    if (meetingTimeList[i]
-                                                            .timeOfDay ==
-                                                        "Morning")
-                                                      {
-                                                        concatenatedMeetingTimes +=
-                                                            "Morning:",
-                                                        concatenatedMeetingTimes +=
-                                                            meetingTimeList[i]
-                                                                .daysOfWeek
-                                                                .join(','),
-                                                        concatenatedMeetingTimes +=
-                                                            '`'
-                                                      }
-                                                    else if (meetingTimeList[i]
-                                                            .timeOfDay ==
-                                                        "Afternoon")
-                                                      {
-                                                        concatenatedMeetingTimes +=
-                                                            "Afternoon:",
-                                                        concatenatedMeetingTimes +=
-                                                            meetingTimeList[i]
-                                                                .daysOfWeek
-                                                                .join(','),
-                                                        concatenatedMeetingTimes +=
-                                                            '`'
-                                                      }
-                                                    else if (meetingTimeList[i]
-                                                            .timeOfDay ==
-                                                        "Evening")
-                                                      {
-                                                        concatenatedMeetingTimes +=
-                                                            "Evening:",
-                                                        concatenatedMeetingTimes +=
-                                                            meetingTimeList[i]
-                                                                .daysOfWeek
-                                                                .join(','),
-                                                        concatenatedMeetingTimes +=
-                                                            '`'
-                                                      }
-                                                  },
-                                                answers.add(AnswerDTO(
-                                                    -1,
-                                                    concatenatedMeetingTimes,
-                                                    questions[i].id,
-                                                    loggedUserId,
-                                                    loggedUserName)),
-                                              }
-                                            else if (i == 1)
-                                              {
-                                                if (_quality ==
-                                                    ExpectedQuality.A)
-                                                  {
-                                                    answers.add(AnswerDTO(
-                                                        -1,
-                                                        "A",
-                                                        questions[i].id,
-                                                        loggedUserId,
-                                                        loggedUserName)),
-                                                  }
-                                                else if (_quality ==
-                                                    ExpectedQuality.B)
-                                                  {
-                                                    answers.add(AnswerDTO(
-                                                        -1,
-                                                        "B",
-                                                        questions[i].id,
-                                                        loggedUserId,
-                                                        loggedUserName)),
-                                                  }
-                                                else if (_quality ==
-                                                    ExpectedQuality.C)
-                                                  {
-                                                    answers.add(AnswerDTO(
-                                                        -1,
-                                                        "C",
-                                                        questions[i].id,
-                                                        loggedUserId,
-                                                        loggedUserName)),
-                                                  }
-                                              }
-                                            else if (i == 2)
-                                              {
-                                                answers.add(AnswerDTO(
-                                                    -1,
-                                                    skillList.join(','),
-                                                    questions[i].id,
-                                                    loggedUserId,
-                                                    loggedUserName)),
-                                              }
-                                            else if (i == 3)
-                                              {
-                                                answers.add(AnswerDTO(
-                                                    -1,
-                                                    numberHoursTextFieldController
-                                                        .text,
-                                                    questions[i].id,
-                                                    loggedUserId,
-                                                    loggedUserName)),
-                                              }
-                                            else if (i == 4)
-                                              {
-                                                // Answer is not in use
-                                              }
-                                          },
-                                        await httpService
-                                            .postQuestionnaireAnswers(
-                                                widget.projectId, answers)
-                                            .then((loggedUserAnswers) => {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                    builder: (context) {
-                                                      return GroupSearchPage(
-                                                          userId: widget
-                                                              .loggedUserId,
-                                                          classId:
-                                                              widget.classId,
-                                                          className:
-                                                              widget.className,
-                                                          projectId:
-                                                              widget.projectId,
-                                                          projectName: widget
-                                                              .projectName);
-                                                    },
-                                                  ))
-                                                })
-                                      })
-                            }
-                        },
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(150, 50),
-                            backgroundColor: const Color(0xFF7AC8F5)),
-                        child: const Text(
-                          "Submit",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontFamily: 'SourceSansPro',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
