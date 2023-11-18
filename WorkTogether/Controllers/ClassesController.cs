@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkTogether.Models;
@@ -22,61 +16,35 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
-        // GET: api/Classes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClasses()
-        {
-            if (_context.Classes == null)
-            {
-                return NotFound();
-            }
-            var classList = await _context.Classes.Include(c=>c.Professor).ToListAsync();
-            var classDTOList = new List<ClassDTO>();
-            foreach (Class c in classList) 
-            {
-                classDTOList.Add(ClassToDTO(c));
-            }
 
-            return Ok(classDTOList);
-        }
 
-        // GET: api/Classes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ClassDTO>> GetClass(int id)
-        {
-            if (_context.Classes == null)
-            {
-                return NotFound();
-            }
-            var @class = ClassToDTO(await _context.Classes.Include(c=>c.Professor).Where(c=>c.Id==id).FirstOrDefaultAsync());
-
-            if (@class == null)
-            {
-                return NotFound();
-            }
-
-            return @class;
-        }
-
-  
-
+        /// <summary>
+        /// Allows professors to get the invite code for a class, that they can then give to students to allow them to join on Work Together
+        /// </summary>
+        /// <param name="classid">The ID of the class</param>
+        /// <returns>A string(the code)</returns>
         [HttpGet("getinvitecode/{classid}")]
         [Authorize]
         public async Task<ActionResult<string>> GetInviteCode(int classid)
         {
             User curr = GetCurrentUser(HttpContext);
             Class c = await _context.Classes.Where(c => c.Id == classid).Include(c => c.Professor).FirstOrDefaultAsync();
-            if(c==null)
+            if (c == null)
             {
                 return NotFound();
             }
-            if(c.Professor != curr)
+            if (c.Professor != curr)
             {
                 return Unauthorized();
             }
             return c.InviteCode;
         }
 
+        /// <summary>
+        /// Allows a student to join a class with it's invite code.
+        /// </summary>
+        /// <param name="invcode">The invite code</param>
+        /// <returns>a DTO for the joined class, if successful.</returns>
         [HttpGet("joinclass/{invcode}")]
         [Authorize]
         public async Task<ActionResult<ClassDTO>> Join(string invcode)
@@ -91,7 +59,7 @@ namespace WorkTogether.Controllers
             {
                 return Unauthorized();
             }
-            if(await _context.StudentClasses.Include(sc=>sc.Student).Include(sc=>sc.Class).Where(sc => sc.Class == c && sc.Student == curr).CountAsync() > 0)
+            if (await _context.StudentClasses.Include(sc => sc.Student).Include(sc => sc.Class).Where(sc => sc.Class == c && sc.Student == curr).CountAsync() > 0)
             {
                 return BadRequest("Student already in this class");
             }
@@ -121,16 +89,17 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
 
-            List<StudentClass> c_u = await _context.StudentClasses.Include(sc => sc.Student).Include(sc=>sc.Class).Where(sc => sc.Student == u && sc.Class.Id == id).ToListAsync();
+            List<StudentClass> c_u = await _context.StudentClasses.Include(sc => sc.Student).Include(sc => sc.Class).Where(sc => sc.Student == u && sc.Class.Id == id).ToListAsync();
 
 
 
-            if(c_u.Count == 0 && c.Professor.Id != u.Id) {
+            if (c_u.Count == 0 && c.Professor.Id != u.Id)
+            {
                 return Unauthorized();
             }
 
 
-            List<StudentClass> sc = await _context.StudentClasses.Include(s=> s.Class).Include(s=>s.Student).Where(s => s.Class.Id == id).ToListAsync();
+            List<StudentClass> sc = await _context.StudentClasses.Include(s => s.Class).Include(s => s.Student).Where(s => s.Class.Id == id).ToListAsync();
             List<UserProfileDTO> students = new List<UserProfileDTO>();
             foreach (var s in sc)
             {
@@ -152,7 +121,7 @@ namespace WorkTogether.Controllers
         {
             User u = GetCurrentUser(HttpContext);
 
-            var studentClasses = await _context.StudentClasses.Where(r => r.Student.UserId == u.UserId).Include(r => r.Class.Professor).ToListAsync(); 
+            var studentClasses = await _context.StudentClasses.Where(r => r.Student.UserId == u.UserId).Include(r => r.Class.Professor).ToListAsync();
 
             List<ClassDTO> classes = new List<ClassDTO>();
             foreach (var studentClass in studentClasses)
@@ -162,13 +131,16 @@ namespace WorkTogether.Controllers
             return classes;
         }
 
-        //get classes that the current user is prof of
+        /// <summary>
+        /// Gets the classes that the current user is professor for.
+        /// </summary>
+        /// <returns>A list of classes</returns>
         [Authorize]
         [HttpGet("profclasses")]
         public async Task<ActionResult<IEnumerable<ClassDTO>>> GetUserProfessorClasses()
         {
             User u = GetCurrentUser(HttpContext);
-            var classes = await _context.Classes.Include(c => c.Professor).Where(c => c.Professor == u).ToListAsync(); 
+            var classes = await _context.Classes.Include(c => c.Professor).Where(c => c.Professor == u).ToListAsync();
             List<ClassDTO> classesdto = new List<ClassDTO>();
             foreach (var cl in classes)
             {
@@ -177,6 +149,11 @@ namespace WorkTogether.Controllers
             return classesdto;
         }
 
+        /// <summary>
+        /// Creates a class, assigning the user doing it as professor.
+        /// </summary>
+        /// <param name="cd">The CreateClassDTO with the info to create the class.</param>
+        /// <returns>If successful, a ClassDTO for the new class.</returns>
         [HttpPost("create")]
         [Authorize]
         public async Task<ActionResult<ClassDTO>> CreateClass(CreateClassDTO cd)
@@ -191,17 +168,22 @@ namespace WorkTogether.Controllers
             return ClassToDTO(c);
         }
 
+        /// <summary>
+        /// Allows a professor to edit the info for their class
+        /// </summary>
+        /// <param name="cd">an EditClassDTO containing the changes</param>
+        /// <returns>a ClassDTO for the edited class, if successful.</returns>
         [HttpPost("edit")]
         [Authorize]
         public async Task<ActionResult<ClassDTO>> EditClass(EditClassDTO cd)
         {
             User curr = GetCurrentUser(HttpContext);
             Class c = await _context.Classes.Where(c => c.Id == cd.Id).Include(c => c.Professor).FirstOrDefaultAsync();
-            if(c == null)
+            if (c == null)
             {
                 return NotFound(cd);
             }
-            if(c.Professor != curr)
+            if (c.Professor != curr)
             {
                 return Unauthorized();
             }
@@ -213,8 +195,11 @@ namespace WorkTogether.Controllers
 
 
 
-
-        // DELETE: api/Classes/5
+        /// <summary>
+        /// Allows a prof to delete one of their classes.
+        /// </summary>
+        /// <param name="id">The ID of the class</param>
+        /// <returns>200 ok if successful.</returns>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteClass(int id)
@@ -224,12 +209,12 @@ namespace WorkTogether.Controllers
             {
                 return NotFound();
             }
-            var @class = await _context.Classes.Include(c=>c.Professor).Where(c=>c.Id==id).FirstOrDefaultAsync();
+            var @class = await _context.Classes.Include(c => c.Professor).Where(c => c.Id == id).FirstOrDefaultAsync();
             if (@class == null)
             {
                 return NotFound();
             }
-            if(@class.Professor != curr)
+            if (@class.Professor != curr)
             {
                 return Unauthorized();
             }
@@ -240,11 +225,11 @@ namespace WorkTogether.Controllers
             return NoContent();
         }
 
-        private bool ClassExists(int id)
-        {
-            return (_context.Classes?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
+        /// <summary>
+        /// Gets the current authorized user making a request
+        /// </summary>
+        /// <param name="httpContext">The HTTPContext from inside the endpoint</param>
+        /// <returns>the current User</returns>
         private User GetCurrentUser(HttpContext httpContext)
         {
             string userEmail = httpContext.User.Identity.Name;
@@ -252,115 +237,37 @@ namespace WorkTogether.Controllers
             return u1;
         }
 
+        /// <summary>
+        /// Turns a class into a DTO
+        /// </summary>
+        /// <param name="curClass">The class</param>
+        /// <returns>The DTO</returns>
         private static ClassDTO ClassToDTO(Class curClass) =>
             new ClassDTO
-            { 
+            {
                 Id = curClass.Id,
                 Name = curClass.Name,
                 ProfessorID = curClass.Professor.UserId,
                 Description = curClass.Description
             };
 
+        /// <summary>
+        /// Converts a User into a UserProfileDTO
+        /// </summary>
+        /// <param name="user">The user</param>
+        /// <returns>The DTO</returns>
         private static UserProfileDTO UsertoProfileDTO(User user) =>
-    new UserProfileDTO
-    {
-        Id = user.UserId,
-        Name = user.Name,
-        Email = user.Email,
-        Bio = user.Bio,
-        Major = user.Major,
-        EmploymentStatus = user.EmploymentStatus,
-        StudentStatus = user.StudentStatus,
-        Interests = user.Interests
-    };
-
-        /*
-  //GET: api/Classes/getbystudentid/10
-  [HttpGet("getbystudentID/{id}")]
-  [Authorize]
-  public async Task<ActionResult<IEnumerable<ClassDTO>>> GetClassesByStudentID(int id)
-  {
-      string userEmail = HttpContext.User.Identity.Name;
-      User u1 = await _context.Users.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
-
-      if (u1.UserId != id)
-      {
-          return Unauthorized();
-      }
-
-      var result = await (from studentClass in _context.StudentClasses
-                          join course in _context.Classes on studentClass.Class.Id equals course.Id
-                          where studentClass.Student.UserId == id
-                          select new { Id = course.Id, ProfessorID = course.Professor.UserID, Name = course.Name, Description = course.Description }).ToListAsync();
-
-      List<ClassDTO> classList = new List<ClassDTO>();
-
-      foreach (var c in result) {
-          classList.Add(ClassToDTO(new Class { Id = c.Id, ProfessorUserID = c.ProfessorID, Name = c.Name,  Description = c.Description}));
-      }
-
-      return classList;
-  }
-        
-         
-         
-         
-        // PUT: api/Classes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClass(int id, Class @class)
-        {
-            if (id != @class.Id)
+            new UserProfileDTO
             {
-                return BadRequest();
-            }
-
-            _context.Entry(@class).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClassExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-        
-         
-         
-                 // POST: api/Classes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Class>> PostClass(ClassDTO classDTO)
-        {
-            if (_context.Classes == null)
-            {
-                return Problem("Entity set 'WT_DBContext.Classes'  is null.");
-            }
-            
-            Class @class = new Class
-            {
-                Id = classDTO.Id,
-                Name = classDTO.Name,
-                ProfessorUserID = classDTO.ProfessorID,
-                Description = classDTO.Description
+                Id = user.UserId,
+                Name = user.Name,
+                Email = user.Email,
+                Bio = user.Bio,
+                Major = user.Major,
+                EmploymentStatus = user.EmploymentStatus,
+                StudentStatus = user.StudentStatus,
+                Interests = user.Interests
             };
-
-            _context.Classes.Add(@class);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetClass", new { id = @class.Id }, @class);
-        }*/
 
 
     }

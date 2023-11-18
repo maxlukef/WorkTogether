@@ -5,7 +5,13 @@ namespace WorkTogether.Models
     public class EmailHelper
     {
 
-
+        /// <summary>
+        /// Sends an email
+        /// </summary>
+        /// <param name="userEmail">The address</param>
+        /// <param name="Message">The message(HTML)</param>
+        /// <param name="Title">The title of the email</param>
+        /// <returns>true if success, otherwise false</returns>
         public bool SendEmail(string userEmail, string Message, string Title)
         {
             MailMessage mailMessage = new MailMessage();
