@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/http_request.dart';
 import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/models/chat_models/create_chat_dto.dart';
@@ -87,151 +88,172 @@ class _CreateConversationState extends State<CreateConversation> {
   @override
   Widget build(BuildContext context) {
     return studentClasses == null
-        ? const CircularProgressIndicator()
+        ? const Center(
+            child: SizedBox(
+                height: 50, width: 50, child: CircularProgressIndicator()),
+          )
         : Scaffold(
             backgroundColor: const Color(0xFFFFFFFF),
             appBar: const CustomAppBar(
               title: "Create Conversation",
             ),
             body: noClasses == true
-                ? Column(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.all(12.0),
-                        child: Text(
-                          "You are not registered to any classes, and cannot create a new conversation.",
-                          style: TextStyle(
-                            fontSize: 18,
+                ? const Align(
+                    alignment: Alignment.topCenter,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Text(
+                            "You are not registered to any classes, and cannot create a new conversation.",
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   )
-                : SingleChildScrollView(
-                    child: Column(children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Conversation Name.",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextField(
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText:
-                                      "Enter Conversation Name (Optional)",
-                                ),
-                                controller: conversationName,
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Add users to chat. At least one student must be selected.",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: MultiSelectDialogField(
-                                items: classesDropdownList,
-                                title: const Text(
-                                  "Select Classes",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                buttonText: const Text(
-                                  "Select Classes to Find Users",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                onConfirm: (results) async {
-                                  selectedClasses = results;
-                                  selectedStudents = [];
-                                  if (results.isNotEmpty) {
-                                    await getAllStudentsInClassSelections();
-                                  } else {
-                                    studentsInClass = null;
-                                    setState(() {});
-                                  }
-                                },
-                                searchable: true,
-                              ),
-                            ),
-                            if (studentsInClass != null)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: MultiSelectDialogField(
-                                  items: studentsDropdownList,
-                                  title: const Text(
-                                    "Select Users To Add",
+                : Align(
+                    alignment: Alignment.topCenter,
+                    child: SizedBox(
+                      width: 675,
+                      child: SingleChildScrollView(
+                        child: Column(children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Conversation Name.",
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600),
                                   ),
-                                  buttonText: const Text(
-                                    "Add Users To Chat",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  onConfirm: (results) {
-                                    selectedStudents = results;
-                                  },
-                                  searchable: true,
                                 ),
-                              ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue),
-                                  onPressed: () async {
-                                    List<int> usersToAdd = [];
-                                    for (User u in selectedStudents) {
-                                      usersToAdd.add(u.id);
-                                    }
-                                    String name = "";
-                                    if (conversationName.text.isNotEmpty) {
-                                      name = conversationName.text;
-                                    }
-                                    if (usersToAdd.isNotEmpty) {
-                                      CreateChatDTO dto =
-                                          CreateChatDTO(name, usersToAdd);
-                                      await HttpService()
-                                          .createNewConversation(dto);
-                                      if (context.mounted) {
-                                        Navigator.of(context).pop();
-                                      }
-                                    }
-                                  },
-                                  child: const Padding(
-                                    padding: EdgeInsets.fromLTRB(1, 4, 12, 8),
-                                    child: Text(
-                                      "Create Conversation",
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextField(
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText:
+                                          "Enter Conversation Name (Optional)",
+                                    ),
+                                    controller: conversationName,
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Add users to chat. At least one student must be selected.",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: MultiSelectDialogField(
+                                    dialogHeight: 300,
+                                    dialogWidth: 300,
+                                    isDismissible: false,
+                                    items: classesDropdownList,
+                                    title: const Text(
+                                      "Select Classes",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    buttonText: const Text(
+                                      "Select Classes to Find Users",
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: Colors.white,
                                       ),
                                     ),
-                                  )),
-                            )
-                          ],
-                        ),
+                                    onConfirm: (results) async {
+                                      selectedClasses = results;
+                                      selectedStudents = [];
+                                      if (results.isNotEmpty) {
+                                        await getAllStudentsInClassSelections();
+                                      } else {
+                                        studentsInClass = null;
+                                        setState(() {});
+                                      }
+                                    },
+                                    searchable: true,
+                                  ),
+                                ),
+                                if (studentsInClass != null)
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: MultiSelectDialogField(
+                                      dialogHeight: 300,
+                                      dialogWidth: 300,
+                                      isDismissible: false,
+                                      items: studentsDropdownList,
+                                      title: const Text(
+                                        "Select Users To Add",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      buttonText: const Text(
+                                        "Add Users To Chat",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      onConfirm: (results) {
+                                        selectedStudents = results;
+                                      },
+                                      searchable: true,
+                                    ),
+                                  ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: ourLightColor()),
+                                      onPressed: () async {
+                                        List<int> usersToAdd = [];
+                                        for (User u in selectedStudents) {
+                                          usersToAdd.add(u.id);
+                                        }
+                                        String name = "";
+                                        if (conversationName.text.isNotEmpty) {
+                                          name = conversationName.text;
+                                        }
+                                        if (usersToAdd.isNotEmpty) {
+                                          CreateChatDTO dto =
+                                              CreateChatDTO(name, usersToAdd);
+                                          await HttpService()
+                                              .createNewConversation(dto);
+                                          if (context.mounted) {
+                                            Navigator.of(context).pop();
+                                          }
+                                        }
+                                      },
+                                      child: const Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(1, 4, 12, 8),
+                                        child: Text(
+                                          "Create Conversation",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )),
+                                )
+                              ],
+                            ),
+                          ),
+                        ]),
                       ),
-                    ]),
+                    ),
                   ),
           );
   }

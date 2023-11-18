@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/pages/group_search/components/student_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -50,265 +51,289 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
     return Scaffold(
         appBar: const CustomAppBar(title: "Group Search"),
         backgroundColor: const Color(0xFFFFFFFF),
-        body: SingleChildScrollView(
-            child: Column(children: [
-          Row(
-            children: [
-              const Padding(
-                  padding: EdgeInsets.only(left: 5, top: 15, bottom: 20),
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text("CS4400",
-                          style: TextStyle(
-                              fontSize: 32, fontWeight: FontWeight.w700)))),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 5, right: 15, top: 15, bottom: 20),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: GestureDetector(
-                    child: const Icon(Icons.filter_alt_outlined),
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => const GroupSearchFilter(),
-                      ).then((value) => setState(() {}));
-                    },
-                  ),
+        body: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              width: 750,
+              child: SingleChildScrollView(
+                  child: Column(children: [
+                Row(
+                  children: [
+                    const Padding(
+                        padding: EdgeInsets.only(left: 5, top: 15, bottom: 20),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("CS4400",
+                                style: TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w700)))),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 5, right: 15, top: 15, bottom: 20),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          child: const Icon(Icons.filter_alt_outlined),
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => const GroupSearchFilter(),
+                            ).then((value) => setState(() {}));
+                          },
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
+                FutureBuilder(
+                    future: httpService.getLoggedUserCard(widget.projectId),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<CardInfo> snapshot) {
+                      if (snapshot.hasData) {
+                        loggedUserCard = snapshot.data;
+                      }
+
+                      if (loggedUserCard != null) {
+                        return Column(children: [
+                          const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 5),
+                                child: Text("My Questionnaire",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700)),
+                              )),
+                          MasonryGridView.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 15,
+                              crossAxisSpacing: 10,
+                              itemCount: 1,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return StudentCard(
+                                  id: loggedUserCard!.id,
+                                  fullName: loggedUserCard!.name,
+                                  major: loggedUserCard!.major,
+                                  availableMornings:
+                                      loggedUserCard!.availableMornings,
+                                  availableAfternoons:
+                                      loggedUserCard!.availableAfternoons,
+                                  availableEvenings:
+                                      loggedUserCard!.availableEvenings,
+                                  skills: loggedUserCard!.skills,
+                                  expectedGrade: loggedUserCard!.expectedGrade,
+                                  weeklyHours: loggedUserCard!.weeklyHours,
+                                  interests: loggedUserCard!.interests,
+                                  notifyParent: refresh,
+                                  classId: widget.classId,
+                                  className: widget.className,
+                                  projectId: widget.projectId,
+                                  projectName: widget.projectName,
+                                  onLoggedUserTeam: true,
+                                );
+                              }),
+                          const Padding(
+                              padding: EdgeInsets.only(
+                                  left: 5, top: 5, bottom: 5, right: 5),
+                              child: Divider(color: Colors.black)),
+                        ]);
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    }),
+                FutureBuilder(
+                    future: httpService.getTeam(widget.projectId),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<CardInfo>> snapshot) {
+                      if (snapshot.hasData) {
+                        teamMates = snapshot.data;
+                      }
+
+                      if (teamMates!.isNotEmpty) {
+                        return Column(children: [
+                          const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 5),
+                                child: Text("My Team",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700)),
+                              )),
+                          MasonryGridView.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 15,
+                              crossAxisSpacing: 10,
+                              itemCount: teamMates?.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return StudentCard(
+                                  id: teamMates![index].id,
+                                  fullName: teamMates![index].name,
+                                  major: teamMates![index].major,
+                                  availableMornings:
+                                      teamMates![index].availableMornings,
+                                  availableAfternoons:
+                                      teamMates![index].availableAfternoons,
+                                  availableEvenings:
+                                      teamMates![index].availableEvenings,
+                                  skills: teamMates![index].skills,
+                                  expectedGrade:
+                                      teamMates![index].expectedGrade,
+                                  weeklyHours: teamMates![index].weeklyHours,
+                                  interests: teamMates![index].interests,
+                                  notifyParent: refresh,
+                                  classId: widget.classId,
+                                  className: widget.className,
+                                  projectId: widget.projectId,
+                                  projectName: widget.projectName,
+                                  onLoggedUserTeam: true,
+                                );
+                              }),
+                          const Padding(
+                              padding: EdgeInsets.only(
+                                  left: 5, top: 5, bottom: 5, right: 5),
+                              child: Divider(color: Colors.black)),
+                        ]);
+                      }
+
+                      return const SizedBox.shrink();
+                    }),
+                FutureBuilder(
+                    future:
+                        httpService.getUsers(widget.classId, widget.projectId),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<CardInfo>> snapshot) {
+                      if (snapshot.hasData) {
+                        users = snapshot.data;
+                      }
+
+                      filteredUsers.clear();
+
+                      if (ref
+                              .read(filterChoicesNotifierProvider)
+                              .filterIsActive ==
+                          true) {
+                        for (CardInfo user in users!) {
+                          // Filter for skills
+                          for (String skill in ref
+                              .read(filterChoicesNotifierProvider)
+                              .skillsSet) {
+                            if (user.skills.contains(skill) &&
+                                !filteredUsers.contains(user)) {
+                              filteredUsers.add(user);
+                            }
+                          }
+                          // Filter for interests
+                          for (String interest in ref
+                              .read(filterChoicesNotifierProvider)
+                              .interestsSet) {
+                            if (user.interests.contains(interest) &&
+                                !filteredUsers.contains(user)) {
+                              filteredUsers.add(user);
+                            }
+                          }
+
+                          // Filter for expected grade
+                          if (ref
+                                      .read(filterChoicesNotifierProvider)
+                                      .expectedGrade ==
+                                  user.expectedGrade &&
+                              !filteredUsers.contains(user)) {
+                            filteredUsers.add(user);
+                          }
+
+                          // Filter for expected hours b/w start and end
+                          if (ref
+                                      .read(filterChoicesNotifierProvider)
+                                      .expectedHours
+                                      .start <=
+                                  int.parse(user.weeklyHours) &&
+                              ref
+                                      .read(filterChoicesNotifierProvider)
+                                      .expectedHours
+                                      .end >=
+                                  int.parse(user.weeklyHours) &&
+                              !filteredUsers.contains(user)) {
+                            filteredUsers.add(user);
+                          }
+                        }
+                      }
+
+                      if (ref
+                              .read(filterChoicesNotifierProvider)
+                              .filterIsActive ==
+                          true) {
+                        return MasonryGridView.count(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 15,
+                            crossAxisSpacing: 10,
+                            itemCount: filteredUsers.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return StudentCard(
+                                id: filteredUsers[index].id,
+                                fullName: filteredUsers[index].name,
+                                major: filteredUsers[index].major,
+                                availableMornings:
+                                    filteredUsers[index].availableMornings,
+                                availableAfternoons:
+                                    filteredUsers[index].availableAfternoons,
+                                availableEvenings:
+                                    filteredUsers[index].availableEvenings,
+                                skills: filteredUsers[index].skills,
+                                expectedGrade:
+                                    filteredUsers[index].expectedGrade,
+                                weeklyHours: filteredUsers[index].weeklyHours,
+                                interests: filteredUsers[index].interests,
+                                notifyParent: refresh,
+                                classId: widget.classId,
+                                className: widget.className,
+                                projectId: widget.projectId,
+                                projectName: widget.projectName,
+                                onLoggedUserTeam: false,
+                              );
+                            });
+                      } else {
+                        return MasonryGridView.count(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 15,
+                            crossAxisSpacing: 10,
+                            itemCount: users?.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return StudentCard(
+                                id: users![index].id,
+                                fullName: users![index].name,
+                                major: users![index].major,
+                                availableMornings:
+                                    users![index].availableMornings,
+                                availableAfternoons:
+                                    users![index].availableAfternoons,
+                                availableEvenings:
+                                    users![index].availableEvenings,
+                                skills: users![index].skills,
+                                expectedGrade: users![index].expectedGrade,
+                                weeklyHours: users![index].weeklyHours,
+                                interests: users![index].interests,
+                                notifyParent: refresh,
+                                classId: widget.classId,
+                                className: widget.className,
+                                projectId: widget.projectId,
+                                projectName: widget.projectName,
+                                onLoggedUserTeam: false,
+                              );
+                            });
+                      }
+                    })
+              ])),
+            ),
           ),
-          FutureBuilder(
-              future: httpService.getLoggedUserCard(widget.projectId),
-              builder:
-                  (BuildContext context, AsyncSnapshot<CardInfo> snapshot) {
-                if (snapshot.hasData) {
-                  loggedUserCard = snapshot.data;
-                }
-
-                if (loggedUserCard != null) {
-                  return Column(children: [
-                    const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Text("My Questionnaire",
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.w700)),
-                        )),
-                    MasonryGridView.count(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 15,
-                        crossAxisSpacing: 10,
-                        itemCount: 1,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return StudentCard(
-                            id: loggedUserCard!.id,
-                            fullName: loggedUserCard!.name,
-                            major: loggedUserCard!.major,
-                            availableMornings:
-                                loggedUserCard!.availableMornings,
-                            availableAfternoons:
-                                loggedUserCard!.availableAfternoons,
-                            availableEvenings:
-                                loggedUserCard!.availableEvenings,
-                            skills: loggedUserCard!.skills,
-                            expectedGrade: loggedUserCard!.expectedGrade,
-                            weeklyHours: loggedUserCard!.weeklyHours,
-                            interests: loggedUserCard!.interests,
-                            notifyParent: refresh,
-                            classId: widget.classId,
-                            className: widget.className,
-                            projectId: widget.projectId,
-                            projectName: widget.projectName,
-                            onLoggedUserTeam: true,
-                          );
-                        }),
-                    const Padding(
-                        padding: EdgeInsets.only(
-                            left: 5, top: 5, bottom: 5, right: 5),
-                        child: Divider(color: Colors.black)),
-                  ]);
-                } else {
-                  return const SizedBox.shrink();
-                }
-              }),
-          FutureBuilder(
-              future: httpService.getTeam(widget.projectId),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<CardInfo>> snapshot) {
-                if (snapshot.hasData) {
-                  teamMates = snapshot.data;
-                }
-
-                if (teamMates!.isNotEmpty) {
-                  return Column(children: [
-                    const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Text("My Team",
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.w700)),
-                        )),
-                    MasonryGridView.count(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 15,
-                        crossAxisSpacing: 10,
-                        itemCount: teamMates?.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return StudentCard(
-                            id: teamMates![index].id,
-                            fullName: teamMates![index].name,
-                            major: teamMates![index].major,
-                            availableMornings:
-                                teamMates![index].availableMornings,
-                            availableAfternoons:
-                                teamMates![index].availableAfternoons,
-                            availableEvenings:
-                                teamMates![index].availableEvenings,
-                            skills: teamMates![index].skills,
-                            expectedGrade: teamMates![index].expectedGrade,
-                            weeklyHours: teamMates![index].weeklyHours,
-                            interests: teamMates![index].interests,
-                            notifyParent: refresh,
-                            classId: widget.classId,
-                            className: widget.className,
-                            projectId: widget.projectId,
-                            projectName: widget.projectName,
-                            onLoggedUserTeam: true,
-                          );
-                        }),
-                    const Padding(
-                        padding: EdgeInsets.only(
-                            left: 5, top: 5, bottom: 5, right: 5),
-                        child: Divider(color: Colors.black)),
-                  ]);
-                }
-
-                return const SizedBox.shrink();
-              }),
-          FutureBuilder(
-              future: httpService.getUsers(widget.classId, widget.projectId),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<CardInfo>> snapshot) {
-                if (snapshot.hasData) {
-                  users = snapshot.data;
-                }
-
-                filteredUsers.clear();
-
-                if (ref.read(filterChoicesNotifierProvider).filterIsActive ==
-                    true) {
-                  for (CardInfo user in users!) {
-                    // Filter for skills
-                    for (String skill
-                        in ref.read(filterChoicesNotifierProvider).skillsSet) {
-                      if (user.skills.contains(skill) &&
-                          !filteredUsers.contains(user)) {
-                        filteredUsers.add(user);
-                      }
-                    }
-                    // Filter for interests
-                    for (String interest in ref
-                        .read(filterChoicesNotifierProvider)
-                        .interestsSet) {
-                      if (user.interests.contains(interest) &&
-                          !filteredUsers.contains(user)) {
-                        filteredUsers.add(user);
-                      }
-                    }
-
-                    // Filter for expected grade
-                    if (ref.read(filterChoicesNotifierProvider).expectedGrade ==
-                            user.expectedGrade &&
-                        !filteredUsers.contains(user)) {
-                      filteredUsers.add(user);
-                    }
-
-                    // Filter for expected hours b/w start and end
-                    if (ref
-                                .read(filterChoicesNotifierProvider)
-                                .expectedHours
-                                .start <=
-                            int.parse(user.weeklyHours) &&
-                        ref
-                                .read(filterChoicesNotifierProvider)
-                                .expectedHours
-                                .end >=
-                            int.parse(user.weeklyHours) &&
-                        !filteredUsers.contains(user)) {
-                      filteredUsers.add(user);
-                    }
-                  }
-                }
-
-                if (ref.read(filterChoicesNotifierProvider).filterIsActive ==
-                    true) {
-                  return MasonryGridView.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 10,
-                      itemCount: filteredUsers.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return StudentCard(
-                          id: filteredUsers[index].id,
-                          fullName: filteredUsers[index].name,
-                          major: filteredUsers[index].major,
-                          availableMornings:
-                              filteredUsers[index].availableMornings,
-                          availableAfternoons:
-                              filteredUsers[index].availableAfternoons,
-                          availableEvenings:
-                              filteredUsers[index].availableEvenings,
-                          skills: filteredUsers[index].skills,
-                          expectedGrade: filteredUsers[index].expectedGrade,
-                          weeklyHours: filteredUsers[index].weeklyHours,
-                          interests: filteredUsers[index].interests,
-                          notifyParent: refresh,
-                          classId: widget.classId,
-                          className: widget.className,
-                          projectId: widget.projectId,
-                          projectName: widget.projectName,
-                          onLoggedUserTeam: false,
-                        );
-                      });
-                } else {
-                  return MasonryGridView.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 10,
-                      itemCount: users?.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return StudentCard(
-                          id: users![index].id,
-                          fullName: users![index].name,
-                          major: users![index].major,
-                          availableMornings: users![index].availableMornings,
-                          availableAfternoons:
-                              users![index].availableAfternoons,
-                          availableEvenings: users![index].availableEvenings,
-                          skills: users![index].skills,
-                          expectedGrade: users![index].expectedGrade,
-                          weeklyHours: users![index].weeklyHours,
-                          interests: users![index].interests,
-                          notifyParent: refresh,
-                          classId: widget.classId,
-                          className: widget.className,
-                          projectId: widget.projectId,
-                          projectName: widget.projectName,
-                          onLoggedUserTeam: false,
-                        );
-                      });
-                }
-              })
-        ])));
+        ));
   }
 }
 
@@ -329,7 +354,7 @@ class Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = Container(
-      color: Colors.blue,
+      color: ourLightColor(),
       height: extent,
       child: Center(
         child: CircleAvatar(
@@ -396,14 +421,18 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
         children: [
           Row(
             children: [
-              IconButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.blue,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ourLightColor()),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const Spacer(),
@@ -515,8 +544,8 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                   width: 50,
                   height: 50,
                   child: IconButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: ourLightColor()),
                     onPressed: () {
                       setState(() {
                         ref.read(filterChoicesNotifierProvider).addToSkillsSet(
@@ -527,7 +556,7 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                     },
                     icon: const Icon(
                       Icons.add,
-                      color: Colors.blue,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -617,8 +646,8 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                   width: 50,
                   height: 50,
                   child: IconButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: ourLightColor()),
                     onPressed: () {
                       setState(() {
                         ref
@@ -631,7 +660,7 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                     },
                     icon: const Icon(
                       Icons.add,
-                      color: Colors.blue,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -813,14 +842,14 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                   },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 50),
-                      backgroundColor: const Color(0xFF7AC8F5)),
+                      backgroundColor: ourLightColor()),
                   child: const Text(
                     "Reset",
                     style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w400,
-                    ),
+                        fontSize: 24,
+                        fontFamily: 'SourceSansPro',
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white),
                   ),
                 ),
               ),
@@ -835,14 +864,14 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
                   },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 50),
-                      backgroundColor: const Color(0xFF7AC8F5)),
+                      backgroundColor: ourLightColor()),
                   child: const Text(
                     "Submit",
                     style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w400,
-                    ),
+                        fontSize: 24,
+                        fontFamily: 'SourceSansPro',
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white),
                   ),
                 ),
               ),

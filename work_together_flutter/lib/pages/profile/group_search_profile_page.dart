@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/custom_app_bar.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
 import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
@@ -66,7 +67,10 @@ class _GroupProfileProfilePageState
 
             return buildPage(context, u);
           }
-          return const CircularProgressIndicator();
+          return const Center(
+            child: SizedBox(
+                height: 50, width: 50, child: CircularProgressIndicator()),
+          );
         });
   }
 
@@ -93,209 +97,219 @@ class _GroupProfileProfilePageState
         appBar: const CustomAppBar(title: "User Profile"),
         backgroundColor: const Color(0xFFFFFFFF),
         body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.account_circle,
-                color: Colors.blue,
-                size: 110.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                child: Text(
-                  userdata.name,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.account_circle,
+                  color: Colors.blue,
+                  size: 110.0,
                 ),
-              ),
-              Visibility(
-                visible:
-                    !widget.onLoggedUserTeam || userdata.id == loggedUserId,
-                child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (userdata.id == loggedUserId) {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return QuestionnairePage(
-                                  loggedUserId: loggedUserId,
-                                  classId: widget.classId,
-                                  className: widget.className,
-                                  projectId: widget.projectId,
-                                  projectName: widget.projectName);
-                            },
-                          ));
-                        } else {
-                          NotificationDTO teamInviteNotificationDTO =
-                              NotificationDTO(
-                                  id: -1,
-                                  title:
-                                      "$loggedUserName Invited You To a Team",
-                                  description:
-                                      "$loggedUserName Invited You To a Team. Would you like to join?",
-                                  isInvite: true,
-                                  projectID: widget.projectId,
-                                  projectName: widget.projectName,
-                                  classID: widget.classId,
-                                  className: widget.className,
-                                  fromID: loggedUserId,
-                                  fromName: loggedUserName,
-                                  toID: userdata.id,
-                                  toName: userdata.name,
-                                  sentAt: DateTime.now(),
-                                  read: false);
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                  child: Text(
+                    userdata.name,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Visibility(
+                  visible:
+                      !widget.onLoggedUserTeam || userdata.id == loggedUserId,
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (userdata.id == loggedUserId) {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (BuildContext context,
+                                    Animation<double> animation1,
+                                    Animation<double> animation2) {
+                                  return QuestionnairePage(
+                                      loggedUserId: loggedUserId,
+                                      classId: widget.classId,
+                                      className: widget.className,
+                                      projectId: widget.projectId,
+                                      projectName: widget.projectName);
+                                },
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+                          } else {
+                            NotificationDTO teamInviteNotificationDTO =
+                                NotificationDTO(
+                                    id: -1,
+                                    title:
+                                        "$loggedUserName Invited You To a Team",
+                                    description:
+                                        "$loggedUserName Invited You To a Team. Would you like to join?",
+                                    isInvite: true,
+                                    projectID: widget.projectId,
+                                    projectName: widget.projectName,
+                                    classID: widget.classId,
+                                    className: widget.className,
+                                    fromID: loggedUserId,
+                                    fromName: loggedUserName,
+                                    toID: userdata.id,
+                                    toName: userdata.name,
+                                    sentAt: DateTime.now(),
+                                    read: false);
 
-                          HttpService().sendInviteNotificationToUser(
-                              teamInviteNotificationDTO);
-                          // HttpService().inviteToTeam(1, loggedUserId, widget.id);
-                          // Navigator.pop(context);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(125, 35),
-                          backgroundColor: const Color(0xFF1192dc)),
+                            HttpService().sendInviteNotificationToUser(
+                                teamInviteNotificationDTO);
+                            // HttpService().inviteToTeam(1, loggedUserId, widget.id);
+                            // Navigator.pop(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(125, 35),
+                            backgroundColor: ourLightColor()),
+                        child: Text(
+                          inviteToGroupOrEdit,
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white),
+                        ),
+                      )),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
                       child: Text(
-                        inviteToGroupOrEdit,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                        ),
+                        "Bio:",
+                        style: TextStyle(fontSize: 24),
                       ),
-                    )),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                    child: Text(
-                      "Bio:",
-                      style: TextStyle(fontSize: 24),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                    child: Text(
-                      userdata.bio,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                    child: Text(
-                      "Major:",
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                    child: Text(
-                      userdata.major,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
-                      child: Column(children: [..._availabilityCards()])),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                    child: Text(
-                      "Student Status:",
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                    child: Row(
-                      children: [
-                        Tag(
-                          text: userdata.studentStatus,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                    child: Text(
-                      "Employment Status:",
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                    child: Row(
-                      children: [
-                        Tag(
-                          text: userdata.employmentStatus,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                    child: Text(
-                      "Interests:",
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-                  Padding(
+                    Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      child: Wrap(
-                        children: interestTags,
-                      )),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
-                    child: Text(
-                      "Skills:",
-                      style: TextStyle(fontSize: 24),
+                      child: Text(
+                        userdata.bio,
+                        style: const TextStyle(fontSize: 14),
+                      ),
                     ),
-                  ),
-                  Padding(
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                      child: Text(
+                        "Major:",
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      child: Wrap(
-                        children: _skillsList(),
-                      )),
-                  const Padding(
-                      padding: EdgeInsets.fromLTRB(32, 16, 32, 4),
-                      child: Text("Project Expectations",
-                          style: TextStyle(fontSize: 24))),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 10, 32, 10),
-                    child: IntrinsicHeight(
-                        child: Flex(direction: Axis.horizontal, children: [
-                      Expanded(
-                        flex: 10,
-                        child: Column(children: [
-                          const Text("Grade", style: TextStyle(fontSize: 16)),
-                          Text(widget.expectedGrade,
-                              style: const TextStyle(
-                                  fontSize: 48, fontWeight: FontWeight.w900)),
-                        ]),
+                      child: Text(
+                        userdata.major,
+                        style: const TextStyle(fontSize: 14),
                       ),
-                      const Expanded(
-                        flex: 1,
-                        child:
-                            VerticalDivider(thickness: 1, color: Colors.black),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
+                        child: Column(children: [..._availabilityCards()])),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                      child: Text(
+                        "Student Status:",
+                        style: TextStyle(fontSize: 24),
                       ),
-                      Expanded(
-                        flex: 10,
-                        child: Column(children: [
-                          const Text("Weekly Hours",
-                              style: TextStyle(fontSize: 16)),
-                          Text(widget.weeklyHours,
-                              style: const TextStyle(
-                                  fontSize: 48, fontWeight: FontWeight.w900)),
-                        ]),
-                      )
-                    ])),
-                  ),
-                ],
-              ),
-            ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                      child: Row(
+                        children: [
+                          Tag(
+                            text: userdata.studentStatus,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                      child: Text(
+                        "Employment Status:",
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                      child: Row(
+                        children: [
+                          Tag(
+                            text: userdata.employmentStatus,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                      child: Text(
+                        "Interests:",
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                        child: Wrap(
+                          children: interestTags,
+                        )),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 4.0),
+                      child: Text(
+                        "Skills:",
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                        child: Wrap(
+                          children: _skillsList(),
+                        )),
+                    const Padding(
+                        padding: EdgeInsets.fromLTRB(32, 16, 32, 4),
+                        child: Text("Project Expectations",
+                            style: TextStyle(fontSize: 24))),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(32, 10, 32, 10),
+                      child: IntrinsicHeight(
+                          child: Flex(direction: Axis.horizontal, children: [
+                        Expanded(
+                          flex: 10,
+                          child: Column(children: [
+                            const Text("Grade", style: TextStyle(fontSize: 16)),
+                            Text(widget.expectedGrade,
+                                style: const TextStyle(
+                                    fontSize: 48, fontWeight: FontWeight.w900)),
+                          ]),
+                        ),
+                        const Expanded(
+                          flex: 1,
+                          child: VerticalDivider(
+                              thickness: 1, color: Colors.black),
+                        ),
+                        Expanded(
+                          flex: 10,
+                          child: Column(children: [
+                            const Text("Weekly Hours",
+                                style: TextStyle(fontSize: 16)),
+                            Text(widget.weeklyHours,
+                                style: const TextStyle(
+                                    fontSize: 48, fontWeight: FontWeight.w900)),
+                          ]),
+                        )
+                      ])),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ));
   }
