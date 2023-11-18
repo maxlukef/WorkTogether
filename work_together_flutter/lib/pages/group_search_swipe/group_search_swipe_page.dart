@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:swipable_stack/swipable_stack.dart';
+import 'package:work_together_flutter/global_components/custom_app_bar.dart';
+import 'package:work_together_flutter/main.dart';
+import 'package:work_together_flutter/models/notification_models/notification_dto.dart';
 import 'package:work_together_flutter/pages/group_search_swipe/components/student_card_swipe.dart';
 
 import '../../http_request.dart';
@@ -38,6 +40,8 @@ class _GroupSearchSwipePageState extends ConsumerState<GroupSearchSwipePage> {
       setState(() => {});
     }
 
+    final swipeController = SwipableStackController();
+
     List<StudentCardSwipable> studentSwipable = widget.users
         .map((e) => StudentCardSwipable(
               id: e.id,
@@ -59,13 +63,47 @@ class _GroupSearchSwipePageState extends ConsumerState<GroupSearchSwipePage> {
             ))
         .toList();
 
+    print(studentSwipable.length);
+
     return Scaffold(
-      body: Center(
-        child: Stack(
-          children: [
-            Padding(
-                padding: const EdgeInsets.all(8),
+      appBar: const CustomAppBar(title: "Group Search"),
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          width: 550,
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(75),
                 child: SwipableStack(
+                  controller: swipeController,
+                  onSwipeCompleted: (index, direction) {
+                    if (direction.toString() == "SwipeDirection.right") {
+                      // Invite to team
+                      NotificationDTO teamInviteNotificationDTO = NotificationDTO(
+                          id: -1,
+                          title: "$loggedUserName Invited You To a Team",
+                          description:
+                              "$loggedUserName Invited You To a Team. Would you like to join?",
+                          isInvite: true,
+                          projectID: widget.projectId,
+                          projectName: widget.projectName,
+                          classID: widget.classId,
+                          className: widget.className,
+                          fromID: loggedUserId,
+                          fromName: loggedUserName,
+                          toID: studentSwipable.elementAt(index).id,
+                          toName: studentSwipable.elementAt(index).fullName,
+                          sentAt: DateTime.now(),
+                          read: false);
+
+                      HttpService().sendInviteNotificationToUser(
+                          teamInviteNotificationDTO);
+                    }
+                  },
+                  horizontalSwipeThreshold: 0.8,
+                  verticalSwipeThreshold: 0.8,
                   detectableSwipeDirections: const {
                     SwipeDirection.left,
                     SwipeDirection.right
@@ -75,52 +113,31 @@ class _GroupSearchSwipePageState extends ConsumerState<GroupSearchSwipePage> {
                     final itemIndex = properties.index % studentSwipable.length;
 
                     return Stack(
-                      children: <Widget>[
-                        studentSwipable.elementAt(itemIndex)
-                        // ...widget.users.map((e) => StudentCardSwipable(
-                        //       id: e.id,
-                        //       fullName: e.name,
-                        //       major: e.major,
-                        //       availableMornings: e.availableMornings,
-                        //       availableAfternoons: e.availableAfternoons,
-                        //       availableEvenings: e.availableEvenings,
-                        //       skills: e.skills,
-                        //       expectedGrade: e.expectedGrade,
-                        //       weeklyHours: e.weeklyHours,
-                        //       interests: e.interests,
-                        //       notifyParent: refresh,
-                        //       classId: widget.classId,
-                        //       className: widget.className,
-                        //       projectId: widget.projectId,
-                        //       projectName: widget.projectName,
-                        //       onLoggedUserTeam: false,
-                        //     ))
-                      ],
+                      children: <Widget>[studentSwipable.elementAt(itemIndex)],
                     );
                   },
-                ))
-          ],
-          // clipBehavior: Clip.none,
-          // children: <Widget>[
-          //   ...widget.users.map((e) => StudentCardSwipable(
-          //         id: e.id,
-          //         fullName: e.name,
-          //         major: e.major,
-          //         availableMornings: e.availableMornings,
-          //         availableAfternoons: e.availableAfternoons,
-          //         availableEvenings: e.availableEvenings,
-          //         skills: e.skills,
-          //         expectedGrade: e.expectedGrade,
-          //         weeklyHours: e.weeklyHours,
-          //         interests: e.interests,
-          //         notifyParent: refresh,
-          //         classId: widget.classId,
-          //         className: widget.className,
-          //         projectId: widget.projectId,
-          //         projectName: widget.projectName,
-          //         onLoggedUserTeam: false,
-          //       ))
-          // ],
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                      child: Icon(Icons.arrow_circle_left_outlined),
+                    ),
+                    Text("Swipe Left To Ignore"),
+                    Spacer(),
+                    Text("Swipe Right To Invite"),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+                      child: Icon(Icons.arrow_circle_right_outlined),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

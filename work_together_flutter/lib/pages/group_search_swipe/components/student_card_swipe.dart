@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:work_together_flutter/global_components/tag_small.dart';
+import 'package:work_together_flutter/global_components/tag_medium.dart';
 
 import '../../profile/group_search_profile_page.dart';
 
@@ -62,13 +62,13 @@ class StudentCardSwipable extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                             child: Text(fullName,
                                 style: const TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w700))),
                         Align(
                             alignment: Alignment.centerLeft,
                             child: Text(major,
                                 style: const TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w700))),
                       ]))
             ]),
@@ -79,7 +79,7 @@ class StudentCardSwipable extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text("Availability",
                         style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w700)))),
+                            fontSize: 14, fontWeight: FontWeight.w700)))),
             ..._availabilityCards(),
             const Divider(color: Colors.black),
             const Padding(
@@ -88,7 +88,7 @@ class StudentCardSwipable extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text("Skills",
                         style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w700)))),
+                            fontSize: 14, fontWeight: FontWeight.w700)))),
             Align(
               alignment: Alignment.centerLeft,
               child: Wrap(children: [..._skillsList()]),
@@ -100,13 +100,13 @@ class StudentCardSwipable extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text("Project Expectations",
                         style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w700)))),
+                            fontSize: 14, fontWeight: FontWeight.w700)))),
             IntrinsicHeight(
                 child: Flex(direction: Axis.horizontal, children: [
               Expanded(
                 flex: 10,
                 child: Column(children: [
-                  const Text("Grade", style: TextStyle(fontSize: 8)),
+                  const Text("Grade", style: TextStyle(fontSize: 12)),
                   Text(expectedGrade,
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.w900)),
@@ -119,7 +119,7 @@ class StudentCardSwipable extends StatelessWidget {
               Expanded(
                 flex: 10,
                 child: Column(children: [
-                  const Text("Weekly Hours", style: TextStyle(fontSize: 8)),
+                  const Text("Weekly Hours", style: TextStyle(fontSize: 12)),
                   Text(weeklyHours,
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.w900)),
@@ -133,7 +133,7 @@ class StudentCardSwipable extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text("Interests",
                         style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.w700)))),
+                            fontSize: 14, fontWeight: FontWeight.w700)))),
             Align(
               alignment: Alignment.centerLeft,
               child: Wrap(children: [..._interestsList()]),
@@ -159,8 +159,8 @@ class StudentCardSwipable extends StatelessWidget {
           child: Padding(
               padding: const EdgeInsets.all(1),
               child: Container(
-                  height: 13,
-                  width: 13,
+                  height: 20,
+                  width: 20,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     shape: BoxShape.circle,
@@ -171,7 +171,7 @@ class StudentCardSwipable extends StatelessWidget {
                     child: Text(
                       availabilityList[i][j],
                       style: const TextStyle(
-                          fontSize: 8, fontWeight: FontWeight.w800),
+                          fontSize: 12, fontWeight: FontWeight.w800),
                     ),
                   ))),
         ));
