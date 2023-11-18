@@ -28,8 +28,8 @@ import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
 class HttpService {
-  String connectionString = 'localhost:7277';
-  //String connectionString = 'worktogether.site';
+  // String connectionString = 'localhost:7277';
+  String connectionString = 'worktogether.site';
 
   var authHeader = {
     'Content-Type': 'application/json',
