@@ -79,7 +79,7 @@ namespace WorkTogether.Controllers
 
         [HttpGet("joinclass/{invcode}")]
         [Authorize]
-        public async Task<ActionResult<ClassDTO>> Join(string invcode)
+        public async Task<ActionResult<bool>> Join(string invcode)
         {
             User curr = GetCurrentUser(HttpContext);
             Class c = await _context.Classes.Where(c => c.InviteCode == invcode).FirstOrDefaultAsync();
@@ -100,7 +100,7 @@ namespace WorkTogether.Controllers
             n.Class = c;
             _context.StudentClasses.Add(n);
             _context.SaveChanges();
-            return ClassToDTO(c);
+            return true;
         }
 
         /// <summary>
