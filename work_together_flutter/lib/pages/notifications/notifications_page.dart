@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 
 import '../../global_components/custom_app_bar.dart';
 import '../../http_request.dart';
@@ -79,7 +80,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           }
 
           if (currentUserNotifications.isEmpty && !snapshot.hasData) {
-            return const CircularProgressIndicator();
+            return const Center(
+              child: SizedBox(
+                  height: 50, width: 50, child: CircularProgressIndicator()),
+            );
           } else {
             List<Widget> notificationsWidgets = [];
 
@@ -107,88 +111,95 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         appBar: const CustomAppBar(title: "Notifications"),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: notificationsWidgets.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade200),
-                      // Bring user to relavant page regarding the notification.
-                      onPressed: () => {
-                            if (currentUserNotifications
-                                .elementAt(index)
-                                .isInvite)
-                              {
-                                showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: Text(
-                                        '${currentUserNotifications.elementAt(index).fromName} Team Invite'),
-                                    content: Text(
-                                        "${currentUserNotifications.elementAt(index).fromName} invited You To a Team. Would you like to join?"),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () => {
-                                          httpService.deleteNotification(
-                                              currentUserNotifications
-                                                  .elementAt(index)
-                                                  .id),
-                                          Navigator.pop(context, 'Reject'),
-                                          setState(() {})
-                                        },
-                                        child: const Text('Reject'),
+          child: Center(
+            child: SizedBox(
+              width: 800,
+              child: ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: notificationsWidgets.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                          // Bring user to relavant page regarding the notification.
+                          onTap: () => {
+                                if (currentUserNotifications
+                                    .elementAt(index)
+                                    .isInvite)
+                                  {
+                                    showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: Text(
+                                            '${currentUserNotifications.elementAt(index).fromName} Team Invite'),
+                                        content: Text(
+                                            "${currentUserNotifications.elementAt(index).fromName} invited You To a Team. Would you like to join?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => {
+                                              httpService.deleteNotification(
+                                                  currentUserNotifications
+                                                      .elementAt(index)
+                                                      .id),
+                                              Navigator.pop(context, 'Reject'),
+                                              setState(() {})
+                                            },
+                                            child: const Text('Reject'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => {
+                                              httpService
+                                                  .acceptInviteNotification(
+                                                      currentUserNotifications
+                                                          .elementAt(index)
+                                                          .id),
+                                              httpService.deleteNotification(
+                                                  currentUserNotifications
+                                                      .elementAt(index)
+                                                      .id),
+                                              Navigator.pop(context, 'Accept')
+                                            },
+                                            child: const Text('Accept'),
+                                          ),
+                                        ],
                                       ),
-                                      TextButton(
-                                        onPressed: () => {
-                                          httpService.acceptInviteNotification(
-                                              currentUserNotifications
-                                                  .elementAt(index)
-                                                  .id),
-                                          httpService.deleteNotification(
-                                              currentUserNotifications
-                                                  .elementAt(index)
-                                                  .id),
-                                          Navigator.pop(context, 'Accept')
-                                        },
-                                        child: const Text('Accept'),
+                                    ),
+                                  }
+                                else
+                                  {
+                                    showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: Text(currentUserNotifications
+                                            .elementAt(index)
+                                            .title),
+                                        content: Text(currentUserNotifications
+                                            .elementAt(index)
+                                            .description),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, 'Ok'),
+                                            child: const Text('Ok'),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              }
-                            else
-                              {
-                                showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: Text(currentUserNotifications
-                                        .elementAt(index)
-                                        .title),
-                                    content: Text(currentUserNotifications
-                                        .elementAt(index)
-                                        .description),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'Ok'),
-                                        child: const Text('Ok'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              }
-                          },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: notificationsWidgets[index],
-                      )),
-                );
-              }),
+                                    ),
+                                  }
+                              },
+                          child: Container(
+                            color: ourVeryLightColor(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: notificationsWidgets[index],
+                            ),
+                          )),
+                    );
+                  }),
+            ),
+          ),
         ));
   }
 

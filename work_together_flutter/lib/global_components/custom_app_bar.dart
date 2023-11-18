@@ -13,12 +13,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: const Color(0xFFFFFFFF),
       foregroundColor: const Color(0xFF000000),
       elevation: 4.0,
-      title: Text(
-        title,
-        overflow: TextOverflow.ellipsis,
-        style:
-            const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-      ),
+      title: (MediaQuery.of(context).size.width >= 700)
+          ? Text(
+              title,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                  color: Colors.black, fontWeight: FontWeight.bold),
+            )
+          : Align(
+              alignment: Alignment.topCenter,
+              child: Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            ),
     );
   }
 }

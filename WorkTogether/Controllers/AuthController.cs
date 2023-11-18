@@ -31,7 +31,23 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return NotFound(email);
 
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            User u = _context.Users.Where(u=>u.Email == email).FirstOrDefault();
+            if(result.Succeeded)
+            {
+                u.EmailConfirmed = true;
+                _context.SaveChanges();
+                return Ok("Email confirmed!");
+            }
+            return Problem("Confirmation Failed!");
+        }
         /// <summary>
         /// Generates a JWT bearer token
         /// </summary>
@@ -101,7 +117,18 @@ namespace WorkTogether.Controllers
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
             await _userManager.AddToRoleAsync(user, UserRoles.User);
 
-
+            //semd a verification email 
+            if (result.Succeeded)
+            {
+                var emailtoken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string emailParams = user.Email + "/" + emailtoken;
+                var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { token = emailtoken, email = user.Email }, Request.Scheme);
+               
+                EmailHelper emailHelper = new EmailHelper();
+                string message = "<a href=\"" + confirmationLink + "\">Click here to confirm your email</a>";
+                bool emailResponse = emailHelper.SendEmail(user.Email, message, "Confirm your email!");
+                
+            }
 
 
             var userRoles = await _userManager.GetRolesAsync(user);

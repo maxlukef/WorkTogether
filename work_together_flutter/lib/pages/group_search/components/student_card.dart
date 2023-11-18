@@ -43,24 +43,31 @@ class StudentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () => {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return GroupSearchProfilePage(
-                    id: id,
-                    availableMornings: availableMornings,
-                    availableAfternoons: availableAfternoons,
-                    availableEvenings: availableEvenings,
-                    skills: skills,
-                    expectedGrade: expectedGrade,
-                    weeklyHours: weeklyHours,
-                    classId: classId,
-                    className: className,
-                    projectId: projectId,
-                    projectName: projectName,
-                    onLoggedUserTeam: onLoggedUserTeam,
-                  );
-                },
-              )).whenComplete(() => notifyParent())
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation1,
+                      Animation<double> animation2) {
+                    return GroupSearchProfilePage(
+                      id: id,
+                      availableMornings: availableMornings,
+                      availableAfternoons: availableAfternoons,
+                      availableEvenings: availableEvenings,
+                      skills: skills,
+                      expectedGrade: expectedGrade,
+                      weeklyHours: weeklyHours,
+                      classId: classId,
+                      className: className,
+                      projectId: projectId,
+                      projectName: projectName,
+                      onLoggedUserTeam: onLoggedUserTeam,
+                    );
+                  },
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              ).whenComplete(() => notifyParent())
             },
         child: Card(
           elevation: 10,

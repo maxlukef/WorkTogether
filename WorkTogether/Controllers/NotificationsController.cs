@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Cms;
 using WorkTogether.Models;
 
 namespace WorkTogether.Controllers
@@ -146,6 +147,11 @@ namespace WorkTogether.Controllers
 
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
+            User rec = _context.Users.Where(u => u.UserId == notification.ToID).FirstOrDefault();
+            if (rec != null)
+            {
+                EmailNotification(notification, rec);
+            }
 
             return CreatedAtAction("GetNotification", new { id = notification.Id }, notification);
         }
@@ -165,6 +171,7 @@ namespace WorkTogether.Controllers
             {
                 notification.ToID = user.UserId;
                 _context.Notification.Add(notification);
+                EmailNotification(notification, user);
             }
 
             await _context.SaveChangesAsync();
@@ -238,6 +245,22 @@ namespace WorkTogether.Controllers
                 Read = notification.Read,
 
             };
+        }
+
+        private void EmailNotification(Notification n, User recipient)
+        {
+            //don't send emails to unconfirmed addresses. Don't want to spam u0000000...
+            if(recipient.EmailConfirmed == false)
+            {
+                return;
+            }
+            string message = "You have a new notification from " + n.FromName + "<br><br>" +
+                "Title: " + n.Title + "<br><br>" +
+                "Description: " + n.Description + "<br><br> <a href=\"worktogether.site\">worktogether.site</a>";
+            string addr = recipient.UserName;
+            EmailHelper emailHelper = new EmailHelper();
+            bool emailResponse = emailHelper.SendEmail(recipient.Email, message, "New Work Together Notification: " + n.Title);
+
         }
     }
 }

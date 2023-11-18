@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/http_request.dart';
 import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
@@ -45,6 +46,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void sendMessage(String text) async {
+    if (text.isEmpty) {
+      return;
+    }
     SendMessageDto dto = SendMessageDto(widget.chatInfo.id, text);
     await HttpService().sendMessage(dto);
     await getMessagesApiCall();
@@ -54,66 +58,82 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return messages == null
-        ? const CircularProgressIndicator()
+        ? const Center(
+            child: SizedBox(
+                height: 50, width: 50, child: CircularProgressIndicator()),
+          )
         : Scaffold(
             backgroundColor: const Color(0xFFFFFFFF),
             appBar: CustomAppBar(
               title: widget.chatInfo.name,
             ),
-            body: Stack(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      reverse: true,
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 55),
-                      itemCount: messages!.length,
-                      itemBuilder: createMessage),
-                ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.only(left: 10, bottom: 10, top: 10),
-                    height: 60,
-                    width: double.infinity,
-                    color: Colors.white,
-                    child: Row(
-                      children: <Widget>[
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: messageController,
-                            onSubmitted: sendMessage,
-                            decoration: const InputDecoration(
-                                hintText: "Write message...",
-                                hintStyle: TextStyle(color: Colors.black),
-                                border: InputBorder.none),
+            body: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                child: SizedBox(
+                  width: 675,
+                  child: Stack(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            reverse: true,
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 55),
+                            itemCount: messages!.length,
+                            itemBuilder: createMessage),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                              left: 10, bottom: 10, top: 10),
+                          width: double.infinity,
+                          color: Colors.grey[300],
+                          child: Row(
+                            children: <Widget>[
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              Expanded(
+                                child: TextField(
+                                  controller: messageController,
+                                  maxLines: null,
+                                  onSubmitted: sendMessage,
+                                  keyboardType: TextInputType.text,
+                                  decoration: const InputDecoration(
+                                      hintText: "Write message...",
+                                      hintStyle: TextStyle(color: Colors.black),
+                                      border: InputBorder.none),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    sendMessage(messageController.text);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: ourLightColor()),
+                                  child: const Icon(
+                                    Icons.send,
+                                    color: Colors.white,
+                                    size: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        FloatingActionButton(
-                          onPressed: () {
-                            sendMessage(messageController.text);
-                          },
-                          backgroundColor: Colors.blue,
-                          elevation: 0,
-                          child: const Icon(
-                            Icons.send,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           );
   }
@@ -121,9 +141,9 @@ class _ChatPageState extends State<ChatPage> {
   Widget createMessage(BuildContext context, int index) {
     ChatMessage currentMessage = messages![index];
     Widget textMessage;
-
+    bool sentByUser = currentMessage.senderID == loggedUserId;
     // Change message look if the logged in user sent it.
-    if (currentMessage.senderID == loggedUserId) {
+    if (sentByUser) {
       textMessage = formatMessage(currentMessage,
           const Color.fromARGB(255, 129, 190, 240), Colors.black, true);
     }
@@ -136,7 +156,8 @@ class _ChatPageState extends State<ChatPage> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            sentByUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [textMessage, const Divider()],
       ),
     );
