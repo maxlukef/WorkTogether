@@ -52,6 +52,53 @@ namespace WorkTogether.Controllers
         }
 
 
+        [HttpGet("NextMilestoneDue/{pid}")]
+        [Authorize]
+        public async Task<ActionResult<MilestoneDTO>> NextMilestoneDue(int pid)
+        {
+            Milestone m = await _context.Milestones.Where(p => p.Id == pid && p.Deadline > DateTime.Now).OrderBy(d => d.Deadline).FirstOrDefaultAsync();
+
+            if (m == null)
+            {
+                return NotFound();
+            }
+
+            MilestoneDTO mDTO = MilestoneToDTO(m);
+
+            return mDTO;
+        }
+
+        [HttpGet("MilestoneCompletions/{pid}")]
+        [Authorize]
+        public async Task<ActionResult<Dictionary<String, String>>> MilestoneCompletions(int pid)
+        {
+            List<Team> teams = await _context.Teams.Include(t => t.CompleteMilestones).Where(t => t.Project.Id == pid).ToListAsync();
+
+            if (teams == null) { return NotFound(); }
+
+            Dictionary<String, int> completions = new Dictionary<String, int>();
+
+            foreach (Milestone m in teams[0].CompleteMilestones)
+            {
+                completions[m.Title] = 0;
+            }
+
+            foreach(Team t in teams)
+            {
+                foreach (Milestone m in t.CompleteMilestones)
+                {
+                    completions[m.Title] += 1;
+                }
+            }
+
+            foreach(String m in completions.Keys)
+            {
+                completions[m] = completions[m] / teams.Count;
+            }
+            return null;
+        }
+
+
 
         //Get all milestones for a project. This doesn't include the complete tag.
         [HttpGet("ProjectMilestones/{pid}")]

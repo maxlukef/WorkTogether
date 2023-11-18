@@ -131,7 +131,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   if (value != null && loggedUserId == value.professorID) {
                                     Navigator.push(context, MaterialPageRoute(
                                       builder: (context) {
-                                        return Dashboard(projectId: projectNameValue.id);
+                                        return Dashboard(
+                                            projectId: projectNameValue.id,
+                                            projectName: projectNameValue.name,
+                                            classId: projectNameValue.classId);
                                       },
                                     ));
                                   }
