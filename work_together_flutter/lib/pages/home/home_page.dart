@@ -29,10 +29,10 @@ class _HomePageState extends ConsumerState<HomePage> {
         future: httpService.getCurrentUserProjectsAndClasses(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasError) {
-            return Column(
+            return const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 Text("An error has occurred while loading page."),
               ],
             );
@@ -252,8 +252,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                                           ),
                                         );
                                       }
-                                    }
-                                  },
+                                    });
+                                    },
+
                                   child: SizedBox(
                                     width: 300,
                                     height: 260,

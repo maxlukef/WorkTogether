@@ -43,7 +43,7 @@ class _DonutChartState extends State<DonutChart> {
                       ),
                       PieChartSectionData(
                         value: 100 - widget.percentComplete.toDouble(),
-                        color: const Color(0x00FFFFFF),
+                        color: const Color(0xFFDDDDDD),
                         radius: 10,
                         showTitle: false,
                       )

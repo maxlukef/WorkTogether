@@ -68,9 +68,9 @@ namespace WorkTogether.Controllers
 
         [HttpGet("NextMilestoneDue/{pid}")]
         [Authorize]
-        public async Task<ActionResult<MilestoneDTO>> NextMilestoneDue(int pid)
+        public async Task<ActionResult<List<MilestoneDTO>>> NextMilestoneDue(int pid)
         {
-            Milestone m = await _context.Milestones.Where(p => p.Id == pid && p.Deadline > DateTime.Now).OrderBy(d => d.Deadline).FirstOrDefaultAsync();
+            Milestone m = await _context.Milestones.Where(p => p.Id == pid && p.Deadline > DateTime.Now).OrderBy(d => d.Deadline).Include(p => p.Project).FirstOrDefaultAsync();
 
             if (m == null)
             {
@@ -78,8 +78,9 @@ namespace WorkTogether.Controllers
             }
 
             MilestoneDTO mDTO = MilestoneToDTO(m);
-
-            return mDTO;
+            List<MilestoneDTO> mDTOs = new List<MilestoneDTO>();
+            mDTOs.Add(mDTO);
+            return mDTOs;
         }
 
         [HttpGet("MilestoneCompletions/{pid}")]
@@ -375,7 +376,7 @@ namespace WorkTogether.Controllers
         /// <returns>The number of teams that have completed the milestone</returns>
         [HttpGet("NumComplete/{id}")]
         [Authorize]
-        public async Task<ActionResult<CompleteRatioDTO>> GetNumComplete(int id)
+        public async Task<ActionResult<List<CompleteRatioDTO>>> GetNumComplete(int id)
         {
             User curr = GetCurrentUser(HttpContext);
             Milestone m = await _context.Milestones.Where(m => m.Id == id).Include(m => m.Project).FirstOrDefaultAsync();
@@ -401,7 +402,9 @@ namespace WorkTogether.Controllers
             toret.md = MilestoneToDTO(m);
             toret.complete = complete;
             toret.numteams = countteams;
-            return toret;
+            List<CompleteRatioDTO> completions = new List<CompleteRatioDTO>();
+            completions.Add(toret);
+            return completions;
         }
 
 

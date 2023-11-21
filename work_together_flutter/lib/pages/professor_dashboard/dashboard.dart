@@ -2,9 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:work_together_flutter/pages/professor_dashboard/project_edit_page.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../http_request.dart';
+import '../../models/milestone_models/completion_info.dart';
+import '../../models/milestone_models/milestone.dart';
+import '../../models/milestone_models/milestone_dto.dart';
 import 'components/alert_card.dart';
 import 'components/donut_chart.dart';
 import 'components/stat_card.dart';
@@ -25,6 +30,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  HttpService httpService = HttpService();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -82,27 +88,30 @@ class _DashboardState extends State<Dashboard> {
             ])))));
   }
 
-  Map<String, String> getMilestoneCompletionRate() {
+  Future<Map<String, String>> getMilestoneCompletionRate() async {
+    List<Milestone> milestones = [];
+    Map<String, String> milestoneCompletionRate = {};
+    await httpService.getMilestonesForProject(widget.projectId).then((value) => milestones = value!);
+    for (Milestone m in milestones) {
+      CompletionInfo? completionRate = await httpService.getMilestoneCompletionRate(m.id);
 
-    return {
-      "Milestone 1": "50%",
-      "Milestone 2": "74%",
-      "Milestone 3": "100%",
-    };
+      if (completionRate != null) {
+        milestoneCompletionRate[m.title] = (completionRate.completed / completionRate.numTeams).toString() + "%";
+      }
+    }
+    return milestoneCompletionRate;
   }
 
-  String getNextMilestoneDue() {
-    return "November 20 2023";
+  Future<String> getNextMilestoneDue() async {
+    MilestoneDTO? m = await httpService.getNextMilestoneDue(widget.projectId);
+
+    if (m == null) {
+      return "";
+    }
+    return DateFormat.yMMMd().format(m.deadline);
   }
 
   _milestoneSection() {
-    var milestones = getMilestoneCompletionRate();
-    List<DonutChart> donutCharts = [];
-
-    for (var milestone in milestones.entries) {
-      donutCharts.add(DonutChart(
-          title: milestone.key, size: 100, percentComplete: int.parse(milestone.value.replaceAll("%", ""))));
-    }
     return Column(
       children: [
         const SizedBox(height: 20),
@@ -110,14 +119,37 @@ class _DashboardState extends State<Dashboard> {
             child: Text("Next Milestone Due", style: TextStyle(fontSize: 16))
         ),
         Center(
-            child: Text(getNextMilestoneDue(), style: TextStyle(
-                fontSize: 32, fontWeight: FontWeight.w700))
+            child: FutureBuilder(
+                future: getNextMilestoneDue(),
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(snapshot.data.toString(), style: const TextStyle(
+                        fontSize: 32, fontWeight: FontWeight.w700));
+                  } else {
+                    return const Text("Loading...");
+                  }
+                }
+          )
         ),
         const SizedBox(height: 20),
         Center(
             child: Column(
               children: [
-                Wrap(direction: Axis.horizontal, spacing: 2, children: donutCharts),
+                FutureBuilder(
+                  future: getMilestoneCompletionRate(),
+                  builder: (BuildContext context, AsyncSnapshot<Map<String, String>> snapshot) {
+                    if (snapshot.hasData) {
+                      List<DonutChart> donutCharts = [];
+                      for (var milestone in snapshot.data!.entries) {
+                        donutCharts.add(DonutChart(
+                            title: milestone.key, size: 100, percentComplete: int.parse(milestone.value.replaceAll("%", ""))));
+                      }
+                      return Wrap(direction: Axis.horizontal, spacing: 15, children: donutCharts);
+                    } else {
+                      return const Text("Loading...");
+                    }
+                  }
+                ),
                 const SizedBox(height: 10),
                 const Text("Class Milestone Progress",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))

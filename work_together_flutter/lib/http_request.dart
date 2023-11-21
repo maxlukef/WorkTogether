@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
@@ -21,6 +22,7 @@ import 'package:work_together_flutter/models/team_dto.dart';
 import 'main.dart';
 import 'models/answer_models/answer_dto.dart';
 import 'models/card_info_models/card_info.dart';
+import 'models/milestone_models/completion_info.dart';
 import 'models/notification_models/notification_dto.dart';
 import 'models/project_models/project_in_class.dart';
 import 'models/question_models/question_dto.dart';
@@ -214,7 +216,7 @@ class HttpService {
   Future<List<TeamDTO>> getTeamsInProject(int projectId) async {
     Uri uri = Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
 
-    var res = await get(uri);
+    var res = await get(uri, headers: authHeader);
     List<TeamDTO> teams = [];
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
@@ -231,8 +233,7 @@ class HttpService {
     Uri uri = Uri.https(connectionString, 'api/Milestones/NextMilestoneDue/$projectId');
     Response res;
     MilestoneDTO milestone;
-
-    res = await get(uri);
+    res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
@@ -255,8 +256,26 @@ class HttpService {
     else {
       return null;
     }
+  }
 
 
+  Future<CompletionInfo?> getMilestoneCompletionRate(int id) async {
+    Uri uri = Uri.https(connectionString, 'api/Milestones/numcomplete/$id');
+    Response res;
+    res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      final body = jsonDecode(res.body);
+
+      CompletionInfo c = CompletionInfo(
+        id, body[0]["complete"], body[0]["numteams"]
+      );
+
+      return c;
+    }
+    else {
+      return null;
+    }
   }
 
   Future<List<CardInfo>> getTeam(int projectId) async {
@@ -807,7 +826,6 @@ class HttpService {
                 deadline: DateTime.parse((project["deadline"])),
                 teamFormationDeadline:
                     DateTime.parse((project["teamFormationDeadline"])));
-
             projectsInClass.add(projectInClass);
           }
         } else {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing.Printing;
 using WorkTogether.Models;
 
 namespace WorkTogether.Controllers
@@ -14,6 +15,21 @@ namespace WorkTogether.Controllers
         public ClassesController(WT_DBContext context)
         {
             _context = context;
+        }
+
+
+        [HttpGet("{classid}")]
+        [Authorize]
+        public async Task<ActionResult<ClassDTO>> GetClasses(int classid)
+        {
+            Class c = await _context.Classes.Where(c => c.Id == classid).Include(c => c.Professor).FirstOrDefaultAsync();
+
+            if (c == null)
+            {
+                return NotFound();
+            }
+
+            return ClassToDTO(c);
         }
 
 
@@ -127,6 +143,12 @@ namespace WorkTogether.Controllers
             foreach (var studentClass in studentClasses)
             {
                 classes.Add(ClassToDTO(studentClass.Class));
+            }
+
+            var professorClasses = await _context.Classes.Include(c => c.Professor).Where(c => c.Professor == u).ToListAsync();
+            foreach (var c in professorClasses) 
+            {
+                classes.Add(ClassToDTO(c));
             }
             return classes;
         }
