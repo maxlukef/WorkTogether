@@ -127,7 +127,7 @@ namespace WorkTogether.Controllers
 
         [HttpGet("alertsForProject/{id}")]
         [Authorize]
-        public async Task<ActionResult<List<String>>> GetAlerts(int id)
+        public async Task<ActionResult<List<List<String>>>> GetAlerts(int id)
         {
             List<dynamic> alerts = new List<dynamic>();
 

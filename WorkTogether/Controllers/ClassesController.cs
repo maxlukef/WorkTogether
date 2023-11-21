@@ -17,6 +17,24 @@ namespace WorkTogether.Controllers
             _context = context;
         }
 
+        // GET: api/Classes/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ClassDTO>> GetClass(int id)
+        {
+            if (_context.Classes == null)
+            {
+                return NotFound();
+            }
+            var @class = ClassToDTO(await _context.Classes.Include(c => c.Professor).Where(c => c.Id == id).FirstOrDefaultAsync());
+
+            if (@class == null)
+            {
+                return NotFound();
+            }
+
+            return @class;
+        }
+
 
 
         /// <summary>

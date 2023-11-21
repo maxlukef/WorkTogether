@@ -78,7 +78,7 @@ class _DashboardState extends State<Dashboard> {
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return ProjectEditPage(id: widget.projectId);
+                          return ProjectEditPage(projectId: widget.projectId, classId: widget.classId);
                         }));
                   },
                   child: const Text("Manage Project"),
@@ -140,9 +140,15 @@ class _DashboardState extends State<Dashboard> {
                   builder: (BuildContext context, AsyncSnapshot<Map<String, String>> snapshot) {
                     if (snapshot.hasData) {
                       List<DonutChart> donutCharts = [];
+
                       for (var milestone in snapshot.data!.entries) {
-                        donutCharts.add(DonutChart(
-                            title: milestone.key, size: 100, percentComplete: int.parse(milestone.value.replaceAll("%", ""))));
+                        try{
+                          donutCharts.add(DonutChart(
+                              title: milestone.key, size: 100, percentComplete: int.parse(milestone.value.replaceAll("%", ""))));
+                        } on Exception catch (_) {
+                          donutCharts.add(DonutChart(
+                              title: milestone.key, size: 100, percentComplete: 0));
+                        }
                       }
                       return Wrap(direction: Axis.horizontal, spacing: 15, children: donutCharts);
                     } else {
@@ -222,4 +228,6 @@ class _DashboardState extends State<Dashboard> {
       )
     );
   }
+
+
 }

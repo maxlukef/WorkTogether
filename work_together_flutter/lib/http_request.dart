@@ -1043,4 +1043,75 @@ class HttpService {
       throw "Unable to retrieve class.";
     }
   }
+
+  Future<String> getClassInviteCode(int classId) async {
+    Uri uri = Uri.https(connectionString, 'api/Classes/GetInviteCode/$classId');
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return res.body;
+    } else {
+      throw "Unable to retrieve class invite code.";
+    }
+  }
+  Future<List<TeamDTO>> getTeamsForProject(int projectId) async {
+    Uri uri = Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
+    Response res = await get(uri, headers: authHeader);
+
+    var body = jsonDecode(res.body);
+    if (res.statusCode == 200) {
+      List<TeamDTO> allTeams = [];
+      for(Map<String, dynamic> t in body) {
+        allTeams.add(TeamDTO.fromJson(t));
+      }
+
+      return allTeams;
+    } else {
+      throw "Unable to retrieve class.";
+    }
+  }
+
+  Future<List<User>> getStudentsInTeam(int teamId) async {
+    Uri uri = Uri.https(connectionString, 'api/Teams/GetStudentsInTeam/$teamId');
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<User> students;
+
+      students =
+      (json.decode(res.body) as List).map((i) => User.fromJson(i)).toList();
+      return students;
+    } else {
+      throw "Unable to retrieve class.";
+    }
+  }
+
+  Future<List<String>> getAlerts(int projectId) async {
+    Uri uri = Uri.https(connectionString, 'api/Alerts/GetAlerts/$projectId');
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<String> alerts = [];
+      List<String>  body = jsonDecode(res.body);
+
+
+
+      return body;
+    } else {
+      throw "Unable to retrieve alerts.";
+    }
+  }
+
+  Future<bool> isProfessor() async {
+    Uri uri = Uri.https(connectionString, 'api/Users/isprofessor/');
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      dynamic body = jsonDecode(res.body);
+      return body;
+    }
+    else {
+      throw "Unable to check if current user is professor";
+    }
+  }
 }

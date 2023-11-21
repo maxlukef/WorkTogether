@@ -1,13 +1,22 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../http_request.dart';
+import '../../models/team_dto.dart';
+import '../../models/user_models/user.dart';
 
 class ProjectEditPage extends StatefulWidget {
-  ProjectEditPage({required this.id, Key? key}) : super(key: key);
+  ProjectEditPage({
+    required this.projectId,
+    required this.classId,
+    Key? key}) : super(key: key);
 
-  int id;
+  int projectId;
+  int classId;
+  String inviteCode = "";
 
   @override
   _projectEditPageState createState() => _projectEditPageState();
@@ -16,34 +25,10 @@ class ProjectEditPage extends StatefulWidget {
 class _projectEditPageState extends State<ProjectEditPage> {
   @override
   Widget build(BuildContext context) {
-    List<String> students = getStudentsInProject(widget.id);
-    List<String> groups = getGroupsInProject(widget.id);
 
-    String studentDropdownValue = students[0];
-    String oldGroupDropdownValue = groups[0];
-    String newGroupDropdownValue = groups[0];
-
-    CustomDropdown studentDropdown = CustomDropdown(
-        title: "Student",
-        items: students,
-        selectedItem: studentDropdownValue,
-        onChanged: (String newValue) {
-          oldGroupDropdownValue = newValue;
-        });
-    CustomDropdown oldGroupDropdown = CustomDropdown(
-        title: "Old Group",
-        items: groups,
-        selectedItem: oldGroupDropdownValue,
-        onChanged: (String newValue) {
-          oldGroupDropdownValue = newValue;
-        });
-    CustomDropdown newGroupDropdown = CustomDropdown(
-        title: "New Group",
-        items: groups,
-        selectedItem: newGroupDropdownValue,
-        onChanged: (String newValue) {
-          newGroupDropdownValue = newValue;
-        });
+    String oldGroupDropdownValue = "";
+    String newGroupDropdownValue = "";
+    String studentDropdownValue = "";
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.width;
@@ -63,15 +48,88 @@ class _projectEditPageState extends State<ProjectEditPage> {
             children: [
               const Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Move Students", style: TextStyle(fontSize: 24))),
+                  child: Text("Move Students", style: TextStyle(
+                      fontSize: 32, fontWeight: FontWeight.w700))),
               Wrap(
                 direction: Axis.horizontal,
                 spacing: 20,
                 runSpacing: 20,
                 children: [
-                  studentDropdown,
-                  oldGroupDropdown,
-                  newGroupDropdown,
+                  FutureBuilder(
+                    future: getStudentsInProject(widget.projectId),
+                    builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                      if (snapshot.hasData && snapshot.data!.length > 0) {
+                        List<String> students = snapshot.data!;
+                        studentDropdownValue = students[0];
+                        return CustomDropdown(
+                            title: "Student",
+                            items: students,
+                            selectedItem: studentDropdownValue,
+                            onChanged: (String newValue) {
+                              studentDropdownValue = newValue;
+                            });
+                      } else {
+                        return CustomDropdown(
+                            title: "Student",
+                            items: const ["Loading..."],
+                            selectedItem: "Loading...",
+                            onChanged: (String newValue) {
+                              studentDropdownValue = newValue;
+                            }
+                        );
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: getGroupsInProject(widget.projectId),
+                    builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                      if (snapshot.hasData && snapshot.data!.length > 0) {
+                        List<String> groups = snapshot.data!;
+                        oldGroupDropdownValue = groups[0];
+                        return CustomDropdown(
+                            title: "Old Group",
+                            items: groups,
+                            selectedItem: oldGroupDropdownValue,
+                            onChanged: (String newValue) {
+                              oldGroupDropdownValue = newValue;
+                            });
+                      } else {
+                        return CustomDropdown(
+                          title: "Old Group",
+                          items: const ["Loading..."],
+                          selectedItem: "Loading...",
+                          onChanged: (String newValue) {
+                            oldGroupDropdownValue = newValue;
+                          }
+                        );
+                      }
+                    },
+                  ),
+                  FutureBuilder(
+                    future: getGroupsInProject(widget.projectId),
+                    builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                      if (snapshot.hasData && snapshot.data!.length > 0) {
+                        List<String> groups = snapshot.data!;
+                        newGroupDropdownValue = groups[0];
+                        return CustomDropdown(
+                            title: "New Group",
+                            items: groups,
+                            selectedItem: newGroupDropdownValue,
+                            onChanged: (String newValue) {
+                              newGroupDropdownValue = newValue;
+                            });
+                      } else {
+                        return CustomDropdown(
+                            title: "New Group",
+                            items: const ["Loading..."],
+                            selectedItem: "Loading...",
+                            onChanged: (String newValue) {
+                              newGroupDropdownValue = newValue;
+                            }
+                        );
+                      }
+                    },
+                  ),
                 ],
               ),
               Align(
@@ -84,6 +142,44 @@ class _projectEditPageState extends State<ProjectEditPage> {
                 ),
               ),
               const Divider(color: Colors.black),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Class Invite Code", style: TextStyle(
+                    fontSize: 32, fontWeight: FontWeight.w700)),
+              ),
+              Row(
+                children: [
+                  FutureBuilder(
+                    future: HttpService().getClassInviteCode(widget.classId),
+                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData) {
+                        widget.inviteCode = snapshot.data!.substring(1, snapshot.data!.length - 1);
+                        return Text(widget.inviteCode);
+                      } else {
+                        return const Text("Loading...");
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 15),
+                  ElevatedButton(
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: widget.inviteCode)).then((value) {
+                        final snackBar = SnackBar(
+                          content: const Text('Copied to Clipboard'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              Clipboard.setData(const ClipboardData(text: ""));
+                            },
+                        ));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      });
+                    },
+                    child: const Text('Copy'),
+                  )
+                ]
+              ),
+              const SizedBox(width: 50),
             ]
           )
         ),
@@ -91,19 +187,30 @@ class _projectEditPageState extends State<ProjectEditPage> {
     );
   }
 
-  List<String> getStudentsInProject(int id) {
-    return ["John Coder", "Jane Coder", "Jack Coder"];
+  Future<List<String>> getStudentsInProject(int id) async {
+    List<User>? students = await HttpService().getStudentsInClass(widget.classId);
+    List<String> studentsNames = [];
+    for(User s in students!) {
+      print(s.name);
+      studentsNames.add(s.name);
+    }
+    return studentsNames;
   }
 
-  List<String> getGroupsInProject(int id) {
-    return ["WorkTogether", "Chef'd", "Habit@t"];
+  Future<List<String>> getGroupsInProject(int id) async {
+    List<String> teamNames = [];
+    List<TeamDTO> teams = await HttpService().getTeamsForProject(id);
+    for(TeamDTO t in teams) {
+      print(t.name);
+      teamNames.add(t.name);
+    }
+    print("yo");
+    return teamNames;
   }
 
   void moveStudent(String student, String oldGroup, String newGroup) {
     print("Moving $student from $oldGroup to $newGroup");
   }
-
-
 }
 
 class CustomDropdown extends StatefulWidget {
