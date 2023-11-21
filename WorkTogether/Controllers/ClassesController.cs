@@ -18,21 +18,6 @@ namespace WorkTogether.Controllers
         }
 
 
-        [HttpGet("{classid}")]
-        [Authorize]
-        public async Task<ActionResult<ClassDTO>> GetClasses(int classid)
-        {
-            Class c = await _context.Classes.Where(c => c.Id == classid).Include(c => c.Professor).FirstOrDefaultAsync();
-
-            if (c == null)
-            {
-                return NotFound();
-            }
-
-            return ClassToDTO(c);
-        }
-
-
 
         /// <summary>
         /// Allows professors to get the invite code for a class, that they can then give to students to allow them to join on Work Together
@@ -63,7 +48,7 @@ namespace WorkTogether.Controllers
         /// <returns>a DTO for the joined class, if successful.</returns>
         [HttpGet("joinclass/{invcode}")]
         [Authorize]
-        public async Task<ActionResult<ClassDTO>> Join(string invcode)
+        public async Task<ActionResult<bool>> Join(string invcode)
         {
             User curr = GetCurrentUser(HttpContext);
             Class c = await _context.Classes.Where(c => c.InviteCode == invcode).FirstOrDefaultAsync();
@@ -84,7 +69,7 @@ namespace WorkTogether.Controllers
             n.Class = c;
             _context.StudentClasses.Add(n);
             _context.SaveChanges();
-            return ClassToDTO(c);
+            return true;
         }
 
         /// <summary>
@@ -146,7 +131,7 @@ namespace WorkTogether.Controllers
             }
 
             var professorClasses = await _context.Classes.Include(c => c.Professor).Where(c => c.Professor == u).ToListAsync();
-            foreach (var c in professorClasses) 
+            foreach (var c in professorClasses)
             {
                 classes.Add(ClassToDTO(c));
             }

@@ -340,6 +340,17 @@ class HttpService {
     return teamMates;
   }
 
+  Future<bool> joinClassWithCode(String classCode) async {
+    Uri uri = Uri.https(connectionString, "api/Classes/joinclass/$classCode");
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   acceptInviteNotification(int notificationId) async {
     Uri uri =
         Uri.https(connectionString, "api/Teams/AcceptInvite/$notificationId");

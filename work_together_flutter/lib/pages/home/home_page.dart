@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/pages/group_home/group_home.dart';
 import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
@@ -23,6 +24,8 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   final HttpService httpService = HttpService();
+  final courseJoinTextController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -77,6 +80,58 @@ class _HomePageState extends ConsumerState<HomePage> {
               children: [
                 Column(
                   children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 300,
+                            height: 50,
+                            child: TextFormField(
+                              controller: courseJoinTextController,
+                              style: const TextStyle(
+                                  color: Color(0xFF000000),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'SourceSansPro'),
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.done,
+                              onSaved: (hours) {},
+                              decoration: const InputDecoration(
+                                  filled: true,
+                                  fillColor: Color(0xFFFAFAFA),
+                                  hintText: "Type code to join class",
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xFFD9D9D9),
+                                          width: 2.0))),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: IconButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: ourLightColor()),
+                              onPressed: () async {
+                                if (await HttpService().joinClassWithCode(
+                                    courseJoinTextController.text)) {
+                                  setState(() {});
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     ...classesToProjects.keys.map((classNameKey) {
                       return Column(
                         children: [
