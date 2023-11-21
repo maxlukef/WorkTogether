@@ -74,9 +74,16 @@ class _DonutChartState extends State<DonutChart> {
               ],
             ),
           ),
-          Text(
-            widget.title,
-            style: TextStyle(fontSize: 16),
+          SizedBox(
+            width: widget.size.toDouble(),
+            child: Tooltip(
+                message: widget.title,
+                child: Text(
+                  widget.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 16),
+                )
+            )
           )
         ],
     );
