@@ -1114,4 +1114,20 @@ class HttpService {
       throw "Unable to check if current user is professor";
     }
   }
+
+  void deleteClass(int classId) async {
+    Uri uri = Uri.https(connectionString, 'api/Classes/$classId');
+    await delete(uri, headers: authHeader);
+  }
+
+  void addClass(String className, String description) async{
+    Uri uri = Uri.https(connectionString, 'api/Classes/create');
+    var body = jsonEncode({
+      "name": className,
+      "description": description
+    });
+    var response = await post(uri, headers: authHeader, body: body);
+    print(response.statusCode);
+
+  }
 }

@@ -183,6 +183,13 @@ namespace WorkTogether.Controllers
         [Authorize]
         public async Task<ActionResult<ClassDTO>> CreateClass(CreateClassDTO cd)
         {
+            Console.WriteLine("###############################");
+            Console.WriteLine("###############################");
+            Console.WriteLine("###############################");
+            Console.WriteLine(cd.Name + " " + cd.Description);
+            Console.WriteLine("###############################");
+            Console.WriteLine("###############################");
+            Console.WriteLine("###############################");
             User curr = GetCurrentUser(HttpContext);
             Class c = new Class();
             c.Name = cd.Name;
