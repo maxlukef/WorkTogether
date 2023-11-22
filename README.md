@@ -48,16 +48,16 @@ Our project is run in a standard linux environment. These insructions are specif
 
 Once you have the prereqs installed the first thing you need to do is pull the code down to your computer. Once you have the code pulled down you can start building and running the application. We will assume that you have the code in a director called work-together in your home directory.
 
-## Setting up the Server
+### Setting up the Server
 Follow the instructions at https://ubuntu.com/tutorials/install-and-configure-nginx#1-overview to set up nginx for your server.
 We will assume that your site is being run from /var/www/html/work-together.
 
-## Building and Running the Frontend
+### Building and Running the Frontend
 - Navigate to ~/work-together/work_together_flutter’
 - Run ‘sudo flutter build web’
 - Run ‘cp -r ~/work-together/work_together_flutter/build/web/* /var/www/html/work-together’
 
-## Building and Running the Backend
+### Building and Running the Backend
 - Navigate to ~/work-together/WorkTogether
 - If the database needs updating run ‘dotnet ef database update’
 - 	You may need to drop the database. If so:
