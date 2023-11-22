@@ -61,10 +61,10 @@ We will assume that your site is being run from /var/www/html/work-together.
 - Navigate to ~/work-together/WorkTogether
 - If the database needs updating run ‘dotnet ef database update’
 - 	You may need to drop the database. If so:
- 		- Mysql -u test -p
- 		- Drop database worktogether
-		- Create database worktogether
-		- quit
+* Mysql -u username -p
+* Drop database worktogether
+* Create database worktogether
+* quit
 - Run ‘dotnet publish –configuration Release’
 - Run ‘cp -r ~/work-together/WorkTogether/bin/Release/net6.0/* /var/www/html/work-together/api
 - Run ‘sudo systemctl restart kestre-worktogether.service’
