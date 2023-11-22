@@ -161,6 +161,40 @@ namespace WorkTogether.Controllers
             return t;
         }
 
+
+        // GET: api/Teams/allteamsinproject/1
+        [HttpGet("allteamsinproject/{id}")]
+        [Authorize]
+        public async Task<ActionResult<List<TeamDTO>>> allteamsinproject(int id)
+        {
+            List<Team> teams = await _context.Teams.Include(t => t.Project).Include(t => t.Members).Where(t => t.Project.Id == id).ToListAsync();
+            if (teams == null)
+            {
+                return NotFound();
+            }
+            List<TeamDTO> allTeams = new List<TeamDTO>();
+
+            foreach(Team team in teams)
+            {
+                TeamDTO t = new TeamDTO();
+                t.Name = team.Name;
+                t.Id = team.Id;
+                t.Complete = team.Complete;
+                t.projectId = team.Project.Id;
+                t.Members = new List<UserProfileDTO>();
+                foreach (User cur in team.Members)
+                {
+                    t.Members.Add(UsertoProfileDTO(cur));
+                }
+
+                allTeams.Add(t);
+            }
+
+            return allTeams;
+        }
+
+
+        // GET: api/Teams/5
         /// <summary>
         /// Lets the current user accept a team invite
         /// </summary>

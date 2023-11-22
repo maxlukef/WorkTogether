@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:work_together_flutter/models/chat_models/chat_info_dto.dart';
@@ -21,6 +22,7 @@ import 'package:work_together_flutter/models/team_dto.dart';
 import 'main.dart';
 import 'models/answer_models/answer_dto.dart';
 import 'models/card_info_models/card_info.dart';
+import 'models/milestone_models/completion_info.dart';
 import 'models/notification_models/notification_dto.dart';
 import 'models/project_models/project_in_class.dart';
 import 'models/question_models/question_dto.dart';
@@ -209,6 +211,69 @@ class HttpService {
     }
 
     return teamIds;
+  }
+
+  Future<List<TeamDTO>> getTeamsInProject(int projectId) async {
+    Uri uri =
+        Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
+
+    var res = await get(uri, headers: authHeader);
+    List<TeamDTO> teams = [];
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+
+      for (var i = 0; i < body.length; i++) {
+        teams.add(TeamDTO.fromJson(body[i]));
+      }
+    }
+
+    return teams;
+  }
+
+  Future<MilestoneDTO?> getNextMilestoneDue(int projectId) async {
+    Uri uri = Uri.https(
+        connectionString, 'api/Milestones/NextMilestoneDue/$projectId');
+    Response res;
+    MilestoneDTO milestone;
+    res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<dynamic> body = jsonDecode(res.body);
+
+      int iD = body[0]["id"];
+      int pID = body[0]["projectID"];
+      String title = body[0]["title"];
+      String description = body[0]["description"];
+      DateTime date = DateTime.parse((body[0]["deadline"]));
+
+      milestone = MilestoneDTO(
+          id: iD,
+          projectId: pID,
+          title: title,
+          description: description,
+          deadline: date);
+
+      return milestone;
+    } else {
+      return null;
+    }
+  }
+
+  Future<CompletionInfo?> getMilestoneCompletionRate(int id) async {
+    Uri uri = Uri.https(connectionString, 'api/Milestones/numcomplete/$id');
+    Response res;
+    res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      final body = jsonDecode(res.body);
+
+      CompletionInfo c =
+          CompletionInfo(id, body[0]["complete"], body[0]["numteams"]);
+
+      return c;
+    } else {
+      return null;
+    }
   }
 
   Future<List<CardInfo>> getTeam(int projectId) async {
@@ -770,7 +835,6 @@ class HttpService {
                 deadline: DateTime.parse((project["deadline"])),
                 teamFormationDeadline:
                     DateTime.parse((project["teamFormationDeadline"])));
-
             projectsInClass.add(projectInClass);
           }
         } else {
@@ -961,5 +1025,103 @@ class HttpService {
     } else {
       throw "Unable to retrieve Questionnaire";
     }
+  }
+
+  Future<ClassesDTO> getClassByID(int classId) async {
+    Uri ClassesURI = Uri.https(connectionString, 'api/Classes/$classId');
+    ClassesDTO returnedClass;
+
+    Response res = await get(ClassesURI, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      dynamic body = jsonDecode(res.body);
+      returnedClass = ClassesDTO.fromJson(body);
+      return returnedClass;
+    } else {
+      throw "Unable to retrieve class.";
+    }
+  }
+
+  Future<String> getClassInviteCode(int classId) async {
+    Uri uri = Uri.https(connectionString, 'api/Classes/GetInviteCode/$classId');
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      return res.body;
+    } else {
+      throw "Unable to retrieve class invite code.";
+    }
+  }
+
+  Future<List<TeamDTO>> getTeamsForProject(int projectId) async {
+    Uri uri =
+        Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
+    Response res = await get(uri, headers: authHeader);
+
+    var body = jsonDecode(res.body);
+    if (res.statusCode == 200) {
+      List<TeamDTO> allTeams = [];
+      for (Map<String, dynamic> t in body) {
+        allTeams.add(TeamDTO.fromJson(t));
+      }
+
+      return allTeams;
+    } else {
+      throw "Unable to retrieve class.";
+    }
+  }
+
+  Future<List<User>> getStudentsInTeam(int teamId) async {
+    Uri uri =
+        Uri.https(connectionString, 'api/Teams/GetStudentsInTeam/$teamId');
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<User> students;
+
+      students =
+          (json.decode(res.body) as List).map((i) => User.fromJson(i)).toList();
+      return students;
+    } else {
+      throw "Unable to retrieve class.";
+    }
+  }
+
+  Future<List<String>> getAlerts(int projectId) async {
+    Uri uri = Uri.https(connectionString, 'api/Alerts/GetAlerts/$projectId');
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      List<String> alerts = [];
+      List<String> body = jsonDecode(res.body);
+
+      return body;
+    } else {
+      throw "Unable to retrieve alerts.";
+    }
+  }
+
+  Future<bool> isProfessor() async {
+    Uri uri = Uri.https(connectionString, 'api/Users/isprofessor/');
+    Response res = await get(uri, headers: authHeader);
+
+    if (res.statusCode == 200) {
+      dynamic body = jsonDecode(res.body);
+      return body;
+    } else {
+      throw "Unable to check if current user is professor";
+    }
+  }
+
+  void deleteClass(int classId) async {
+    Uri uri = Uri.https(connectionString, 'api/Classes/$classId');
+    await delete(uri, headers: authHeader);
+  }
+
+  void addClass(String className, String description) async {
+    Uri uri = Uri.https(connectionString, 'api/Classes/create');
+    var body = jsonEncode({"name": className, "description": description});
+    var response = await post(uri, headers: authHeader, body: body);
+    print(response.statusCode);
   }
 }
