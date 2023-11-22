@@ -639,25 +639,37 @@ namespace WorkTogether.Models
 
                 this.SaveChanges();
 
-                Team t1 = new Team();
-                t1.Name = "John Coder's Capstone Crew";
-                t1.Project = project1;
-                t1.Id = 1;
-                t1.Complete = true;
-                t1.Members = new List<User>{newUser, newUser16, newUser15, newUser14};
-                t1.CompleteMilestones = new List<Milestone>();
-                Teams.Add(t1);
-                this.SaveChanges();
+                Team t = new Team();
+                t.Members = new List<User>{ newUser3, newUser4, newUser5, newUser6};
+                t.Project = newProject;
+                t.Complete = true;
+                t.Name = "Jims Coders";
+                t.CompleteMilestones = new List<Milestone> { m, m2 };
+                Teams.Add(t);
 
+                Team t4 = new Team();
+                t4.Members = new List<User> { newUser3, newUser4, newUser5, newUser6 };
+                t4.Project = newProject3;
+                t4.Complete = true;
+                t4.Name = "The Zuckerbergs";
+                t4.CompleteMilestones = new List<Milestone> { m4 };
+                Teams.Add(t4);
 
                 Team t2 = new Team();
-                t2.Name = "John Coder's HashMap Crew";
-                t2.Project = newProject;
-                t2.Id = 2;
+                t2.Members = new List<User> { newUser7, newUser8, newUser9, newUser10 };
+                t2.Project = project1;
                 t2.Complete = true;
-                t2.Members = new List<User> { newUser, newUser16, newUser15, newUser14 };
+                t2.Name = "Capstone Crew";
+                t2.CompleteMilestones = new List<Milestone> {m6,m7};
                 Teams.Add(t2);
-                this.SaveChanges();
+
+                Team t3 = new Team();
+                t3.Members = new List<User> { newUser7, newUser8, newUser9, newUser10 };
+                t3.Project = newProject2;
+                t3.Complete = true;
+                t3.Name = "Facebook Dev Team";
+                t3.CompleteMilestones = new List<Milestone> { m10 };
+                Teams.Add(t3);
 
                 Questionnaire default_questionnaire = new Questionnaire();
                 default_questionnaire.Project = newProject3;
