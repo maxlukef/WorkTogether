@@ -66,6 +66,55 @@ namespace WorkTogether.Controllers
         }
 
 
+        [HttpGet("NextMilestoneDue/{pid}")]
+        [Authorize]
+        public async Task<ActionResult<List<MilestoneDTO>>> NextMilestoneDue(int pid)
+        {
+            Milestone m = await _context.Milestones.Where(p => p.Id == pid && p.Deadline > DateTime.Now).OrderBy(d => d.Deadline).Include(p => p.Project).FirstOrDefaultAsync();
+
+            if (m == null)
+            {
+                return NotFound();
+            }
+
+            MilestoneDTO mDTO = MilestoneToDTO(m);
+            List<MilestoneDTO> mDTOs = new List<MilestoneDTO>();
+            mDTOs.Add(mDTO);
+            return mDTOs;
+        }
+
+        [HttpGet("MilestoneCompletions/{pid}")]
+        [Authorize]
+        public async Task<ActionResult<Dictionary<String, String>>> MilestoneCompletions(int pid)
+        {
+            List<Team> teams = await _context.Teams.Include(t => t.CompleteMilestones).Where(t => t.Project.Id == pid).ToListAsync();
+
+            if (teams == null) { return NotFound(); }
+
+            Dictionary<String, int> completions = new Dictionary<String, int>();
+
+            foreach (Milestone m in teams[0].CompleteMilestones)
+            {
+                completions[m.Title] = 0;
+            }
+
+            foreach(Team t in teams)
+            {
+                foreach (Milestone m in t.CompleteMilestones)
+                {
+                    completions[m.Title] += 1;
+                }
+            }
+
+            foreach(String m in completions.Keys)
+            {
+                completions[m] = completions[m] / teams.Count;
+            }
+            return null;
+        }
+
+
+
         /// <summary>
         /// Get all milestones for a project. This doesn't include the complete tag.
         /// </summary>
@@ -327,7 +376,7 @@ namespace WorkTogether.Controllers
         /// <returns>The number of teams that have completed the milestone</returns>
         [HttpGet("NumComplete/{id}")]
         [Authorize]
-        public async Task<ActionResult<CompleteRatioDTO>> GetNumComplete(int id)
+        public async Task<ActionResult<List<CompleteRatioDTO>>> GetNumComplete(int id)
         {
             User curr = GetCurrentUser(HttpContext);
             Milestone m = await _context.Milestones.Where(m => m.Id == id).Include(m => m.Project).FirstOrDefaultAsync();
@@ -353,7 +402,9 @@ namespace WorkTogether.Controllers
             toret.md = MilestoneToDTO(m);
             toret.complete = complete;
             toret.numteams = countteams;
-            return toret;
+            List<CompleteRatioDTO> completions = new List<CompleteRatioDTO>();
+            completions.Add(toret);
+            return completions;
         }
 
 
@@ -394,7 +445,7 @@ namespace WorkTogether.Controllers
             return clist;
         }
 
-        // 
+        //
         /// <summary>
         /// Gets the number of teams that have marked a milestone complete, and all teams in the project. For the prof dashboard
         /// </summary>

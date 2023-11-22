@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing.Printing;
 using WorkTogether.Models;
 
 namespace WorkTogether.Controllers
@@ -14,6 +15,24 @@ namespace WorkTogether.Controllers
         public ClassesController(WT_DBContext context)
         {
             _context = context;
+        }
+
+        // GET: api/Classes/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ClassDTO>> GetClass(int id)
+        {
+            if (_context.Classes == null)
+            {
+                return NotFound();
+            }
+            var @class = ClassToDTO(await _context.Classes.Include(c => c.Professor).Where(c => c.Id == id).FirstOrDefaultAsync());
+
+            if (@class == null)
+            {
+                return NotFound();
+            }
+
+            return @class;
         }
 
 
@@ -128,6 +147,12 @@ namespace WorkTogether.Controllers
             {
                 classes.Add(ClassToDTO(studentClass.Class));
             }
+
+            var professorClasses = await _context.Classes.Include(c => c.Professor).Where(c => c.Professor == u).ToListAsync();
+            foreach (var c in professorClasses)
+            {
+                classes.Add(ClassToDTO(c));
+            }
             return classes;
         }
 
@@ -158,6 +183,13 @@ namespace WorkTogether.Controllers
         [Authorize]
         public async Task<ActionResult<ClassDTO>> CreateClass(CreateClassDTO cd)
         {
+            Console.WriteLine("###############################");
+            Console.WriteLine("###############################");
+            Console.WriteLine("###############################");
+            Console.WriteLine(cd.Name + " " + cd.Description);
+            Console.WriteLine("###############################");
+            Console.WriteLine("###############################");
+            Console.WriteLine("###############################");
             User curr = GetCurrentUser(HttpContext);
             Class c = new Class();
             c.Name = cd.Name;

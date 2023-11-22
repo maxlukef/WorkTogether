@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/pages/group_home/group_home.dart';
+import 'package:work_together_flutter/pages/home/add_delete_class.dart';
 import 'package:work_together_flutter/pages/questionnaire/questionnaire.dart';
 
 import '../../global_components/custom_app_bar.dart';
@@ -11,6 +12,7 @@ import '../../http_request.dart';
 import '../../main.dart';
 import '../../models/project_models/project_in_class.dart';
 import '../group_search/group_search_page.dart';
+import '../professor_dashboard/dashboard.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({
@@ -31,10 +33,10 @@ class _HomePageState extends ConsumerState<HomePage> {
         future: httpService.getCurrentUserProjectsAndClasses(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasError) {
-            return Column(
+            return const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 Text("An error has occurred while loading page."),
               ],
             );
@@ -114,7 +116,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             width: 50,
                             height: 50,
                             child: IconButton(
-                              style: ElevatedButton.styleFrom(
+                              style: IconButton.styleFrom(
                                   backgroundColor: ourLightColor()),
                               onPressed: () async {
                                 if (await HttpService().joinClassWithCode(
@@ -124,12 +126,29 @@ class _HomePageState extends ConsumerState<HomePage> {
                               },
                               icon: const Icon(
                                 Icons.add,
-                                color: Colors.white,
+                                color: Colors.blue,
                               ),
                             ),
                           ),
                         ),
                       ],
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: ourLightColor()),
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return AddDeleteClass();
+                            }));
+                          },
+                          child: const Text("Add/Delete Class"),
+                        ),
+                      ),
                     ),
                     ...classesToProjects.keys.map((classNameKey) {
                       return Column(
@@ -190,28 +209,76 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 child: InkWell(
                                   splashColor: Colors.blue.withAlpha(30),
                                   onTap: () async {
-                                    if (projectNameValue.teamFormationDeadline
-                                        .isAfter(DateTime.now())) {
-                                      await httpService
-                                          .getProjectAnswers(
-                                              projectNameValue.id)
-                                          .then((value) => {
-                                                if (value.isNotEmpty)
-                                                  {
-                                                    Navigator.push(
-                                                      context,
-                                                      PageRouteBuilder(
-                                                        pageBuilder:
-                                                            (BuildContext
-                                                                    context,
-                                                                Animation<
-                                                                        double>
-                                                                    animation1,
-                                                                Animation<
-                                                                        double>
-                                                                    animation2) {
-                                                          return GroupSearchPage(
-                                                              userId:
+                                    await httpService
+                                        .getClassByID(projectNameValue.classId)
+                                        .then((value) async {
+                                      if (value != null &&
+                                          loggedUserId == value.professorID) {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                          builder: (context) {
+                                            return Dashboard(
+                                                projectId: projectNameValue.id,
+                                                projectName:
+                                                    projectNameValue.name,
+                                                classId:
+                                                    projectNameValue.classId);
+                                          },
+                                        ));
+                                      } else if (projectNameValue
+                                          .teamFormationDeadline
+                                          .isAfter(DateTime.now())) {
+                                        await httpService
+                                            .getProjectAnswers(
+                                                projectNameValue.id)
+                                            .then((value) => {
+                                                  if (value.isNotEmpty)
+                                                    {
+                                                      Navigator.push(
+                                                        context,
+                                                        PageRouteBuilder(
+                                                          pageBuilder: (BuildContext
+                                                                  context,
+                                                              Animation<double>
+                                                                  animation1,
+                                                              Animation<double>
+                                                                  animation2) {
+                                                            return GroupSearchPage(
+                                                                userId:
+                                                                    loggedUserId,
+                                                                classId:
+                                                                    projectNameValue
+                                                                        .classId,
+                                                                className:
+                                                                    projectNameValue
+                                                                        .className,
+                                                                projectId:
+                                                                    projectNameValue
+                                                                        .id,
+                                                                projectName:
+                                                                    projectNameValue
+                                                                        .name);
+                                                          },
+                                                          transitionDuration:
+                                                              Duration.zero,
+                                                          reverseTransitionDuration:
+                                                              Duration.zero,
+                                                        ),
+                                                      )
+                                                    }
+                                                  else
+                                                    {
+                                                      Navigator.push(
+                                                        context,
+                                                        PageRouteBuilder(
+                                                          pageBuilder: (BuildContext
+                                                                  context,
+                                                              Animation<double>
+                                                                  animation1,
+                                                              Animation<double>
+                                                                  animation2) {
+                                                            return QuestionnairePage(
+                                                              loggedUserId:
                                                                   loggedUserId,
                                                               classId:
                                                                   projectNameValue
@@ -224,71 +291,35 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                                       .id,
                                                               projectName:
                                                                   projectNameValue
-                                                                      .name);
-                                                        },
-                                                        transitionDuration:
-                                                            Duration.zero,
-                                                        reverseTransitionDuration:
-                                                            Duration.zero,
-                                                      ),
-                                                    )
-                                                  }
-                                                else
-                                                  {
-                                                    Navigator.push(
-                                                      context,
-                                                      PageRouteBuilder(
-                                                        pageBuilder:
-                                                            (BuildContext
-                                                                    context,
-                                                                Animation<
-                                                                        double>
-                                                                    animation1,
-                                                                Animation<
-                                                                        double>
-                                                                    animation2) {
-                                                          return QuestionnairePage(
-                                                            loggedUserId:
-                                                                loggedUserId,
-                                                            classId:
-                                                                projectNameValue
-                                                                    .classId,
-                                                            className:
-                                                                projectNameValue
-                                                                    .className,
-                                                            projectId:
-                                                                projectNameValue
-                                                                    .id,
-                                                            projectName:
-                                                                projectNameValue
-                                                                    .name,
-                                                          );
-                                                        },
-                                                        transitionDuration:
-                                                            Duration.zero,
-                                                        reverseTransitionDuration:
-                                                            Duration.zero,
-                                                      ),
-                                                    )
-                                                  }
-                                              });
-                                    } else {
-                                      Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                          pageBuilder: (BuildContext context,
-                                              Animation<double> animation1,
-                                              Animation<double> animation2) {
-                                            return GroupHome(
-                                              project: projectNameValue,
-                                            );
-                                          },
-                                          transitionDuration: Duration.zero,
-                                          reverseTransitionDuration:
-                                              Duration.zero,
-                                        ),
-                                      );
-                                    }
+                                                                      .name,
+                                                            );
+                                                          },
+                                                          transitionDuration:
+                                                              Duration.zero,
+                                                          reverseTransitionDuration:
+                                                              Duration.zero,
+                                                        ),
+                                                      )
+                                                    }
+                                                });
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder(
+                                            pageBuilder: (BuildContext context,
+                                                Animation<double> animation1,
+                                                Animation<double> animation2) {
+                                              return GroupHome(
+                                                project: projectNameValue,
+                                              );
+                                            },
+                                            transitionDuration: Duration.zero,
+                                            reverseTransitionDuration:
+                                                Duration.zero,
+                                          ),
+                                        );
+                                      }
+                                    });
                                   },
                                   child: SizedBox(
                                     width: 300,
@@ -438,7 +469,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                           })
                         ],
                       );
-                    })
+                    }),
+                    const SizedBox(height: 50),
                   ],
                 )
               ],

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using WorkTogether.Models;
 
 namespace WorkTogether.Controllers
@@ -123,6 +124,85 @@ namespace WorkTogether.Controllers
 
             return projectToDTO(project);
         }
+
+        [HttpGet("alertsForProject/{id}")]
+        [Authorize]
+        public async Task<ActionResult<List<List<String>>>> GetAlerts(int id)
+        {
+            List<dynamic> alerts = new List<dynamic>();
+
+            var users = (from u in _context.Users
+                         join c in _context.StudentClasses on u.Id equals c.Student.Id
+                         join p in _context.Projects on c.ID equals p.ClassId
+                         join m in _context.Milestones on p.Id equals m.Project.Id
+                         join t in _context.Tasks on m.Id equals t.ParentMilestone.Id
+                         where p.Id == id && c.Class.Id == p.ClassId && t.Assignees.Contains(u)
+                         select new
+                         {
+                             userId = u.Name
+                         }).ToList();
+
+            
+
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            alerts.Add(users);
+
+            var teams = (from t in _context.Teams
+                         join p in _context.Projects on t.Project.Id equals p.Id
+                         join m in _context.Milestones on p.Id equals m.Project.Id
+                         where !t.CompleteMilestones.Contains(m) && p.Id == id && m.Deadline < DateTime.Now
+                         select new
+                         {
+                             teamName = t.Name
+                         }).ToList();
+
+            if (teams == null) { return NotFound(); }
+
+            alerts.Add(teams);
+
+            return Ok(alerts);
+        }
+
+        [HttpGet("projectInfo/{id}")]
+        [Authorize]
+        public async Task<ActionResult<List<String>>> ProjectInfo(int id)
+        {
+            //NumGroups
+            var teams = (from t in _context.Teams
+                         where t.Project.Id == id
+                         select new
+                         {
+                             teamName = t.Name,
+                             teamSize = t.Members.Count
+                         });
+
+            //Avg Group Size
+            
+                
+                
+            //Final Project Deadline
+            List<String> strings = new List<String>();
+            strings.Add("hello");
+            return strings;
+        }
+
+        [HttpGet("projectStats/{id}")]
+        [Authorize]
+        public async Task<ActionResult<List<String>>> GetProjectStats(int id)
+        {
+            //Average Tasks Completed Per Student
+
+            //Tasks Completed This Week
+            List<String> strings = new List<String>();
+            strings.Add("hello");
+            return strings;
+        }
+
+
 
         /// <summary>
         /// Get All projects in a class

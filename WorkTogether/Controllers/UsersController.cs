@@ -48,6 +48,28 @@ namespace WorkTogether.Controllers
             return UsertoProfileDTO(user);
         }
 
+        [HttpGet("isProfessor")]
+        [Authorize]
+        public async Task<ActionResult<Boolean>> IsProfessor()
+        {
+            User u = GetCurrentUser(HttpContext);
+            var classes = (from c in _context.Classes
+                                   where c.Professor.Id == u.Id
+                                   select new
+                                   {
+                                       prof = c.Name,
+                                   }).ToList();
+
+            if (classes.Count == 0)
+            {
+                return Ok(false);
+            }
+            else
+            {
+                return Ok(true);
+            }
+        }
+
         /// <summary>
         /// Gets a JSON array of all students in a class.
         /// </summary>
@@ -121,6 +143,18 @@ namespace WorkTogether.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        /// <summary>
+        /// Gets the current authorized user making a request
+        /// </summary>
+        /// <param name="httpContext">The HTTPContext from inside the endpoint</param>
+        /// <returns>the current User</returns>
+        private User GetCurrentUser(HttpContext httpContext)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            User u1 = _context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
+            return u1;
         }
 
         /// <summary>
