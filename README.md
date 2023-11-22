@@ -67,5 +67,5 @@ We will assume that your site is being run from /var/www/html/work-together.
 * quit
 - Run ‘dotnet publish –configuration Release’
 - Run ‘cp -r ~/work-together/WorkTogether/bin/Release/net6.0/* /var/www/html/work-together/api
-- Run ‘sudo systemctl restart kestre-worktogether.service’
+- Run ‘sudo systemctl restart kestrel-worktogether.service’
 
