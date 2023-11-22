@@ -30,8 +30,8 @@ import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
 class HttpService {
-  String connectionString = 'localhost:7277';
-  //String connectionString = 'worktogether.site';
+  // String connectionString = 'localhost:7277';
+  String connectionString = 'worktogether.site';
 
   var authHeader = {
     'Content-Type': 'application/json',
@@ -214,7 +214,8 @@ class HttpService {
   }
 
   Future<List<TeamDTO>> getTeamsInProject(int projectId) async {
-    Uri uri = Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
+    Uri uri =
+        Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
 
     var res = await get(uri, headers: authHeader);
     List<TeamDTO> teams = [];
@@ -230,7 +231,8 @@ class HttpService {
   }
 
   Future<MilestoneDTO?> getNextMilestoneDue(int projectId) async {
-    Uri uri = Uri.https(connectionString, 'api/Milestones/NextMilestoneDue/$projectId');
+    Uri uri = Uri.https(
+        connectionString, 'api/Milestones/NextMilestoneDue/$projectId');
     Response res;
     MilestoneDTO milestone;
     res = await get(uri, headers: authHeader);
@@ -252,12 +254,10 @@ class HttpService {
           deadline: date);
 
       return milestone;
-    }
-    else {
+    } else {
       return null;
     }
   }
-
 
   Future<CompletionInfo?> getMilestoneCompletionRate(int id) async {
     Uri uri = Uri.https(connectionString, 'api/Milestones/numcomplete/$id');
@@ -267,13 +267,11 @@ class HttpService {
     if (res.statusCode == 200) {
       final body = jsonDecode(res.body);
 
-      CompletionInfo c = CompletionInfo(
-        id, body[0]["complete"], body[0]["numteams"]
-      );
+      CompletionInfo c =
+          CompletionInfo(id, body[0]["complete"], body[0]["numteams"]);
 
       return c;
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -1029,7 +1027,7 @@ class HttpService {
     }
   }
 
-  Future<ClassesDTO> getClassByID(int classId)  async {
+  Future<ClassesDTO> getClassByID(int classId) async {
     Uri ClassesURI = Uri.https(connectionString, 'api/Classes/$classId');
     ClassesDTO returnedClass;
 
@@ -1054,14 +1052,16 @@ class HttpService {
       throw "Unable to retrieve class invite code.";
     }
   }
+
   Future<List<TeamDTO>> getTeamsForProject(int projectId) async {
-    Uri uri = Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
+    Uri uri =
+        Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
     Response res = await get(uri, headers: authHeader);
 
     var body = jsonDecode(res.body);
     if (res.statusCode == 200) {
       List<TeamDTO> allTeams = [];
-      for(Map<String, dynamic> t in body) {
+      for (Map<String, dynamic> t in body) {
         allTeams.add(TeamDTO.fromJson(t));
       }
 
@@ -1072,14 +1072,15 @@ class HttpService {
   }
 
   Future<List<User>> getStudentsInTeam(int teamId) async {
-    Uri uri = Uri.https(connectionString, 'api/Teams/GetStudentsInTeam/$teamId');
+    Uri uri =
+        Uri.https(connectionString, 'api/Teams/GetStudentsInTeam/$teamId');
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
       List<User> students;
 
       students =
-      (json.decode(res.body) as List).map((i) => User.fromJson(i)).toList();
+          (json.decode(res.body) as List).map((i) => User.fromJson(i)).toList();
       return students;
     } else {
       throw "Unable to retrieve class.";
@@ -1092,9 +1093,7 @@ class HttpService {
 
     if (res.statusCode == 200) {
       List<String> alerts = [];
-      List<String>  body = jsonDecode(res.body);
-
-
+      List<String> body = jsonDecode(res.body);
 
       return body;
     } else {
@@ -1109,8 +1108,7 @@ class HttpService {
     if (res.statusCode == 200) {
       dynamic body = jsonDecode(res.body);
       return body;
-    }
-    else {
+    } else {
       throw "Unable to check if current user is professor";
     }
   }
@@ -1120,14 +1118,10 @@ class HttpService {
     await delete(uri, headers: authHeader);
   }
 
-  void addClass(String className, String description) async{
+  void addClass(String className, String description) async {
     Uri uri = Uri.https(connectionString, 'api/Classes/create');
-    var body = jsonEncode({
-      "name": className,
-      "description": description
-    });
+    var body = jsonEncode({"name": className, "description": description});
     var response = await post(uri, headers: authHeader, body: body);
     print(response.statusCode);
-
   }
 }

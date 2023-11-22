@@ -116,7 +116,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             width: 50,
                             height: 50,
                             child: IconButton(
-                              style: ElevatedButton.styleFrom(
+                              style: IconButton.styleFrom(
                                   backgroundColor: ourLightColor()),
                               onPressed: () async {
                                 if (await HttpService().joinClassWithCode(
@@ -126,12 +126,29 @@ class _HomePageState extends ConsumerState<HomePage> {
                               },
                               icon: const Icon(
                                 Icons.add,
-                                color: Colors.white,
+                                color: Colors.blue,
                               ),
                             ),
                           ),
                         ),
                       ],
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: ourLightColor()),
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return AddDeleteClass();
+                            }));
+                          },
+                          child: const Text("Add/Delete Class"),
+                        ),
+                      ),
                     ),
                     ...classesToProjects.keys.map((classNameKey) {
                       return Column(
@@ -453,28 +470,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ],
                       );
                     }),
-                    SizedBox(height: 25),
-                    FutureBuilder(
-                      future: httpService.isProfessor(),
-                        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data!) {
-                        return Align(
-                        alignment: Alignment.centerLeft,
-                        child: Wrap(spacing: 20, children: [
-                          ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return AddDeleteClass();
-                                }));
-                            },
-                            child: const Text("Add/Delete Class"),
-                            ),
-                            ]));}}
-                      return const SizedBox(height: 0);}
-
-    ),
                     const SizedBox(height: 50),
                   ],
                 )
