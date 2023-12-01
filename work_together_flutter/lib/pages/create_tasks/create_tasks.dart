@@ -93,8 +93,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           )
         : Scaffold(
             backgroundColor: const Color(0xFFFFFFFF),
-            appBar: const CustomAppBar(
-              title: "Create Task",
+            appBar: CustomAppBar(
+              title: widget.isEditing ? "Edit Task" : "Create Task",
             ),
             body: SingleChildScrollView(
               child: Center(
@@ -310,7 +310,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
 
                       await HttpService().editTask(dto);
                       if (context.mounted) {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(true);
                       }
                     }
                     List<int> studentIDs = [];
@@ -330,19 +330,27 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
 
                     await HttpService().createTask(dto);
                     if (context.mounted) {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(true);
                     }
                   }
                 },
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(1, 4, 12, 8),
-                  child: Text(
-                    "Create Task",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(1, 4, 12, 8),
+                  child: widget.isEditing
+                      ? const Text(
+                          "Edit Task",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          "Create Task",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
                 )),
           )
         ],

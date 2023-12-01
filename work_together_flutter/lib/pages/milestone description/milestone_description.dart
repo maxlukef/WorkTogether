@@ -243,7 +243,7 @@ class _MilestoneDescriptionPageState extends State<MilestoneDescriptionPage> {
             child: InkWell(
                 // Bring user to relavant page regarding the task.
                 onTap: () async {
-                  await Navigator.push(
+                  final bool result = await Navigator.push(
                     context,
                     PageRouteBuilder(
                       pageBuilder: (BuildContext context,
@@ -259,6 +259,11 @@ class _MilestoneDescriptionPageState extends State<MilestoneDescriptionPage> {
                       reverseTransitionDuration: Duration.zero,
                     ),
                   );
+                  if (result == true) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
                   await getUserTasksApiCall();
                 },
                 child: Container(

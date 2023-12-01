@@ -193,7 +193,7 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
                                   .markTaskAsComplete(widget.task.id);
                             }
                             if (context.mounted) {
-                              Navigator.of(context).pop();
+                              Navigator.of(context).pop(true);
                             }
                           },
                           child: widget.task.completed
@@ -239,7 +239,7 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
                               backgroundColor: ourLightColor()),
                           // Bring user to create task page.
                           onPressed: () async {
-                            await Navigator.push(
+                            final bool result = await Navigator.push(
                               context,
                               PageRouteBuilder(
                                 pageBuilder: (BuildContext context,
@@ -258,6 +258,11 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
                                 reverseTransitionDuration: Duration.zero,
                               ),
                             );
+                            if (result == true) {
+                              if (context.mounted) {
+                                Navigator.of(context).pop(true);
+                              }
+                            }
                           },
                           child: const Text(
                             "Edit Task",
