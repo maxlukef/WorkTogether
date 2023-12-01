@@ -158,7 +158,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                                                   currentUserNotifications
                                                       .elementAt(index)
                                                       .id),
-                                              Navigator.pop(context, 'Accept')
+                                              if (context.mounted)
+                                                {Navigator.of(context).pop()}
                                             },
                                             child: const Text('Accept'),
                                           ),
