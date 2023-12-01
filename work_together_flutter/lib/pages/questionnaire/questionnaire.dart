@@ -789,6 +789,26 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                                               })
                                     }
                                 }
+                              else
+                                {
+                                  showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text(
+                                          "Fill Out All The Fields To Continue"),
+                                      content: const Text(
+                                          "Please fill out all the fields in the questionnaire to continue."),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Ok'),
+                                          child: const Text('Ok'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                }
                             },
                             style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(150, 50),
