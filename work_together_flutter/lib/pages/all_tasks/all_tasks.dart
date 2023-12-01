@@ -172,7 +172,7 @@ class _AllTasksPageState extends State<AllTasksPage> {
             child: InkWell(
                 // Bring user to relavant page regarding the task.
                 onTap: () async {
-                  await Navigator.push(
+                  final bool result = await Navigator.push(
                     context,
                     PageRouteBuilder(
                       pageBuilder: (BuildContext context,
@@ -188,6 +188,11 @@ class _AllTasksPageState extends State<AllTasksPage> {
                       reverseTransitionDuration: Duration.zero,
                     ),
                   );
+                  if (result == true) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
                   await getUserTasks();
                 },
                 child: Container(
@@ -251,7 +256,7 @@ class _AllTasksPageState extends State<AllTasksPage> {
               child: InkWell(
                   // Bring user to relavant page regarding the task.
                   onTap: () async {
-                    await Navigator.push(
+                    final bool result = await Navigator.push(
                       context,
                       PageRouteBuilder(
                         pageBuilder: (BuildContext context,
@@ -267,6 +272,11 @@ class _AllTasksPageState extends State<AllTasksPage> {
                         reverseTransitionDuration: Duration.zero,
                       ),
                     );
+                    if (result == true) {
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+                    }
                     await getUserTasks();
                   },
                   child: Container(
