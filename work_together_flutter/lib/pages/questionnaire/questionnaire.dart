@@ -517,260 +517,277 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                               const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                           child: ElevatedButton(
                             onPressed: () async => {
-                              if (answers.isNotEmpty)
+                              if (numberHoursTextFieldController.text != "" &&
+                                  skillList.isNotEmpty &&
+                                  meetingTimeList.isNotEmpty)
                                 {
-                                  for (int i = 0; i < answers.length; i++)
+                                  if (answers.isNotEmpty)
                                     {
-                                      if (i == 0)
+                                      for (int i = 0; i < answers.length; i++)
                                         {
-                                          concatenatedMeetingTimes = "",
-                                          for (int i = 0;
-                                              i < meetingTimeList.length;
-                                              i++)
+                                          if (i == 0)
                                             {
-                                              if (meetingTimeList[i]
-                                                      .timeOfDay ==
-                                                  "Morning")
+                                              concatenatedMeetingTimes = "",
+                                              for (int i = 0;
+                                                  i < meetingTimeList.length;
+                                                  i++)
                                                 {
-                                                  concatenatedMeetingTimes +=
-                                                      "Morning:",
-                                                  concatenatedMeetingTimes +=
-                                                      meetingTimeList[i]
-                                                          .daysOfWeek
-                                                          .join(','),
-                                                  concatenatedMeetingTimes +=
-                                                      '`'
-                                                }
-                                              else if (meetingTimeList[i]
-                                                      .timeOfDay ==
-                                                  "Afternoon")
-                                                {
-                                                  concatenatedMeetingTimes +=
-                                                      "Afternoon:",
-                                                  concatenatedMeetingTimes +=
-                                                      meetingTimeList[i]
-                                                          .daysOfWeek
-                                                          .join(','),
-                                                  concatenatedMeetingTimes +=
-                                                      '`'
-                                                }
-                                              else if (meetingTimeList[i]
-                                                      .timeOfDay ==
-                                                  "Evening")
-                                                {
-                                                  concatenatedMeetingTimes +=
-                                                      "Evening:",
-                                                  concatenatedMeetingTimes +=
-                                                      meetingTimeList[i]
-                                                          .daysOfWeek
-                                                          .join(','),
-                                                  concatenatedMeetingTimes +=
-                                                      '`'
-                                                }
-                                            },
-                                          answers[i].answerText =
-                                              concatenatedMeetingTimes
-                                        }
-                                      else if (i == 1)
-                                        {
-                                          if (_quality == ExpectedQuality.A)
-                                            {answers[i].answerText = "A"}
-                                          else if (_quality ==
-                                              ExpectedQuality.B)
-                                            {answers[i].answerText = "B"}
-                                          else if (_quality ==
-                                              ExpectedQuality.C)
-                                            {answers[i].answerText = "C"}
-                                        }
-                                      else if (i == 2)
-                                        {
-                                          answers[i].answerText =
-                                              skillList.join(',')
-                                        }
-                                      else if (i == 3)
-                                        {
-                                          answers[i].answerText =
-                                              numberHoursTextFieldController
-                                                  .text
-                                        }
-                                      else if (i == 4)
-                                        {
-                                          // Answer is not in use
-                                        }
-                                    },
-                                  await httpService
-                                      .putQuestionnaireAnswers(
-                                          widget.projectId, answers)
-                                      .then((loggedUserAnswers) => {
-                                            popCount = 0,
-                                            Navigator.popUntil(context,
-                                                (route) {
-                                              return popCount++ == 2;
-                                            })
-                                          })
-                                }
-                              else
-                                {
-                                  await httpService
-                                      .getQuestionnaireQuestions(
-                                          widget.projectId)
-                                      .then((questions) async => {
-                                            for (int i = 0;
-                                                i < questions.length;
-                                                i++)
-                                              {
-                                                if (i == 0)
+                                                  if (meetingTimeList[i]
+                                                          .timeOfDay ==
+                                                      "Morning")
+                                                    {
+                                                      concatenatedMeetingTimes +=
+                                                          "Morning:",
+                                                      concatenatedMeetingTimes +=
+                                                          meetingTimeList[i]
+                                                              .daysOfWeek
+                                                              .join(','),
+                                                      concatenatedMeetingTimes +=
+                                                          '`'
+                                                    }
+                                                  else if (meetingTimeList[i]
+                                                          .timeOfDay ==
+                                                      "Afternoon")
+                                                    {
+                                                      concatenatedMeetingTimes +=
+                                                          "Afternoon:",
+                                                      concatenatedMeetingTimes +=
+                                                          meetingTimeList[i]
+                                                              .daysOfWeek
+                                                              .join(','),
+                                                      concatenatedMeetingTimes +=
+                                                          '`'
+                                                    }
+                                                  else if (meetingTimeList[i]
+                                                          .timeOfDay ==
+                                                      "Evening")
+                                                    {
+                                                      concatenatedMeetingTimes +=
+                                                          "Evening:",
+                                                      concatenatedMeetingTimes +=
+                                                          meetingTimeList[i]
+                                                              .daysOfWeek
+                                                              .join(','),
+                                                      concatenatedMeetingTimes +=
+                                                          '`'
+                                                    }
+                                                },
+                                              answers[i].answerText =
+                                                  concatenatedMeetingTimes
+                                            }
+                                          else if (i == 1)
+                                            {
+                                              if (_quality == ExpectedQuality.A)
+                                                {answers[i].answerText = "A"}
+                                              else if (_quality ==
+                                                  ExpectedQuality.B)
+                                                {answers[i].answerText = "B"}
+                                              else if (_quality ==
+                                                  ExpectedQuality.C)
+                                                {answers[i].answerText = "C"}
+                                            }
+                                          else if (i == 2)
+                                            {
+                                              answers[i].answerText =
+                                                  skillList.join(',')
+                                            }
+                                          else if (i == 3)
+                                            {
+                                              answers[i].answerText =
+                                                  numberHoursTextFieldController
+                                                      .text
+                                            }
+                                          else if (i == 4)
+                                            {
+                                              // Answer is not in use
+                                            }
+                                        },
+                                      await httpService
+                                          .putQuestionnaireAnswers(
+                                              widget.projectId, answers)
+                                          .then((loggedUserAnswers) => {
+                                                popCount = 0,
+                                                Navigator.popUntil(context,
+                                                    (route) {
+                                                  return popCount++ == 2;
+                                                })
+                                              })
+                                    }
+                                  else
+                                    {
+                                      await httpService
+                                          .getQuestionnaireQuestions(
+                                              widget.projectId)
+                                          .then((questions) async => {
+                                                for (int i = 0;
+                                                    i < questions.length;
+                                                    i++)
                                                   {
-                                                    concatenatedMeetingTimes =
-                                                        "",
-                                                    for (int i = 0;
-                                                        i <
-                                                            meetingTimeList
-                                                                .length;
-                                                        i++)
+                                                    if (i == 0)
                                                       {
-                                                        if (meetingTimeList[i]
-                                                                .timeOfDay ==
-                                                            "Morning")
+                                                        concatenatedMeetingTimes =
+                                                            "",
+                                                        for (int i = 0;
+                                                            i <
+                                                                meetingTimeList
+                                                                    .length;
+                                                            i++)
                                                           {
-                                                            concatenatedMeetingTimes +=
-                                                                "Morning:",
-                                                            concatenatedMeetingTimes +=
-                                                                meetingTimeList[
+                                                            if (meetingTimeList[
                                                                         i]
-                                                                    .daysOfWeek
-                                                                    .join(','),
-                                                            concatenatedMeetingTimes +=
-                                                                '`'
-                                                          }
-                                                        else if (meetingTimeList[
-                                                                    i]
-                                                                .timeOfDay ==
-                                                            "Afternoon")
-                                                          {
-                                                            concatenatedMeetingTimes +=
-                                                                "Afternoon:",
-                                                            concatenatedMeetingTimes +=
-                                                                meetingTimeList[
+                                                                    .timeOfDay ==
+                                                                "Morning")
+                                                              {
+                                                                concatenatedMeetingTimes +=
+                                                                    "Morning:",
+                                                                concatenatedMeetingTimes +=
+                                                                    meetingTimeList[
+                                                                            i]
+                                                                        .daysOfWeek
+                                                                        .join(
+                                                                            ','),
+                                                                concatenatedMeetingTimes +=
+                                                                    '`'
+                                                              }
+                                                            else if (meetingTimeList[
                                                                         i]
-                                                                    .daysOfWeek
-                                                                    .join(','),
-                                                            concatenatedMeetingTimes +=
-                                                                '`'
-                                                          }
-                                                        else if (meetingTimeList[
-                                                                    i]
-                                                                .timeOfDay ==
-                                                            "Evening")
-                                                          {
-                                                            concatenatedMeetingTimes +=
-                                                                "Evening:",
-                                                            concatenatedMeetingTimes +=
-                                                                meetingTimeList[
+                                                                    .timeOfDay ==
+                                                                "Afternoon")
+                                                              {
+                                                                concatenatedMeetingTimes +=
+                                                                    "Afternoon:",
+                                                                concatenatedMeetingTimes +=
+                                                                    meetingTimeList[
+                                                                            i]
+                                                                        .daysOfWeek
+                                                                        .join(
+                                                                            ','),
+                                                                concatenatedMeetingTimes +=
+                                                                    '`'
+                                                              }
+                                                            else if (meetingTimeList[
                                                                         i]
-                                                                    .daysOfWeek
-                                                                    .join(','),
-                                                            concatenatedMeetingTimes +=
-                                                                '`'
-                                                          }
-                                                      },
-                                                    answers.add(AnswerDTO(
-                                                        -1,
-                                                        concatenatedMeetingTimes,
-                                                        questions[i].id,
-                                                        loggedUserId,
-                                                        loggedUserName)),
-                                                  }
-                                                else if (i == 1)
-                                                  {
-                                                    if (_quality ==
-                                                        ExpectedQuality.A)
-                                                      {
-                                                        answers.add(AnswerDTO(
-                                                            -1,
-                                                            "A",
-                                                            questions[i].id,
-                                                            loggedUserId,
-                                                            loggedUserName)),
-                                                      }
-                                                    else if (_quality ==
-                                                        ExpectedQuality.B)
-                                                      {
-                                                        answers.add(AnswerDTO(
-                                                            -1,
-                                                            "B",
-                                                            questions[i].id,
-                                                            loggedUserId,
-                                                            loggedUserName)),
-                                                      }
-                                                    else if (_quality ==
-                                                        ExpectedQuality.C)
-                                                      {
-                                                        answers.add(AnswerDTO(
-                                                            -1,
-                                                            "C",
-                                                            questions[i].id,
-                                                            loggedUserId,
-                                                            loggedUserName)),
-                                                      }
-                                                  }
-                                                else if (i == 2)
-                                                  {
-                                                    answers.add(AnswerDTO(
-                                                        -1,
-                                                        skillList.join(','),
-                                                        questions[i].id,
-                                                        loggedUserId,
-                                                        loggedUserName)),
-                                                  }
-                                                else if (i == 3)
-                                                  {
-                                                    answers.add(AnswerDTO(
-                                                        -1,
-                                                        numberHoursTextFieldController
-                                                            .text,
-                                                        questions[i].id,
-                                                        loggedUserId,
-                                                        loggedUserName)),
-                                                  }
-                                                else if (i == 4)
-                                                  {
-                                                    // Answer is not in use
-                                                  }
-                                              },
-                                            await httpService
-                                                .postQuestionnaireAnswers(
-                                                    widget.projectId, answers)
-                                                .then((loggedUserAnswers) => {
-                                                      Navigator.push(
-                                                        context,
-                                                        PageRouteBuilder(
-                                                          pageBuilder: (BuildContext
-                                                                  context,
-                                                              Animation<double>
-                                                                  animation1,
-                                                              Animation<double>
-                                                                  animation2) {
-                                                            return GroupSearchPage(
-                                                                userId: widget
-                                                                    .loggedUserId,
-                                                                classId: widget
-                                                                    .classId,
-                                                                className: widget
-                                                                    .className,
-                                                                projectId: widget
-                                                                    .projectId,
-                                                                projectName: widget
-                                                                    .projectName);
+                                                                    .timeOfDay ==
+                                                                "Evening")
+                                                              {
+                                                                concatenatedMeetingTimes +=
+                                                                    "Evening:",
+                                                                concatenatedMeetingTimes +=
+                                                                    meetingTimeList[
+                                                                            i]
+                                                                        .daysOfWeek
+                                                                        .join(
+                                                                            ','),
+                                                                concatenatedMeetingTimes +=
+                                                                    '`'
+                                                              }
                                                           },
-                                                          transitionDuration:
-                                                              Duration.zero,
-                                                          reverseTransitionDuration:
-                                                              Duration.zero,
-                                                        ),
-                                                      )
-                                                    })
-                                          })
+                                                        answers.add(AnswerDTO(
+                                                            -1,
+                                                            concatenatedMeetingTimes,
+                                                            questions[i].id,
+                                                            loggedUserId,
+                                                            loggedUserName)),
+                                                      }
+                                                    else if (i == 1)
+                                                      {
+                                                        if (_quality ==
+                                                            ExpectedQuality.A)
+                                                          {
+                                                            answers.add(AnswerDTO(
+                                                                -1,
+                                                                "A",
+                                                                questions[i].id,
+                                                                loggedUserId,
+                                                                loggedUserName)),
+                                                          }
+                                                        else if (_quality ==
+                                                            ExpectedQuality.B)
+                                                          {
+                                                            answers.add(AnswerDTO(
+                                                                -1,
+                                                                "B",
+                                                                questions[i].id,
+                                                                loggedUserId,
+                                                                loggedUserName)),
+                                                          }
+                                                        else if (_quality ==
+                                                            ExpectedQuality.C)
+                                                          {
+                                                            answers.add(AnswerDTO(
+                                                                -1,
+                                                                "C",
+                                                                questions[i].id,
+                                                                loggedUserId,
+                                                                loggedUserName)),
+                                                          }
+                                                      }
+                                                    else if (i == 2)
+                                                      {
+                                                        answers.add(AnswerDTO(
+                                                            -1,
+                                                            skillList.join(','),
+                                                            questions[i].id,
+                                                            loggedUserId,
+                                                            loggedUserName)),
+                                                      }
+                                                    else if (i == 3)
+                                                      {
+                                                        answers.add(AnswerDTO(
+                                                            -1,
+                                                            numberHoursTextFieldController
+                                                                .text,
+                                                            questions[i].id,
+                                                            loggedUserId,
+                                                            loggedUserName)),
+                                                      }
+                                                    else if (i == 4)
+                                                      {
+                                                        // Answer is not in use
+                                                      }
+                                                  },
+                                                await httpService
+                                                    .postQuestionnaireAnswers(
+                                                        widget.projectId,
+                                                        answers)
+                                                    .then(
+                                                        (loggedUserAnswers) => {
+                                                              Navigator.push(
+                                                                context,
+                                                                PageRouteBuilder(
+                                                                  pageBuilder: (BuildContext context,
+                                                                      Animation<
+                                                                              double>
+                                                                          animation1,
+                                                                      Animation<
+                                                                              double>
+                                                                          animation2) {
+                                                                    return GroupSearchPage(
+                                                                        userId: widget
+                                                                            .loggedUserId,
+                                                                        classId:
+                                                                            widget
+                                                                                .classId,
+                                                                        className:
+                                                                            widget
+                                                                                .className,
+                                                                        projectId:
+                                                                            widget
+                                                                                .projectId,
+                                                                        projectName:
+                                                                            widget.projectName);
+                                                                  },
+                                                                  transitionDuration:
+                                                                      Duration
+                                                                          .zero,
+                                                                  reverseTransitionDuration:
+                                                                      Duration
+                                                                          .zero,
+                                                                ),
+                                                              )
+                                                            })
+                                              })
+                                    }
                                 }
                             },
                             style: ElevatedButton.styleFrom(

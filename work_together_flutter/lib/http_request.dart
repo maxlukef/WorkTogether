@@ -30,7 +30,7 @@ import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
 class HttpService {
-  // String connectionString = 'localhost:7277';
+  //String connectionString = 'localhost:7277';
   String connectionString = 'worktogether.site';
 
   var authHeader = {
@@ -108,6 +108,10 @@ class HttpService {
         }
       }
 
+      if (loggedInUser.interests.contains("")) {
+        loggedInUser.interests.remove("");
+      }
+
       return CardInfo(
           id: loggedInUser.id,
           name: loggedInUser.name,
@@ -173,6 +177,10 @@ class HttpService {
               } else if (cur[0] == 'Evening') {
                 evenings = cur[1].split(',');
               }
+            }
+
+            if (users[i].interests.contains("")) {
+              users[i].interests.remove("");
             }
 
             cardInfo.add(CardInfo(
@@ -320,6 +328,10 @@ class HttpService {
               }
             }
 
+            if (curMember["interests"].interests.contains("")) {
+              curMember["interests"].interests.remove("");
+            }
+
             teamMates.add(CardInfo(
                 id: curMember["id"],
                 name: curMember["name"],
@@ -386,6 +398,7 @@ class HttpService {
 
       authToken = result.authToken;
       loggedUserId = result.id;
+      loggedUserName = result.name;
       return true;
     } else {
       return false;
