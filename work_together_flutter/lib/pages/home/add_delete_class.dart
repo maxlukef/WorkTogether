@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:work_together_flutter/global_components/our_colors.dart';
 
 import '../../global_components/custom_app_bar.dart';
+import '../../global_components/date_time_converter.dart';
 import '../../http_request.dart';
 import '../../models/classes_models/classes_dto.dart';
 import '../professor_dashboard/project_edit_page.dart';
@@ -11,6 +13,12 @@ class AddDeleteClass extends StatefulWidget {
 
   String className = "";
   String classDescription = "";
+  String projectName = "";
+  String projectDescription = "";
+  String projectDeadline = "";
+  String formationDeadline = "";
+  String minTeamSize = "";
+  String maxTeamSize = "";
 
   @override
   _AddDeleteClassState createState() => _AddDeleteClassState();
@@ -19,6 +27,14 @@ class AddDeleteClass extends StatefulWidget {
 class _AddDeleteClassState extends State<AddDeleteClass> {
   final _formKey = GlobalKey<FormState>();
   ClassesDTO selectedClass = ClassesDTO(0, 0, "", "");
+  TextEditingController className = TextEditingController();
+  TextEditingController classDescription = TextEditingController();
+  TextEditingController projectName = TextEditingController();
+  TextEditingController projectDescription = TextEditingController();
+  TextEditingController projectDeadline = TextEditingController();
+  TextEditingController formationDeadline = TextEditingController();
+  TextEditingController minTeamSize = TextEditingController();
+  TextEditingController maxTeamSize = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +45,7 @@ class _AddDeleteClassState extends State<AddDeleteClass> {
                 child: SizedBox(
           width: 675,
           child: Padding(
-              padding: EdgeInsets.only(left: 20, right: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               child: Form(
                   key: _formKey,
                   child: Column(children: [
@@ -42,6 +58,7 @@ class _AddDeleteClassState extends State<AddDeleteClass> {
                         onSaved: (value) {
                           widget.className = value!;
                         },
+                        controller: className,
                         decoration: const InputDecoration(
                           hintText: 'Enter a class name',
                         ),
@@ -55,6 +72,7 @@ class _AddDeleteClassState extends State<AddDeleteClass> {
                         onSaved: (value) {
                           widget.classDescription = value!;
                         },
+                        controller: classDescription,
                         decoration: const InputDecoration(
                           hintText: 'Enter a class description',
                         ),
@@ -64,6 +82,115 @@ class _AddDeleteClassState extends State<AddDeleteClass> {
                           }
                           return null;
                         }),
+                    TextFormField(
+                        onSaved: (value) {
+                          widget.projectName = value!;
+                        },
+                        controller: projectName,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter a project name',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a project name';
+                          }
+                          return null;
+                        }),
+                    TextFormField(
+                        onSaved: (value) {
+                          widget.projectDescription = value!;
+                        },
+                        controller: projectDescription,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter a project description',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a project description';
+                          }
+                          return null;
+                        }),
+                    TextFormField(
+                        onSaved: (value) {
+                          widget.minTeamSize = value!;
+                        },
+                        controller: minTeamSize,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter min team size',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter min team size';
+                          }
+                          return null;
+                        }),
+                    TextFormField(
+                        onSaved: (value) {
+                          widget.maxTeamSize = value!;
+                        },
+                        controller: maxTeamSize,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter max team size',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter max team size';
+                          }
+                          return null;
+                        }),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "Enter Team Formation Deadline",
+                        icon: Icon(Icons.calendar_today),
+                      ),
+                      onSaved: (value) {
+                        widget.formationDeadline = value!;
+                      },
+                      controller: formationDeadline,
+                      readOnly: true,
+                      onTap: () async {
+                        DateTime initialDate = DateTime.now();
+                        initialDate = DateTime.now();
+                        DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: initialDate,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2101));
+                        if (pickedDate != null) {
+                          String formattedDate = DateFormat.yMd().format(pickedDate);
+                          setState(() {
+                            formationDeadline.text = formattedDate;
+                          });
+                        }
+                      },
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "Enter Project Deadline",
+                        icon: Icon(Icons.calendar_today),
+                      ),
+                      onSaved: (value) {
+                        widget.projectDeadline = value!;
+                      },
+                      controller: projectDeadline,
+                      readOnly: true,
+                      onTap: () async {
+                        DateTime initialDate = DateTime.now();
+                        initialDate = DateTime.now();
+                        DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: initialDate,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2101));
+                        if (pickedDate != null) {
+                          String formattedDate = DateFormat.yMd().format(pickedDate);
+                          setState(() {
+                            projectDeadline.text = formattedDate;
+                          });
+                        }
+                      },
+                    ),
+
                     const SizedBox(height: 20),
                     Align(
                         alignment: Alignment.centerLeft,
@@ -73,11 +200,22 @@ class _AddDeleteClassState extends State<AddDeleteClass> {
                           onPressed: () {
                             _formKey.currentState!.save();
                             if (_formKey.currentState!.validate()) {
-                              print(widget.className);
-                              print(widget.classDescription);
                               HttpService().addClass(
-                                  widget.className, widget.classDescription);
-                              setState(() {});
+                                  widget.className, widget.classDescription,
+                                  widget.projectName, widget.projectDescription,
+                                  widget.projectDeadline, widget.formationDeadline,
+                                  widget.minTeamSize, widget.maxTeamSize);
+
+                              setState(() {
+                                className.clear();
+                                classDescription.clear();
+                                projectName.clear();
+                                projectDescription.clear();
+                                projectDeadline.clear();
+                                formationDeadline.clear();
+                                minTeamSize.clear();
+                                maxTeamSize.clear();
+                              });
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Class added')));
                             }
