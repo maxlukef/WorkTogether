@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -129,7 +131,7 @@ namespace WorkTogether.Controllers
         [Authorize]
         public async Task<ActionResult<List<List<String>>>> GetAlerts(int id)
         {
-            List<dynamic> alerts = new List<dynamic>();
+            Dictionary<int, dynamic> alerts = new Dictionary<int, dynamic>();
 
             var users = (from u in _context.Users
                          join c in _context.StudentClasses on u.Id equals c.Student.Id
@@ -142,14 +144,12 @@ namespace WorkTogether.Controllers
                              userId = u.Name
                          }).ToList();
 
-            
-
             if (users == null)
             {
                 return NotFound();
             }
 
-            alerts.Add(users);
+            alerts.Add(0, users);
 
             var teams = (from t in _context.Teams
                          join p in _context.Projects on t.Project.Id equals p.Id
@@ -162,7 +162,7 @@ namespace WorkTogether.Controllers
 
             if (teams == null) { return NotFound(); }
 
-            alerts.Add(teams);
+            alerts.Add(1, teams);
 
             return Ok(alerts);
         }

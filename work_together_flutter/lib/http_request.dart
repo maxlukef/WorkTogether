@@ -30,7 +30,7 @@ import 'models/questionnaire_models/questionnaire_info.dart';
 import 'models/user_models/user.dart';
 
 class HttpService {
-  // String connectionString = 'localhost:7277';
+  //String connectionString = 'localhost:7277';
   String connectionString = 'worktogether.site';
 
   var authHeader = {
@@ -200,7 +200,7 @@ class HttpService {
 
   Future<List<int>> getTeamIds(int projectId) async {
     Uri uri = Uri.https(connectionString, 'api/Teams/byproject/$projectId');
-    var res = await get(uri);
+    var res = await get(uri, headers: authHeader);
     List<int> teamIds = [];
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode("[${res.body}]");
@@ -536,6 +536,7 @@ class HttpService {
   Future<List<Milestone>?> getMilestonesForProject(int projectID) async {
     Uri uri = Uri.https(
         connectionString, "api/Milestones/ProjectMilestones/$projectID");
+
     Response res = await get(uri, headers: authHeader);
 
     if (res.statusCode == 200) {
@@ -813,6 +814,7 @@ class HttpService {
           .map((i) => ClassesDTO.fromJson(i))
           .toList();
 
+      print(classes.length);
       for (ClassesDTO classDto in classes) {
         int classId = classDto.classID;
 
@@ -1118,10 +1120,50 @@ class HttpService {
     await delete(uri, headers: authHeader);
   }
 
-  void addClass(String className, String description) async {
+  void addClass(String className, String description, String projectName,
+      String projectDescription, String projectDeadline, String teamFormationDeadline,
+      String minTeamSize, String maxTeamSize,) async {
     Uri uri = Uri.https(connectionString, 'api/Classes/create');
+    Uri projectUri = Uri.https(connectionString, 'api/Projects/create');
     var body = jsonEncode({"name": className, "description": description});
     var response = await post(uri, headers: authHeader, body: body);
-    print(response.statusCode);
+    if (response.statusCode != 200) {
+      throw "Unable to create class";
+    }
+    var responseBody = jsonDecode(response.body);
+    var classId = responseBody["id"].toString();
+
+    try {
+      addProject(classId, projectName, projectDescription, projectDeadline, teamFormationDeadline,
+          minTeamSize, maxTeamSize);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void addProject(String classId, String projectName, String projectDescription,
+      String projectDeadline, String teamFormationDeadline,
+      String minTeamSize, String maxTeamSize) async {
+    var inputFormat = DateFormat.yMd();
+    var outputFormat = DateFormat('yyyy-MM-dd');
+    DateTime formattedProjectDeadline = inputFormat.parse(projectDeadline);
+    DateTime formattedTeamFormationDeadline = inputFormat.parse(teamFormationDeadline);
+
+    Uri uri = Uri.https(connectionString, 'api/Projects/create');
+    var body = jsonEncode({
+      "Name": projectName,
+      "ClassId": classId,
+      "Description": projectDescription,
+      "Deadline": outputFormat.format(formattedProjectDeadline),
+      "TeamFormationDeadline": outputFormat.format(formattedTeamFormationDeadline),
+      "MinTeamSize": minTeamSize,
+      "MaxTeamSize": maxTeamSize
+      });
+    print(body);
+    var response = await post(uri, headers: authHeader, body: body);
+    if (response.statusCode != 200) {
+      print("error creating project");
+      throw response.statusCode;
+    }
   }
 }

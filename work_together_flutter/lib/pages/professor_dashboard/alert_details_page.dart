@@ -16,7 +16,7 @@ class AlertDetailsPage extends StatelessWidget {
         title: Text("Alert Details"),
       ),
       body: Center(
-        child: Text("Alert Details Page"),
+        child: Text("Coming Soon!"),
       ),
     );
   }

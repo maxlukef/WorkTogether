@@ -214,7 +214,6 @@ class _projectEditPageState extends State<ProjectEditPage> {
       print(t.name);
       teamNames.add(t.name);
     }
-    print("yo");
     return teamNames;
   }
 
