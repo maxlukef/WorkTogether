@@ -386,7 +386,6 @@ class _GroupHomeState extends State<GroupHome> {
       padding: const EdgeInsets.fromLTRB(24, 8, 16, 8),
       child: Container(
         width: 200,
-        height: 100,
         color: Colors.grey.shade200,
         child: Material(
           color: Colors.grey.shade200,
@@ -417,22 +416,25 @@ class _GroupHomeState extends State<GroupHome> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            milestone.title,
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          if (milestone.tasksCompleted == milestone.totalTasks)
-                            const Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
+                        padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                milestone.title,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600),
+                              ),
                             ),
-                        ],
-                      ),
-                    ),
+                            if (milestone.tasksCompleted ==
+                                milestone.totalTasks)
+                              const Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                              ),
+                          ],
+                        )),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                       child: Text(

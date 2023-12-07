@@ -163,7 +163,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
-              maxLength: 20,
+              maxLength: 30,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Enter Task Name",

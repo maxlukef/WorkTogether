@@ -83,62 +83,63 @@ class _AllTasksPageState extends State<AllTasksPage> {
               padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
               child: Column(
                 children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        createTaskInProgressSection(groupTasks, "Group Tasks"),
-                        createTaskInProgressSection(yourTasks, "Your Tasks"),
-                        createCompletedTaskSection(
-                            completedTasks, "Completed Tasks"),
-                      ],
-                    ),
-                  ),
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 10, 8, 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    child: SingleChildScrollView(
+                      child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: ourLightColor()),
-                                // Bring user to create task page.
-                                onPressed: () async {
-                                  await Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder: (BuildContext context,
-                                          Animation<double> animation1,
-                                          Animation<double> animation2) {
-                                        return CreateTaskPage(
-                                          team: widget.team,
-                                          milestones: widget.milestones,
-                                          studentsInGroup: widget.team.members,
-                                          hasInitialMilestone: false,
-                                          isEditing: false,
-                                        );
-                                      },
-                                      transitionDuration: Duration.zero,
-                                      reverseTransitionDuration: Duration.zero,
-                                    ),
-                                  );
-                                  await getUserTasks();
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                                  child: Text(
-                                    "Create Task",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                )),
-                          ),
+                          createTaskInProgressSection(
+                              groupTasks, "Group Tasks"),
+                          createTaskInProgressSection(yourTasks, "Your Tasks"),
+                          createCompletedTaskSection(
+                              completedTasks, "Completed Tasks"),
                         ],
                       ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 10, 8, 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: ourLightColor()),
+                              // Bring user to create task page.
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (BuildContext context,
+                                        Animation<double> animation1,
+                                        Animation<double> animation2) {
+                                      return CreateTaskPage(
+                                        team: widget.team,
+                                        milestones: widget.milestones,
+                                        studentsInGroup: widget.team.members,
+                                        hasInitialMilestone: false,
+                                        isEditing: false,
+                                      );
+                                    },
+                                    transitionDuration: Duration.zero,
+                                    reverseTransitionDuration: Duration.zero,
+                                  ),
+                                );
+                                await getUserTasks();
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                                child: Text(
+                                  "Create Task",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )),
+                        ),
+                      ],
                     ),
                   )
                 ],
