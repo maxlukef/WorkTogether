@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -26,7 +27,6 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   final HttpService httpService = HttpService();
   final courseJoinTextController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -140,11 +140,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: ourLightColor()),
-                          onPressed: () {
-                            Navigator.push(context,
+                          onPressed: () async {
+                            await Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
                               return AddDeleteClass();
                             }));
+                            setState(() {});
                           },
                           child: const Text("Add/Delete Class"),
                         ),
@@ -214,7 +215,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                         .then((value) async {
                                       if (value != null &&
                                           loggedUserId == value.professorID) {
-                                        Navigator.push(context,
+                                        await Navigator.push(context,
                                             MaterialPageRoute(
                                           builder: (context) {
                                             return Dashboard(
@@ -225,16 +226,17 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                     projectNameValue.classId);
                                           },
                                         ));
+                                        setState(() {});
                                       } else if (projectNameValue
                                           .teamFormationDeadline
                                           .isAfter(DateTime.now())) {
                                         await httpService
                                             .getProjectAnswers(
                                                 projectNameValue.id)
-                                            .then((value) => {
+                                            .then((value) async => {
                                                   if (value.isNotEmpty)
                                                     {
-                                                      Navigator.push(
+                                                      await Navigator.push(
                                                         context,
                                                         PageRouteBuilder(
                                                           pageBuilder: (BuildContext
@@ -264,11 +266,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                           reverseTransitionDuration:
                                                               Duration.zero,
                                                         ),
-                                                      )
+                                                      ),
+                                                      setState(() {})
                                                     }
                                                   else
                                                     {
-                                                      Navigator.push(
+                                                      await Navigator.push(
                                                         context,
                                                         PageRouteBuilder(
                                                           pageBuilder: (BuildContext
@@ -299,11 +302,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                           reverseTransitionDuration:
                                                               Duration.zero,
                                                         ),
-                                                      )
+                                                      ),
+                                                      setState(() {})
                                                     }
                                                 });
                                       } else {
-                                        Navigator.push(
+                                        await Navigator.push(
                                           context,
                                           PageRouteBuilder(
                                             pageBuilder: (BuildContext context,
@@ -318,6 +322,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                 Duration.zero,
                                           ),
                                         );
+                                        setState(() {});
                                       }
                                     });
                                   },

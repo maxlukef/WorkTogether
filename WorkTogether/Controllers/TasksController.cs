@@ -334,7 +334,7 @@ namespace WorkTogether.Controllers
             var ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
 
             if (ms == null) { return NotFound(); }
-            var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
+            var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).Where(te=>te.Members.Contains(curr_user)).FirstOrDefaultAsync();
 
 
             if (team == null)
@@ -342,10 +342,6 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
 
-            if (!team.Members.Contains(curr_user))
-            {
-                return Unauthorized();
-            }
             var tasks = await _context.Tasks.Include(t => t.ParentMilestone).Include(t => t.Team).Include(t => t.Assignees).Where(t => t.ParentMilestone == ms && !t.Assignees.Contains(curr_user)).ToListAsync();
 
             List<ReturnTaskDTO> tasks_dto = new List<ReturnTaskDTO>();
@@ -422,7 +418,7 @@ namespace WorkTogether.Controllers
             var ms = await _context.Milestones.Include(m => m.Project).Where(m => m.Id == msid).FirstOrDefaultAsync();
 
             if (ms == null) { return NotFound(); }
-            var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).FirstOrDefaultAsync();
+            var team = await _context.Teams.Where(te => te.Project == ms.Project).Include(te => te.Members).Where(te=>te.Members.Contains(curr_user)).FirstOrDefaultAsync();
 
 
             if (team == null)

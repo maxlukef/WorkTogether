@@ -53,231 +53,225 @@ class _TaskDescriptionPageState extends State<TaskDescriptionPage> {
       appBar: CustomAppBar(
         title: widget.task.name,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SingleChildScrollView(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-                child: Container(
-                  constraints: const BoxConstraints(maxHeight: 40.0),
-                  child: Row(
-                    children: [
-                      const Text(
-                        "Task Name: ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Flexible(
-                        child: Text(
-                          widget.task.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-                child: Container(
-                  constraints: const BoxConstraints(maxHeight: 40.0),
-                  child: Row(
-                    children: [
-                      const Text(
-                        "Milestone Name: ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Flexible(
-                        child: Text(
-                          milestoneName,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-                child: Container(
-                  constraints: const BoxConstraints(maxHeight: 40.0),
-                  child: Row(
-                    children: [
-                      const Text(
-                        "Assigned User(s): ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      assignedUsers
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Deadline: ",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+      body: SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 40.0),
+              child: Row(
+                children: [
+                  const Text(
+                    "Task Name: ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
-                    Text(
-                      formatDatePretty(widget.task.dueDate),
+                  ),
+                  Flexible(
+                    child: Text(
+                      widget.task.name,
                       style: const TextStyle(
+                        fontSize: 16,
                         color: Colors.blue,
                         fontWeight: FontWeight.w600,
-                        fontSize: 16,
                       ),
                     ),
-                  ],
-                ),
+                  )
+                ],
               ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
-                child: Text(
-                  "Task Description: ",
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 40.0),
+              child: Row(
+                children: [
+                  const Text(
+                    "Milestone Name: ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      milestoneName,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 40.0),
+              child: Row(
+                children: [
+                  const Text(
+                    "Assigned User(s): ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  assignedUsers
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  "Deadline: ",
                   style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  formatDatePretty(widget.task.dueDate),
+                  style: const TextStyle(
+                    color: Colors.blue,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
                 ),
+              ],
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 0, 8),
+            child: Text(
+              "Task Description: ",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                child: Wrap(children: [
-                  Text(
-                    widget.task.description,
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ]),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                child: Wrap(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ourLightColor()),
-                          onPressed: () async {
-                            if (widget.task.completed) {
-                              await HttpService()
-                                  .markTaskAsIncomplete(widget.task.id);
-                            } else {
-                              await HttpService()
-                                  .markTaskAsComplete(widget.task.id);
-                            }
-                            if (context.mounted) {
-                              Navigator.of(context).pop(true);
-                            }
-                          },
-                          child: widget.task.completed
-                              ? const Text(
-                                  "Mark as Incomplete",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text(
-                                  "Mark as Complete",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                  ),
-                                )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ourLightColor()),
-                          onPressed: () async {
-                            await HttpService().deleteTask(widget.task.id);
-
-                            if (context.mounted) {
-                              Navigator.of(context).pop();
-                            }
-                          },
-                          child: const Text(
-                            "Delete Task",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                            ),
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ourLightColor()),
-                          // Bring user to create task page.
-                          onPressed: () async {
-                            final bool result = await Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder: (BuildContext context,
-                                    Animation<double> animation1,
-                                    Animation<double> animation2) {
-                                  return CreateTaskPage(
-                                    team: widget.team,
-                                    milestones: widget.milestones,
-                                    studentsInGroup: widget.team.members,
-                                    hasInitialMilestone: false,
-                                    isEditing: true,
-                                    editingTask: widget.task,
-                                  );
-                                },
-                                transitionDuration: Duration.zero,
-                                reverseTransitionDuration: Duration.zero,
-                              ),
-                            );
-                            if (result == true) {
-                              if (context.mounted) {
-                                Navigator.of(context).pop(true);
-                              }
-                            }
-                          },
-                          child: const Text(
-                            "Edit Task",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                            ),
-                          )),
-                    ),
-                  ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+            child: Wrap(children: [
+              Text(
+                widget.task.description,
+                style: const TextStyle(
+                  fontSize: 16,
                 ),
               ),
             ]),
           ),
-        ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+            child: Wrap(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ourLightColor()),
+                      onPressed: () async {
+                        if (widget.task.completed) {
+                          await HttpService()
+                              .markTaskAsIncomplete(widget.task.id);
+                        } else {
+                          await HttpService()
+                              .markTaskAsComplete(widget.task.id);
+                        }
+                        if (context.mounted) {
+                          Navigator.of(context).pop(true);
+                        }
+                      },
+                      child: widget.task.completed
+                          ? const Text(
+                              "Mark as Incomplete",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              "Mark as Complete",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ourLightColor()),
+                      onPressed: () async {
+                        await HttpService().deleteTask(widget.task.id);
+
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Text(
+                        "Delete Task",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ourLightColor()),
+                      // Bring user to create task page.
+                      onPressed: () async {
+                        final bool result = await Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (BuildContext context,
+                                Animation<double> animation1,
+                                Animation<double> animation2) {
+                              return CreateTaskPage(
+                                team: widget.team,
+                                milestones: widget.milestones,
+                                studentsInGroup: widget.team.members,
+                                hasInitialMilestone: false,
+                                isEditing: true,
+                                editingTask: widget.task,
+                              );
+                            },
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
+                          ),
+                        );
+                        if (result == true) {
+                          if (context.mounted) {
+                            Navigator.of(context).pop(true);
+                          }
+                        }
+                      },
+                      child: const Text(
+                        "Edit Task",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      )),
+                ),
+              ],
+            ),
+          ),
+        ]),
       ),
     );
   }
