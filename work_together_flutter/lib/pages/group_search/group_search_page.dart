@@ -143,6 +143,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                                         fontWeight: FontWeight.w700)),
                               )),
                           MasonryGridView.count(
+                              physics: NeverScrollableScrollPhysics(),
                               crossAxisCount: 2,
                               mainAxisSpacing: 15,
                               crossAxisSpacing: 10,
@@ -200,6 +201,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                                         fontWeight: FontWeight.w700)),
                               )),
                           MasonryGridView.count(
+                              physics: NeverScrollableScrollPhysics(),
                               crossAxisCount: 2,
                               mainAxisSpacing: 15,
                               crossAxisSpacing: 10,
@@ -304,6 +306,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                               .filterIsActive ==
                           true) {
                         return MasonryGridView.count(
+                            physics: NeverScrollableScrollPhysics(),
                             crossAxisCount: 2,
                             mainAxisSpacing: 15,
                             crossAxisSpacing: 10,
@@ -335,6 +338,7 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                             });
                       } else {
                         return MasonryGridView.count(
+                            physics: NeverScrollableScrollPhysics(),
                             crossAxisCount: 2,
                             mainAxisSpacing: 15,
                             crossAxisSpacing: 10,

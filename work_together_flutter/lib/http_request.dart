@@ -108,9 +108,9 @@ class HttpService {
         }
       }
 
-      if (loggedInUser.interests.contains("")) {
-        loggedInUser.interests.remove("");
-      }
+      // if (loggedInUser.interests.contains("")) {
+      //   loggedInUser.interests.remove("");
+      // }
 
       return CardInfo(
           id: loggedInUser.id,
@@ -180,9 +180,9 @@ class HttpService {
                 }
               }
 
-              if (users[i].interests.contains("")) {
-                users[i].interests.remove("");
-              }
+              // if (users[i].interests.contains("")) {
+              //   users[i].interests.remove("");
+              // }
 
               cardInfo.add(CardInfo(
                   id: users[i].id,
@@ -318,9 +318,9 @@ class HttpService {
               }
             }
 
-            if (curMember["interests"].interests.contains("")) {
-              curMember["interests"].interests.remove("");
-            }
+            // if (curMember["interests"].interests.contains("")) {
+            //   curMember["interests"].interests.remove("");
+            // }
 
             teamMates.add(CardInfo(
                 id: curMember["id"],

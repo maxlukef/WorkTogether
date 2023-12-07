@@ -50,10 +50,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         future: httpService.getCurrentUserNotifications(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasError) {
-            return Column(
+            return const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 Text("An error has occurred while loading page."),
               ],
             );
@@ -154,10 +154,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                                                       currentUserNotifications
                                                           .elementAt(index)
                                                           .id),
-                                              httpService.deleteNotification(
-                                                  currentUserNotifications
-                                                      .elementAt(index)
-                                                      .id),
+                                              // httpService.deleteNotification(
+                                              //     currentUserNotifications
+                                              //         .elementAt(index)
+                                              //         .id),
                                               if (context.mounted)
                                                 {Navigator.of(context).pop()}
                                             },
