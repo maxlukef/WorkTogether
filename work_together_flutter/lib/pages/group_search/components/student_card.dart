@@ -238,7 +238,7 @@ class StudentCard extends StatelessWidget {
   _interestsList() {
     List<Widget> interestsList = [];
 
-    if (interests.isEmpty) {
+    if (interests.length == 1 && interests.elementAt(0) == "") {
       interestsList.add(const Align(
         alignment: Alignment.center,
         child: Text(
@@ -248,6 +248,10 @@ class StudentCard extends StatelessWidget {
       ));
     } else {
       for (var i = 0; i < interests.length; i++) {
+        if (interests[i] == "") {
+          continue;
+        }
+
         interestsList.add(Padding(
           padding: const EdgeInsets.only(top: 3, right: 6, bottom: 3),
           child: Tag(text: interests[i]),
