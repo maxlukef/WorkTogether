@@ -16,7 +16,7 @@ class StatDetailsPage extends StatelessWidget {
         title: Text("Stat Details"),
       ),
       body: Center(
-        child: Text("Stat Details Page"),
+        child: Text("Coming Soon!"),
       ),
     );
   }

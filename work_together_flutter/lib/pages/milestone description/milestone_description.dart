@@ -81,138 +81,141 @@ class _MilestoneDescriptionPageState extends State<MilestoneDescriptionPage> {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SingleChildScrollView(
-                  child: Center(
-                    child: SizedBox(
-                      width: 675,
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: CircularPercentIndicator(
-                                      radius: 40,
-                                      lineWidth: 10.0,
-                                      backgroundColor: Colors.grey.shade200,
-                                      progressColor: Colors.green,
-                                      percent: widget.milestone
-                                          .percentOfTasksComplete(),
-                                      center: Text(
-                                        "${widget.milestone.tasksCompleted} / ${widget.milestone.totalTasks}",
-                                        style: const TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Center(
+                      child: SizedBox(
+                        width: 675,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CircularPercentIndicator(
+                                        radius: 40,
+                                        lineWidth: 10.0,
+                                        backgroundColor: Colors.grey.shade200,
+                                        progressColor: Colors.green,
+                                        percent: widget.milestone
+                                            .percentOfTasksComplete(),
+                                        center: Text(
+                                          "${widget.milestone.tasksCompleted} / ${widget.milestone.totalTasks}",
+                                          style: const TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const Text(
-                                    "Tasks Complete",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w600),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Deadline: ",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    formatDatePretty(widget.milestone.deadline),
-                                    style: const TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                              child: Text(
-                                "Description: ",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                    const Text(
+                                      "Tasks Complete",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600),
+                                    )
+                                  ],
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                              child: Text(
-                                widget.milestone.description,
-                                style: const TextStyle(
-                                  fontSize: 14,
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Deadline: ",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      formatDatePretty(
+                                          widget.milestone.deadline),
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            createTaskSection(userTasks!),
-                          ]),
+                              const Padding(
+                                padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                                child: Text(
+                                  "Description: ",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                                child: Text(
+                                  widget.milestone.description,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              createTaskSection(userTasks!),
+                            ]),
+                      ),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 10, 8, 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: ourLightColor()),
-                              // Bring user to create task page.
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (BuildContext context,
-                                        Animation<double> animation1,
-                                        Animation<double> animation2) {
-                                      return CreateTaskPage(
-                                        team: widget.team,
-                                        milestones: widget.allMilestones,
-                                        studentsInGroup: widget.team.members,
-                                        hasInitialMilestone: true,
-                                        initialMilestoneValue: widget.milestone,
-                                        isEditing: false,
-                                      );
-                                    },
-                                    transitionDuration: Duration.zero,
-                                    reverseTransitionDuration: Duration.zero,
-                                  ),
-                                );
-                                await getUserTasksApiCall();
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                                child: Text(
-                                  "Create Task",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                  ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 10, 8, 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 0, 0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ourLightColor()),
+                            // Bring user to create task page.
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (BuildContext context,
+                                      Animation<double> animation1,
+                                      Animation<double> animation2) {
+                                    return CreateTaskPage(
+                                      team: widget.team,
+                                      milestones: widget.allMilestones,
+                                      studentsInGroup: widget.team.members,
+                                      hasInitialMilestone: true,
+                                      initialMilestoneValue: widget.milestone,
+                                      isEditing: false,
+                                    );
+                                  },
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
                                 ),
-                              )),
-                        ),
-                      ],
-                    ),
+                              );
+                              await getUserTasksApiCall();
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                              child: Text(
+                                "Create Task",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )),
+                      ),
+                    ],
                   ),
                 )
               ],
@@ -243,7 +246,7 @@ class _MilestoneDescriptionPageState extends State<MilestoneDescriptionPage> {
             child: InkWell(
                 // Bring user to relavant page regarding the task.
                 onTap: () async {
-                  await Navigator.push(
+                  final bool result = await Navigator.push(
                     context,
                     PageRouteBuilder(
                       pageBuilder: (BuildContext context,
@@ -259,6 +262,11 @@ class _MilestoneDescriptionPageState extends State<MilestoneDescriptionPage> {
                       reverseTransitionDuration: Duration.zero,
                     ),
                   );
+                  if (result == true) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
                   await getUserTasksApiCall();
                 },
                 child: Container(

@@ -183,13 +183,6 @@ namespace WorkTogether.Controllers
         [Authorize]
         public async Task<ActionResult<ClassDTO>> CreateClass(CreateClassDTO cd)
         {
-            Console.WriteLine("###############################");
-            Console.WriteLine("###############################");
-            Console.WriteLine("###############################");
-            Console.WriteLine(cd.Name + " " + cd.Description);
-            Console.WriteLine("###############################");
-            Console.WriteLine("###############################");
-            Console.WriteLine("###############################");
             User curr = GetCurrentUser(HttpContext);
             Class c = new Class();
             c.Name = cd.Name;
@@ -242,6 +235,7 @@ namespace WorkTogether.Controllers
                 return NotFound();
             }
             var @class = await _context.Classes.Include(c => c.Professor).Where(c => c.Id == id).FirstOrDefaultAsync();
+            
             if (@class == null)
             {
                 return NotFound();
@@ -249,6 +243,25 @@ namespace WorkTogether.Controllers
             if (@class.Professor != curr)
             {
                 return Unauthorized();
+            }
+
+            var projects = await _context.Projects.Where(p => p.ClassId == @class.Id).ToListAsync();
+
+            foreach( var project in projects)
+            {
+                var teams = await _context.Teams.Include(t => t.Project).Where(t => t.Project.Id == project.Id).ToListAsync();
+                foreach( var team in teams )
+                {
+                    var tasks = await _context.Tasks.Include(t => t.Team).Where(t => t.Team.Id == team.Id).ToListAsync();
+
+                    foreach( var task in tasks)
+                    {
+                        _context.Tasks.Remove(task);
+                    }
+
+                    _context.Teams.Remove(team);
+                }
+                _context.Projects.Remove(project);
             }
 
             _context.Classes.Remove(@class);
