@@ -108,6 +108,10 @@ class HttpService {
         }
       }
 
+      // if (loggedInUser.interests.contains("")) {
+      //   loggedInUser.interests.remove("");
+      // }
+
       return CardInfo(
           id: loggedInUser.id,
           name: loggedInUser.name,
@@ -141,53 +145,59 @@ class HttpService {
           )
           .toList();
 
-      List<int> teamIds = await getTeamIds(projectId);
+      List<int> teamIds = await getTeamsInProject(projectId);
 
       for (var i = 0; i < users.length; i++) {
-        if (!teamIds.contains(users[i].id) && users[i].id != loggedUserId) {
-          Uri cardUri = Uri.https(connectionString,
-              'api/Answers/GetAnswersByProjectIdAndUserId/$projectId/${users[i].id}');
-          var cardRes = await get(cardUri, headers: authHeader);
-          if (cardRes.statusCode == 200) {
-            List<dynamic> cardBody = jsonDecode(cardRes.body);
+        if (!teamIds.contains(users[i].id)) {
+          if (users[i].id != loggedUserId) {
+            Uri cardUri = Uri.https(connectionString,
+                'api/Answers/GetAnswersByProjectIdAndUserId/$projectId/${users[i].id}');
+            var cardRes = await get(cardUri, headers: authHeader);
+            if (cardRes.statusCode == 200) {
+              List<dynamic> cardBody = jsonDecode(cardRes.body);
 
-            if (cardBody.isEmpty) {
-              continue;
-            }
-
-            List<String> mornings = [];
-            List<String> afternoons = [];
-            List<String> evenings = [];
-            List<String> skillsList = cardBody[2]["answerText"].split(',');
-            String grade = cardBody[1]["answerText"];
-            String hours = cardBody[3]["answerText"];
-
-            var times = cardBody[0]["answerText"].split('`');
-
-            for (var j = 0; j < times.length; j++) {
-              var cur = times[j].split(':');
-              if (cur[0] == 'Morning') {
-                mornings = cur[1].split(',');
-              } else if (cur[0] == 'Afternoon') {
-                afternoons = cur[1].split(',');
-              } else if (cur[0] == 'Evening') {
-                evenings = cur[1].split(',');
+              if (cardBody.isEmpty) {
+                continue;
               }
-            }
 
-            cardInfo.add(CardInfo(
-                id: users[i].id,
-                name: users[i].name,
-                major: users[i].major,
-                availableMornings: mornings,
-                availableAfternoons: afternoons,
-                availableEvenings: evenings,
-                skills: skillsList,
-                interests: users[i].interests,
-                expectedGrade: grade,
-                weeklyHours: hours));
-          } else {
-            throw "Could not get answers for iterated user";
+              List<String> mornings = [];
+              List<String> afternoons = [];
+              List<String> evenings = [];
+              List<String> skillsList = cardBody[2]["answerText"].split(',');
+              String grade = cardBody[1]["answerText"];
+              String hours = cardBody[3]["answerText"];
+
+              var times = cardBody[0]["answerText"].split('`');
+
+              for (var j = 0; j < times.length; j++) {
+                var cur = times[j].split(':');
+                if (cur[0] == 'Morning') {
+                  mornings = cur[1].split(',');
+                } else if (cur[0] == 'Afternoon') {
+                  afternoons = cur[1].split(',');
+                } else if (cur[0] == 'Evening') {
+                  evenings = cur[1].split(',');
+                }
+              }
+
+              // if (users[i].interests.contains("")) {
+              //   users[i].interests.remove("");
+              // }
+
+              cardInfo.add(CardInfo(
+                  id: users[i].id,
+                  name: users[i].name,
+                  major: users[i].major,
+                  availableMornings: mornings,
+                  availableAfternoons: afternoons,
+                  availableEvenings: evenings,
+                  skills: skillsList,
+                  interests: users[i].interests,
+                  expectedGrade: grade,
+                  weeklyHours: hours));
+            } else {
+              throw "Could not get answers for iterated user";
+            }
           }
         }
       }
@@ -198,36 +208,24 @@ class HttpService {
     }
   }
 
-  Future<List<int>> getTeamIds(int projectId) async {
-    Uri uri = Uri.https(connectionString, 'api/Teams/byproject/$projectId');
-    var res = await get(uri, headers: authHeader);
-    List<int> teamIds = [];
-    if (res.statusCode == 200) {
-      List<dynamic> body = jsonDecode("[${res.body}]");
-
-      for (var i = 0; i < body[0]["members"].length; i++) {
-        teamIds.add(body[0]["members"][i]["id"]);
-      }
-    }
-
-    return teamIds;
-  }
-
-  Future<List<TeamDTO>> getTeamsInProject(int projectId) async {
+  Future<List<int>> getTeamsInProject(int projectId) async {
     Uri uri =
         Uri.https(connectionString, 'api/Teams/allteamsinproject/$projectId');
 
     var res = await get(uri, headers: authHeader);
-    List<TeamDTO> teams = [];
+    List<int> teamUserIds = [];
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
       for (var i = 0; i < body.length; i++) {
-        teams.add(TeamDTO.fromJson(body[i]));
+        TeamDTO newTeam = TeamDTO.fromJson(body[i]);
+        newTeam.members.forEach((member) {
+          teamUserIds.add(member.id);
+        });
       }
     }
 
-    return teams;
+    return teamUserIds;
   }
 
   Future<MilestoneDTO?> getNextMilestoneDue(int projectId) async {
@@ -320,6 +318,10 @@ class HttpService {
               }
             }
 
+            // if (curMember["interests"].interests.contains("")) {
+            //   curMember["interests"].interests.remove("");
+            // }
+
             teamMates.add(CardInfo(
                 id: curMember["id"],
                 name: curMember["name"],
@@ -386,6 +388,7 @@ class HttpService {
 
       authToken = result.authToken;
       loggedUserId = result.id;
+      loggedUserName = result.name;
       return true;
     } else {
       return false;
@@ -1120,9 +1123,16 @@ class HttpService {
     await delete(uri, headers: authHeader);
   }
 
-  void addClass(String className, String description, String projectName,
-      String projectDescription, String projectDeadline, String teamFormationDeadline,
-      String minTeamSize, String maxTeamSize,) async {
+  void addClass(
+    String className,
+    String description,
+    String projectName,
+    String projectDescription,
+    String projectDeadline,
+    String teamFormationDeadline,
+    String minTeamSize,
+    String maxTeamSize,
+  ) async {
     Uri uri = Uri.https(connectionString, 'api/Classes/create');
     Uri projectUri = Uri.https(connectionString, 'api/Projects/create');
     var body = jsonEncode({"name": className, "description": description});
@@ -1134,20 +1144,26 @@ class HttpService {
     var classId = responseBody["id"].toString();
 
     try {
-      addProject(classId, projectName, projectDescription, projectDeadline, teamFormationDeadline,
-          minTeamSize, maxTeamSize);
+      addProject(classId, projectName, projectDescription, projectDeadline,
+          teamFormationDeadline, minTeamSize, maxTeamSize);
     } catch (e) {
       print(e);
     }
   }
 
-  void addProject(String classId, String projectName, String projectDescription,
-      String projectDeadline, String teamFormationDeadline,
-      String minTeamSize, String maxTeamSize) async {
+  void addProject(
+      String classId,
+      String projectName,
+      String projectDescription,
+      String projectDeadline,
+      String teamFormationDeadline,
+      String minTeamSize,
+      String maxTeamSize) async {
     var inputFormat = DateFormat.yMd();
     var outputFormat = DateFormat('yyyy-MM-dd');
     DateTime formattedProjectDeadline = inputFormat.parse(projectDeadline);
-    DateTime formattedTeamFormationDeadline = inputFormat.parse(teamFormationDeadline);
+    DateTime formattedTeamFormationDeadline =
+        inputFormat.parse(teamFormationDeadline);
 
     Uri uri = Uri.https(connectionString, 'api/Projects/create');
     var body = jsonEncode({
@@ -1155,10 +1171,11 @@ class HttpService {
       "ClassId": classId,
       "Description": projectDescription,
       "Deadline": outputFormat.format(formattedProjectDeadline),
-      "TeamFormationDeadline": outputFormat.format(formattedTeamFormationDeadline),
+      "TeamFormationDeadline":
+          outputFormat.format(formattedTeamFormationDeadline),
       "MinTeamSize": minTeamSize,
       "MaxTeamSize": maxTeamSize
-      });
+    });
     print(body);
     var response = await post(uri, headers: authHeader, body: body);
     if (response.statusCode != 200) {

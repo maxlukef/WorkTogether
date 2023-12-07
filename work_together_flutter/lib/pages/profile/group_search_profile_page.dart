@@ -84,13 +84,27 @@ class _GroupProfileProfilePageState
       inviteToGroupOrEdit = "Invite to Group";
     }
 
-    for (String interest in userdata.interests) {
-      interestTags.add(Padding(
-        padding: const EdgeInsets.fromLTRB(0.0, 0, 4.0, 0),
-        child: Tag(
-          text: interest,
+    if (userdata.interests.contains("")) {
+      userdata.interests.remove("");
+    }
+
+    if (userdata.interests.isEmpty) {
+      interestTags.add(const Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          "No Interests",
+          style: TextStyle(fontSize: 14),
         ),
       ));
+    } else {
+      for (String interest in userdata.interests) {
+        interestTags.add(Padding(
+          padding: const EdgeInsets.fromLTRB(0.0, 0, 4.0, 0),
+          child: Tag(
+            text: interest,
+          ),
+        ));
+      }
     }
 
     return Scaffold(
@@ -163,8 +177,6 @@ class _GroupProfileProfilePageState
 
                             HttpService().sendInviteNotificationToUser(
                                 teamInviteNotificationDTO);
-                            // HttpService().inviteToTeam(1, loggedUserId, widget.id);
-                            // Navigator.pop(context);
                           }
                         },
                         style: ElevatedButton.styleFrom(

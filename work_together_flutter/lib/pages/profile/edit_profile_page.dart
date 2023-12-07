@@ -41,13 +41,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   onInterestsSubmitted(interest) {
-    String interestString = interest.toString();
+    String interestString = interest.toString().trim();
 
     if (interestString.isNotEmpty) {
       widget.user.interests.add(interestString);
       ref.read(interestListNotifierProvider.notifier).addInterest(interest);
       interestsController.clear();
     }
+    interestsController.clear();
   }
 
   @override

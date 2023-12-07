@@ -238,11 +238,25 @@ class StudentCard extends StatelessWidget {
   _interestsList() {
     List<Widget> interestsList = [];
 
-    for (var i = 0; i < interests.length; i++) {
-      interestsList.add(Padding(
-        padding: const EdgeInsets.only(top: 3, right: 6, bottom: 3),
-        child: Tag(text: interests[i]),
+    if (interests.length == 1 && interests.elementAt(0) == "") {
+      interestsList.add(const Align(
+        alignment: Alignment.center,
+        child: Text(
+          "No Interests",
+          style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800),
+        ),
       ));
+    } else {
+      for (var i = 0; i < interests.length; i++) {
+        if (interests[i] == "") {
+          continue;
+        }
+
+        interestsList.add(Padding(
+          padding: const EdgeInsets.only(top: 3, right: 6, bottom: 3),
+          child: Tag(text: interests[i]),
+        ));
+      }
     }
 
     return interestsList;
