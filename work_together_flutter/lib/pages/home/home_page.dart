@@ -126,7 +126,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                               },
                               icon: const Icon(
                                 Icons.add,
-                                color: Colors.blue,
+                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -147,7 +147,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                             }));
                             setState(() {});
                           },
-                          child: const Text("Add/Delete Class"),
+                          child: const Text(
+                            "Add/Delete Class",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
@@ -156,29 +159,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                         children: [
                           Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Card(
-                                  elevation: 10,
-                                  color: const Color(0xFFf2f2f2),
-                                  clipBehavior: Clip.hardEdge,
-                                  child: LimitedBox(
-                                    maxWidth: 360,
-                                    maxHeight: 100,
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          32.0, 16.0, 32.0, 16.0),
-                                      child: Text(
-                                        classNameKey,
-                                        style: const TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w400,
-                                            fontFamily:
-                                                'SourceSansPro-SemiBold'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              Expanded(
+                                child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 5, top: 15, bottom: 20),
+                                    child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(classNameKey,
+                                            style: const TextStyle(
+                                                fontSize: 32,
+                                                fontWeight: FontWeight.w700)))),
                               ),
                             ],
                           ),
@@ -191,7 +181,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 projectNameValue.deadline
                                     .isAfter(DateTime.now())) {
                               projectPhase = "Team Formation";
-                            } else if (projectNameValue.teamFormationDeadline
+                            } else if (projectNameValue.deadline
                                     .isBefore(DateTime.now()) &&
                                 projectNameValue.deadline
                                     .isBefore(DateTime.now())) {
@@ -202,7 +192,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                             return Padding(
                               padding: const EdgeInsets.fromLTRB(
-                                  50.0, 0.0, 0.0, 0.0),
+                                  20.0, 0.0, 20.0, 20.0),
                               child: Card(
                                 elevation: 10,
                                 color: const Color(0xFFf2f2f2),
@@ -327,35 +317,44 @@ class _HomePageState extends ConsumerState<HomePage> {
                                     });
                                   },
                                   child: SizedBox(
-                                    width: 300,
+                                    width: 675,
                                     height: 260,
                                     child: Padding(
                                       padding: const EdgeInsets.fromLTRB(
-                                          15.0, 0, 15.0, 0),
+                                          0.0, 0, 0.0, 0),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                4.0, 4.0, 4.0, 0.0),
-                                            child: Text(
-                                              'Project:',
-                                              style: TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.w400,
-                                                fontFamily:
-                                                    'SourceSansPro-SemiBold',
-                                              ),
+                                          SizedBox(
+                                            width: 675,
+                                            height: 100,
+                                            child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      ourLightPrimaryColor()),
                                             ),
                                           ),
+                                          // const Padding(
+                                          //   padding: EdgeInsets.fromLTRB(
+                                          //       4.0, 4.0, 4.0, 0.0),
+                                          //   child: Text(
+                                          //     'Project:',
+                                          //     style: TextStyle(
+                                          //       fontSize: 24,
+                                          //       fontWeight: FontWeight.w400,
+                                          //       fontFamily:
+                                          //           'SourceSansPro-SemiBold',
+                                          //     ),
+                                          //   ),
+                                          // ),
                                           Padding(
                                             padding: const EdgeInsets.fromLTRB(
-                                                4.0, 4.0, 4.0, 0.0),
+                                                4.0, 15.0, 4.0, 0.0),
                                             child: Text(
-                                              projectNameValue.name,
+                                              "Project: ${projectNameValue.name}",
                                               style: const TextStyle(
                                                 fontSize: 24,
                                                 fontWeight: FontWeight.w400,
@@ -364,73 +363,38 @@ class _HomePageState extends ConsumerState<HomePage> {
                                               ),
                                             ),
                                           ),
-                                          const Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                4.0, 4.0, 4.0, 0.0),
-                                            child: Text(
-                                              'Deadline:',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                fontFamily: 'SourceSansPro',
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0.0, 0.0, 4.0, 0.0),
-                                            child: Row(
-                                              children: [
-                                                const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons
-                                                        .calendar_month_outlined,
-                                                    color: Colors.blue,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "${projectNameValue.deadline.year}/${projectNameValue.deadline.month}/${projectNameValue.deadline.day}",
-                                                  style: const TextStyle(
-                                                      color: Colors.blue,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontFamily:
-                                                          'SourceSansPro'),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                4.0, 8.0, 4.0, 0.0),
-                                            child: Text(
-                                              'Team Formation Deadline:',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                fontFamily: 'SourceSansPro',
-                                              ),
-                                            ),
-                                          ),
                                           Row(
                                             children: [
                                               const Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  Icons.calendar_month_outlined,
-                                                  color: Colors.blue,
+                                                padding: EdgeInsets.fromLTRB(
+                                                    4.0, 4.0, 4.0, 0.0),
+                                                child: Text(
+                                                  'Deadline:',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontFamily: 'SourceSansPro',
+                                                  ),
                                                 ),
                                               ),
-                                              Text(
-                                                "${projectNameValue.teamFormationDeadline.year}/${projectNameValue.teamFormationDeadline.month}/${projectNameValue.teamFormationDeadline.day}",
-                                                style: const TextStyle(
-                                                    color: Colors.blue,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontFamily:
-                                                        'SourceSansPro'),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        4.0, 8.0, 4.0, 0.0),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "${projectNameValue.deadline.year}/${projectNameValue.deadline.month}/${projectNameValue.deadline.day}",
+                                                      style: const TextStyle(
+                                                          color: Colors.blue,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontFamily:
+                                                              'SourceSansPro'),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),

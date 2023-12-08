@@ -15,28 +15,30 @@ class LoginPage extends StatelessWidget {
           alignment: Alignment.topCenter,
           child: SizedBox(
             width: 675,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 250,
-                    width: 250,
-                    child: SvgPicture.asset("assets/images/logo.svg"),
-                  ),
-                ),
-                Row(
-                  children: [
-                    const Spacer(),
-                    Expanded(
-                      flex: 8,
-                      child: LoginForm(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 250,
+                      width: 250,
+                      child: SvgPicture.asset("assets/images/logo.svg"),
                     ),
-                    const Spacer(),
-                  ],
-                ),
-              ],
+                  ),
+                  Row(
+                    children: [
+                      const Spacer(),
+                      Expanded(
+                        flex: 8,
+                        child: LoginForm(),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ));

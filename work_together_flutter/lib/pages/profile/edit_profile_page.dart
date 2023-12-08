@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:work_together_flutter/global_components/our_colors.dart';
 import 'package:work_together_flutter/global_components/tag.dart';
+import 'package:work_together_flutter/main.dart';
 import 'package:work_together_flutter/provider/interest_list.dart';
 import '../../global_components/custom_app_bar.dart';
 import '../../http_request.dart';
@@ -99,6 +100,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     textInputAction: TextInputAction.go,
                     onChanged: (name) {
                       widget.user.name = nameController.text;
+                      loggedUserName = nameController.text;
                     },
                     decoration: const InputDecoration(
                         filled: true,

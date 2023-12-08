@@ -186,7 +186,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                                 border:
                                     Border.all(color: const Color(0xFF7AC8F5))),
                             child: SizedBox(
-                              width: 330,
+                              width: 600,
                               height: 50,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -256,10 +256,10 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                               builder: (context) => const QuestionnairePopup())
                         },
                         style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(330, 50),
+                            minimumSize: const Size(150, 50),
                             backgroundColor: ourLightColor()),
                         child: const Text(
-                          "+ Add A Time",
+                          "Add Time +",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -382,7 +382,7 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                             padding:
                                 const EdgeInsets.fromLTRB(40.0, 2.0, 2.0, 4.0),
                             child: SizedBox(
-                              width: 280,
+                              width: 330,
                               height: 50,
                               child: TextFormField(
                                 controller: skillsTextFieldController,
@@ -411,34 +411,65 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
-                            child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: IconButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: ourLightColor()),
-                                onPressed: () {
-                                  setState(() {
-                                    ref
-                                        .read(
-                                            skillListNotifierProvider.notifier)
-                                        .addSkill(
-                                            skillsTextFieldController.text);
-                                    skillsTextFieldController.clear();
-                                    skillsFocusNode.requestFocus();
-                                  });
-                                },
-                                icon: const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
+                          // Padding(
+                          //   padding:
+                          //       const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 4.0),
+                          //   child: SizedBox(
+                          //     width: 50,
+                          //     height: 50,
+                          //     child: IconButton(
+                          //       style: ElevatedButton.styleFrom(
+                          //           backgroundColor: ourLightColor()),
+                          //       onPressed: () {
+                          //         setState(() {
+                          //           ref
+                          //               .read(
+                          //                   skillListNotifierProvider.notifier)
+                          //               .addSkill(
+                          //                   skillsTextFieldController.text);
+                          //           skillsTextFieldController.clear();
+                          //           skillsFocusNode.requestFocus();
+                          //         });
+                          //       },
+                          //       icon: const Icon(
+                          //         Icons.add,
+                          //         color: Colors.white,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ourLightColor()),
+                            onPressed: () {
+                              setState(() {
+                                ref
+                                    .read(skillListNotifierProvider.notifier)
+                                    .addSkill(skillsTextFieldController.text);
+                                skillsTextFieldController.clear();
+                                skillsFocusNode.requestFocus();
+                              });
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Add Skill +",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
                       ),
                       Padding(
                           padding:
@@ -485,28 +516,33 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          width: 330,
-                          height: 50,
-                          child: TextFormField(
-                            controller: numberHoursTextFieldController,
-                            style: const TextStyle(
-                                color: Color(0xFF000000),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'SourceSansPro'),
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.done,
-                            onSaved: (hours) {},
-                            decoration: const InputDecoration(
-                                filled: true,
-                                fillColor: Color(0xFFFAFAFA),
-                                hintText: "Type to Add Number of Hours",
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xFFD9D9D9), width: 2.0))),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                          child: SizedBox(
+                            width: 330,
+                            height: 50,
+                            child: TextFormField(
+                              controller: numberHoursTextFieldController,
+                              style: const TextStyle(
+                                  color: Color(0xFF000000),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'SourceSansPro'),
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.done,
+                              onSaved: (hours) {},
+                              decoration: const InputDecoration(
+                                  filled: true,
+                                  fillColor: Color(0xFFFAFAFA),
+                                  hintText: "Type to Add Number of Hours",
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xFFD9D9D9),
+                                          width: 2.0))),
+                            ),
                           ),
                         ),
                       ),
@@ -812,14 +848,12 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                             },
                             style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(150, 50),
-                                backgroundColor: const Color(0xFF7AC8F5)),
+                                backgroundColor: ourLightColor()),
                             child: const Text(
                               "Submit",
                               style: TextStyle(
+                                fontSize: 16,
                                 color: Colors.white,
-                                fontSize: 24,
-                                fontFamily: 'SourceSansPro',
-                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
@@ -877,15 +911,15 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                 child: Text(
                   "Add Time",
                   style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'SourceSansPro'),
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
           ),
-          Row(
-            children: const [
+          const Row(
+            children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                 child: Text(
@@ -914,7 +948,8 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                         });
                       },
                     ),
-                    const Expanded(
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
                       child: Text(
                         'Morning',
                         style: TextStyle(
@@ -938,12 +973,14 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                         });
                       },
                     ),
-                    const Expanded(
-                        child: Text(
-                      'Afternoon',
-                      style:
-                          TextStyle(fontSize: 14, fontFamily: 'SourceSansPro'),
-                    )),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                      child: Text(
+                        'Afternoon',
+                        style: TextStyle(
+                            fontSize: 14, fontFamily: 'SourceSansPro'),
+                      ),
+                    ),
                     const Icon(Icons.sunny),
                   ],
                 ),
@@ -961,20 +998,22 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                         });
                       },
                     ),
-                    const Expanded(
-                        child: Text(
-                      'Evening',
-                      style:
-                          TextStyle(fontSize: 14, fontFamily: 'SourceSansPro'),
-                    )),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                      child: Text(
+                        'Evening',
+                        style: TextStyle(
+                            fontSize: 14, fontFamily: 'SourceSansPro'),
+                      ),
+                    ),
                     const Icon(Icons.mode_night),
                   ],
                 ),
               ),
             ],
           ),
-          Row(
-            children: const [
+          const Row(
+            children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                 child: Text(
@@ -1033,50 +1072,50 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
               },
             ).toList(),
           ),
-          Row(
-            children: const [
-              Padding(
-                padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
-                child: Text(
-                  "Additional Notes",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'SourceSansPro'),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(40.0, 2.0, 32.0, 4.0),
-                child: SizedBox(
-                  width: 330,
-                  height: 50,
-                  child: TextFormField(
-                    style: const TextStyle(
-                        color: Color(0xFF000000),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'SourceSansPro'),
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    onSaved: (e) {
-                      note = e;
-                    },
-                    decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Color(0xFFFAFAFA),
-                        hintText: "Type to Add a note",
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color(0xFFD9D9D9), width: 2.0))),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // const Row(
+          //   children: [
+          //     Padding(
+          //       padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+          //       child: Text(
+          //         "Additional Notes",
+          //         style: TextStyle(
+          //             fontSize: 24,
+          //             fontWeight: FontWeight.w400,
+          //             fontFamily: 'SourceSansPro'),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // Row(
+          //   children: [
+          //     Padding(
+          //       padding: const EdgeInsets.fromLTRB(40.0, 2.0, 32.0, 4.0),
+          //       child: SizedBox(
+          //         width: 330,
+          //         height: 50,
+          //         child: TextFormField(
+          //           style: const TextStyle(
+          //               color: Color(0xFF000000),
+          //               fontSize: 14,
+          //               fontWeight: FontWeight.w400,
+          //               fontFamily: 'SourceSansPro'),
+          //           keyboardType: TextInputType.emailAddress,
+          //           textInputAction: TextInputAction.next,
+          //           onSaved: (e) {
+          //             note = e;
+          //           },
+          //           decoration: const InputDecoration(
+          //               filled: true,
+          //               fillColor: Color(0xFFFAFAFA),
+          //               hintText: "Type to Add a note",
+          //               enabledBorder: OutlineInputBorder(
+          //                   borderSide: BorderSide(
+          //                       color: Color(0xFFD9D9D9), width: 2.0))),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           Row(
             children: [
               Padding(
@@ -1091,14 +1130,14 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                   },
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(150, 50),
-                      backgroundColor: const Color(0xFF7AC8F5)),
+                      backgroundColor: ourLightColor()),
                   child: const Text(
                     "Confirm",
                     style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'SourceSansPro',
-                      fontWeight: FontWeight.w400,
-                    ),
+                        fontSize: 24,
+                        fontFamily: 'SourceSansPro',
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white),
                   ),
                 ),
               ),

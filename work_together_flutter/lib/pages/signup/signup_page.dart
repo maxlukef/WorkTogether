@@ -11,25 +11,27 @@ class SignupPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 250,
-              width: 250,
-              child: SvgPicture.asset("assets/images/logo.svg"),
-            ),
-            Row(
-              children: const [
-                Spacer(),
-                Expanded(
-                  flex: 8,
-                  child: SignupForm(),
-                ),
-                Spacer(),
-              ],
-            ),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 250,
+                width: 250,
+                child: SvgPicture.asset("assets/images/logo.svg"),
+              ),
+              Row(
+                children: const [
+                  Spacer(),
+                  Expanded(
+                    flex: 8,
+                    child: SignupForm(),
+                  ),
+                  Spacer(),
+                ],
+              ),
+            ],
+          ),
         ));
   }
 }

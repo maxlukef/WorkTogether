@@ -84,18 +84,27 @@ class _GroupSearchPageState extends ConsumerState<GroupSearchPage> {
                             await httpService
                                 .getUsers(widget.classId, widget.projectId)
                                 .then((value) => {
-                                      Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return GroupSearchSwipePage(
-                                            users: value,
-                                            userId: widget.userId,
-                                            classId: widget.classId,
-                                            className: widget.className,
-                                            projectId: widget.projectId,
-                                            projectName: widget.projectName,
-                                          );
-                                        },
-                                      ))
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (BuildContext context,
+                                              Animation<double> animation1,
+                                              Animation<double> animation2) {
+                                            return GroupSearchSwipePage(
+                                              users: value,
+                                              userId: widget.userId,
+                                              classId: widget.classId,
+                                              className: widget.className,
+                                              projectId: widget.projectId,
+                                              projectName: widget.projectName,
+                                            );
+                                            ;
+                                          },
+                                          transitionDuration: Duration.zero,
+                                          reverseTransitionDuration:
+                                              Duration.zero,
+                                        ),
+                                      )
                                     });
                           },
                         ),
