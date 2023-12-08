@@ -181,15 +181,11 @@ namespace WorkTogether.Models
                 newUser.UserName = newUser.Email;
                 await _um.CreateAsync(newUser, "pw");
 
-                StudentClass jcStudentClass = new StudentClass();
-                jcStudentClass.Student = newUser;
-                jcStudentClass.Class = newClass2;
-                StudentClasses.Add(jcStudentClass);
 
                 Class newClass3 = new Class();
                 newClass3.Name = "Demo Day 2023";
                 newClass3.Description = "Work Together";
-                newClass3.Professor = newUser;
+                newClass3.Professor = newUser2;
                 newClass3.InviteCode = "wt_demo";
                 Classes.Add(newClass3);
 
