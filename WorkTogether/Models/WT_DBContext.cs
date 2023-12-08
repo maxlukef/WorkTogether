@@ -187,6 +187,7 @@ namespace WorkTogether.Models
                 newClass3.Description = "Work Together";
                 newClass3.Professor = newUser2;
                 newClass3.InviteCode = "wt_demo";
+                newClass3.Id = 3;
                 Classes.Add(newClass3);
 
                 Project demoProject = new Project();
@@ -491,6 +492,8 @@ namespace WorkTogether.Models
                 c.Users = t2.Members;
                 Chats.Add(c);
                 t2.TeamChat = c;
+
+                CreateQuestionnaire(newProject2);
 
                 Questionnaire default_questionnaire = new Questionnaire();
                 default_questionnaire.Project = newProject2;
