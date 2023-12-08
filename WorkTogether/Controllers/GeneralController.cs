@@ -26,5 +26,19 @@ namespace WorkTogether.Controllers
             await _context.Seed(_um);
             return Ok();
         }
+
+
+        //changes the year of the team formation deadline for the seeded capstone project
+        
+        [HttpPost("changeteamdate/{year}")]
+        public async Task<ActionResult> ChangeDateDemo(int year)
+        {
+            Project tochange = _context.Projects.Find(1);
+            DateTime tfd = tochange.TeamFormationDeadline;
+            DateTime t2 = new DateTime(year, tfd.Month, tfd.Day);
+            tochange.TeamFormationDeadline = t2;
+            _context.SaveChanges();
+            return Ok();
+        }
     }
 }
