@@ -491,8 +491,8 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               const Spacer(),
             ],
           ),
-          Row(
-            children: const [
+          const Row(
+            children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                 child: Text(
@@ -531,8 +531,8 @@ class _GroupSearchFilterState extends ConsumerState<GroupSearchFilter> {
               });
             },
           ),
-          Row(
-            children: const [
+          const Row(
+            children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
                 child: Text(

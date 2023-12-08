@@ -97,7 +97,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   fontFamily: 'SourceSansPro'),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.done,
-                              onSaved: (hours) {},
+                              onFieldSubmitted: (hours) async {
+                                if (await HttpService().joinClassWithCode(
+                                    courseJoinTextController.text)) {
+                                  setState(() {
+                                    courseJoinTextController.text = "";
+                                  });
+                                }
+                              },
                               decoration: const InputDecoration(
                                   filled: true,
                                   fillColor: Color(0xFFFAFAFA),
@@ -121,7 +128,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                               onPressed: () async {
                                 if (await HttpService().joinClassWithCode(
                                     courseJoinTextController.text)) {
-                                  setState(() {});
+                                  setState(() {
+                                    courseJoinTextController.text = "";
+                                  });
                                 }
                               },
                               icon: const Icon(
