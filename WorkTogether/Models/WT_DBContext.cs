@@ -97,6 +97,7 @@ namespace WorkTogether.Models
                 newClass2.Name = "Capstone Project";
                 newClass2.Description = "The CS Capstone";
                 newClass2.Professor = newUser2;
+                newClass2.InviteCode = "capstone";
                 Classes.Add(newClass2);
 
 
@@ -109,34 +110,34 @@ namespace WorkTogether.Models
                 project1.Name = "Capstone";
                 project1.MinTeamSize = 4;
                 project1.MaxTeamSize = 5;
-                project1.Deadline = new DateTime(2023, 12, 10);
-                project1.TeamFormationDeadline = new DateTime(2023, 4, 9);
+                project1.Deadline = new DateTime(2024, 12, 10);
+                project1.TeamFormationDeadline = new DateTime(2023, 12, 9);
                 Projects.Add(project1);
                 this.SaveChanges();
 
                 Milestone m6 = new Milestone();
-                m6.Deadline = new DateTime(2023, 4, 25);
+                m6.Deadline = new DateTime(2024, 4, 25);
                 m6.Description = "Demonstrate the prototype of your capstone project";
                 m6.Title = "Prototype";
                 m6.Project = project1;
                 Milestones.Add(m6);
 
                 Milestone m7 = new Milestone();
-                m7.Deadline = new DateTime(2023, 9, 17);
+                m7.Deadline = new DateTime(2024, 9, 17);
                 m7.Description = "Demonstrate the alpha version of your capstone project";
                 m7.Title = "Alpha";
                 m7.Project = project1;
                 Milestones.Add(m7);
 
                 Milestone m8 = new Milestone();
-                m8.Deadline = new DateTime(2023, 10, 20);
+                m8.Deadline = new DateTime(2024, 10, 20);
                 m8.Description = "Demonstrate the Beta version of your capstone project";
                 m8.Title = "Beta";
                 m8.Project = project1;
                 Milestones.Add(m8);
 
                 Milestone m9 = new Milestone();
-                m9.Deadline = new DateTime(2023, 12, 9);
+                m9.Deadline = new DateTime(2024, 12, 9);
                 m9.Description = "Demonstrate the final version of your capstone project";
                 m9.Title = "Final Release";
                 m9.Project = project1;

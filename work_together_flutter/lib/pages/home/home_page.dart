@@ -150,10 +150,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: ourLightColor()),
                           onPressed: () async {
-                            await Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return AddDeleteClass();
-                            }));
+                            await Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (BuildContext context,
+                                    Animation<double> animation1,
+                                    Animation<double> animation2) {
+                                  return AddDeleteClass();
+                                },
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+
                             setState(() {});
                           },
                           child: const Text(
