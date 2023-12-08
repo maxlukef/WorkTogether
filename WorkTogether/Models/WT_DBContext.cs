@@ -468,12 +468,11 @@ namespace WorkTogether.Models
                 Chats.Add(c);
                 t2.TeamChat = c;
 
-                CreateQuestionnaire(newProject2);
 
                 Questionnaire default_questionnaire = new Questionnaire();
-                default_questionnaire.Project = newProject2;
-                default_questionnaire.ProjectID = newProject2.Id;
-                newProject2.Questionnaire = default_questionnaire;
+                default_questionnaire.Project = project1;
+                default_questionnaire.ProjectID = project1.Id;
+                project1.Questionnaire = default_questionnaire;
                 Questionnaires.Add(default_questionnaire);
 
                 this.SaveChanges();
