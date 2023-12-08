@@ -89,7 +89,12 @@ class _DashboardState extends State<Dashboard> {
                                   classId: widget.classId);
                             }));
                           },
-                          child: const Text("Manage Project"),
+                          child: const Text(
+                            "Manage Project",
+                            style: TextStyle(
+                                fontFamily: 'SourceSansPro',
+                                color: Colors.white),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 50),
