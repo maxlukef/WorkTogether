@@ -62,10 +62,7 @@ namespace WorkTogether.Controllers
 
             List<QuestionDTO> questionDTOs = new List<QuestionDTO>();
 
-            var result = await (from question in _context.Questions
-                                join questionnaire in _context.Questionnaires on questionnaireId equals questionnaire.Id
-                                where questionnaire.Id == questionnaireId
-                                select new { Id = question.Id, qNum = question.QNum, Prompt = question.Prompt, Type = question.Type, Questionnaire = question.Questionnaire }).ToListAsync();
+            var result = await _context.Questions.Include(q => q.Questionnaire).Where(q => q.Questionnaire.Id == questionnaireId).ToListAsync();
 
             if (result == null)
             {
@@ -76,7 +73,7 @@ namespace WorkTogether.Controllers
             {
                 Question newQuestion = new Question();
                 newQuestion.Id = q.Id;
-                newQuestion.QNum = q.qNum;
+                newQuestion.QNum = q.QNum;
                 newQuestion.Prompt = q.Prompt;
                 newQuestion.Type = q.Type;
                 newQuestion.Questionnaire = q.Questionnaire;
