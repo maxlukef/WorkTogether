@@ -87,77 +87,8 @@ namespace WorkTogether.Models
 
                 
 
-                Class newClass = new Class();
-                newClass.Id = 1;
-                newClass.Name = "CS 2420: Data Structures and Algs";
-                newClass.Description = "The weed-out class.";
-                newClass.Professor = newUser2;
-                Classes.Add(newClass);
-                Debug.WriteLine("#########################");
-                Debug.WriteLine(newClass.Id);
-
-                // Project where deadline has passed and team formation deadline has passed (Project complete)
-                Project newProject = new Project();
-                newProject.Deadline = new DateTime(2023, 11, 5);
-                newProject.TeamFormationDeadline = new DateTime(2023, 4, 3);
-                newProject.Name = "Implement a hash map";
-                newProject.Description = "Implement a hashmap in Java. This will take some time, so make sure you start early!";
-                newProject.MaxTeamSize = 3;
-                newProject.MinTeamSize = 1;
-                newProject.ClassId = newClass.Id;
-                Debug.WriteLine("######################");
-                Debug.WriteLine(newProject.ClassId);
-                Projects.Add(newProject);
 
 
-                Milestone m = new Milestone();
-                m.Deadline = new DateTime(2023, 11, 1);
-                m.Description = "Implement your code before testing";
-                m.Title = "Implement Hashmap";
-                m.Project = newProject;
-                Milestones.Add(m);
-
-
-                Milestone m2 = new Milestone();
-                m2.Deadline = new DateTime(2023, 11, 4);
-                m2.Description = "Test your HashMap for correctness";
-                m2.Title = "Test HashMap";
-                m2.Project = newProject;
-                Milestones.Add(m2);
-
-
-                Milestone m3 = new Milestone();
-                m3.Deadline = new DateTime(2023, 11, 5);
-                m3.Description = "Test your hashmap for runtime complexity";
-                m3.Title = "Hashmap Timing";
-                m3.Project = newProject;
-                Milestones.Add(m3);
-
-
-                // Project where Deadline has not passed and team formation deadline has not passed (Group Search Phase)
-                Project newProject3 = new Project();
-                newProject3.Deadline = new DateTime(2025, 5, 5);
-                newProject3.TeamFormationDeadline = new DateTime(2024, 4, 4);
-                newProject3.Name = "Time Travel";
-                newProject3.Description = "Build a time machine";
-                newProject3.MaxTeamSize = 4;
-                newProject3.MinTeamSize = 2;
-                newProject3.ClassId = newClass.Id;
-                Projects.Add(newProject3);
-
-                Milestone m4 = new Milestone();
-                m4.Deadline = new DateTime(2025, 4, 25);
-                m4.Description = "You will need to use a flux capacitor for this.";
-                m4.Title = "Implement your time travel kernel";
-                m4.Project = newProject3;
-                Milestones.Add(m4);
-
-                Milestone m5 = new Milestone();
-                m5.Deadline = new DateTime(2025, 5, 5);
-                m5.Description = "Use the front end of your choice.";
-                m5.Title = "Implement your time travel GUI";
-                m5.Project = newProject3;
-                Milestones.Add(m5);
 
 
 
@@ -167,6 +98,9 @@ namespace WorkTogether.Models
                 newClass2.Description = "The CS Capstone";
                 newClass2.Professor = newUser2;
                 Classes.Add(newClass2);
+
+
+
 
                 // Project where Deadline has not passed and team formation deadline has not passed (Project complete)
                 Project project1 = new Project();
@@ -184,34 +118,34 @@ namespace WorkTogether.Models
                 m6.Deadline = new DateTime(2023, 4, 25);
                 m6.Description = "Demonstrate the prototype of your capstone project";
                 m6.Title = "Prototype";
-                m6.Project = newProject3;
+                m6.Project = project1;
                 Milestones.Add(m6);
 
                 Milestone m7 = new Milestone();
                 m7.Deadline = new DateTime(2023, 9, 17);
                 m7.Description = "Demonstrate the alpha version of your capstone project";
                 m7.Title = "Alpha";
-                m7.Project = newProject3;
+                m7.Project = project1;
                 Milestones.Add(m7);
 
                 Milestone m8 = new Milestone();
                 m8.Deadline = new DateTime(2023, 10, 20);
                 m8.Description = "Demonstrate the Beta version of your capstone project";
                 m8.Title = "Beta";
-                m8.Project = newProject3;
+                m8.Project = project1;
                 Milestones.Add(m8);
 
                 Milestone m9 = new Milestone();
-                m9.Deadline = new DateTime(2023, 12, 10);
+                m9.Deadline = new DateTime(2023, 12, 9);
                 m9.Description = "Demonstrate the final version of your capstone project";
                 m9.Title = "Final Release";
-                m9.Project = newProject3;
+                m9.Project = project1;
                 Milestones.Add(m9);
 
                 // Project where deadline has passed and team formation deadline has passed (Project complete)
                 Project newProject2 = new Project();
-                newProject2.Deadline = new DateTime(2023, 4, 26);
-                newProject2.TeamFormationDeadline = new DateTime(2023, 3, 1);
+                newProject2.Deadline = new DateTime(2024, 4, 26);
+                newProject2.TeamFormationDeadline = new DateTime(2024, 1, 1);
                 newProject2.Name = "Create Facebook";
                 newProject2.Description = "Good luck";
                 newProject2.MaxTeamSize = 4;
@@ -220,27 +154,19 @@ namespace WorkTogether.Models
                 Projects.Add(newProject2 );
 
                 Milestone m10 = new Milestone();
-                m10.Deadline = new DateTime(2023, 3, 20);
+                m10.Deadline = new DateTime(2024, 3, 20);
                 m10.Description = "Find initial investors for facebook";
                 m10.Title = "Gather Facebook Investors";
                 m10.Project = newProject2;
                 Milestones.Add(m10);
 
                 Milestone m11 = new Milestone();
-                m11.Deadline = new DateTime(2023, 4, 26);
+                m11.Deadline = new DateTime(2024, 4, 26);
                 m11.Description = "Good luck!";
                 m11.Title = "Release Facebook";
                 m11.Project = newProject2;
                 Milestones.Add(m11);
 
-
-
-                Milestone m12 = new Milestone();
-                m12.Deadline = new DateTime(2023, 3, 20);
-                m12.Description = "Find initial investors for facebook";
-                m12.Title = "Gather Facebook Investors";
-                m12.Project = newProject2;
-                Milestones.Add(m12);
 
                 User newUser = new User();
                 newUser.Name = "John Coder";
@@ -255,10 +181,31 @@ namespace WorkTogether.Models
                 newUser.UserName = newUser.Email;
                 await _um.CreateAsync(newUser, "pw");
 
-                StudentClass studentClass1 = new StudentClass();
-                studentClass1.Class = newClass;
-                studentClass1.Student = newUser;
-                StudentClasses.Add(studentClass1);
+                StudentClass jcStudentClass = new StudentClass();
+                jcStudentClass.Student = newUser;
+                jcStudentClass.Class = newClass2;
+                StudentClasses.Add(jcStudentClass);
+
+                Class newClass3 = new Class();
+                newClass3.Name = "Demo Day 2023";
+                newClass3.Description = "Work Together";
+                newClass3.Professor = newUser;
+                newClass3.InviteCode = "wt_demo";
+                Classes.Add(newClass3);
+
+                Project demoProject = new Project();
+                demoProject.ClassId = newClass3.Id;
+                demoProject.Deadline = new DateTime(2023, 12, 10);
+                demoProject.Description = "Try out the group search for yourself!";
+                demoProject.TeamFormationDeadline = new DateTime(2023, 12, 9);
+                demoProject.MinTeamSize = 4;
+                demoProject.MaxTeamSize = 10;
+                demoProject.Name = "Group Search Demo";
+                Projects.Add(demoProject);
+                CreateQuestionnaire(demoProject);
+
+
+ 
 
                 StudentClass studentClassx = new StudentClass();
                 studentClassx.Class = newClass2;
@@ -279,11 +226,6 @@ namespace WorkTogether.Models
                 await _um.CreateAsync(newUser3, "pw");
 
 
-                StudentClass studentClass2 = new StudentClass();
-                studentClass2.Class = newClass;
-                studentClass2.Student = newUser3;
-                StudentClasses.Add(studentClass2);
-
                 User newUser4 = new User();
                 newUser4.Name = "Sebastion Carson";
                 newUser4.Interests = "Barbecue, Butterfly Watching, Flutter";
@@ -296,11 +238,6 @@ namespace WorkTogether.Models
                 newUser4.UserId = 3;
                 newUser4.UserName = newUser4.Email;
                 await _um.CreateAsync(newUser4, "pw");
-
-                StudentClass studentClass3 = new StudentClass();
-                studentClass3.Class = newClass;
-                studentClass3.Student = newUser4;
-                StudentClasses.Add(studentClass3);
 
                 User newUser5 = new User();
                 newUser5.Name = "Ronda Carey";
@@ -315,10 +252,7 @@ namespace WorkTogether.Models
                 newUser5.UserName = newUser5.Email;
                 await _um.CreateAsync(newUser5, "pw");
 
-                StudentClass studentClass4 = new StudentClass();
-                studentClass4.Class = newClass;
-                studentClass4.Student = newUser5;
-                StudentClasses.Add(studentClass4);
+
 
                 User newUser6 = new User();
                 newUser6.Name = "Dale Hayden";
@@ -333,10 +267,6 @@ namespace WorkTogether.Models
                 newUser6.UserName= newUser6.Email;
                 await _um.CreateAsync(newUser6, "pw");
 
-                StudentClass studentClass5 = new StudentClass();
-                studentClass5.Class = newClass;
-                studentClass5.Student = newUser6;
-                StudentClasses.Add(studentClass5);
 
 
                 User newUser7 = new User();
@@ -352,41 +282,12 @@ namespace WorkTogether.Models
                 newUser7.UserName = newUser7.Email;
                 await _um.CreateAsync(newUser7, "pw");
 
-                StudentClass studentClass6 = new StudentClass();
-                studentClass6.Class = newClass;
-                studentClass6.Student = newUser7;
-                StudentClasses.Add(studentClass6);
 
                 StudentClass studentClass2_7 = new StudentClass();
                 studentClass2_7.Class = newClass2;
                 studentClass2_7.Student = newUser7;
                 StudentClasses.Add(studentClass2_7);
 
-                Notification notification = new Notification();
-                notification.AttachedProject = newProject.Id;
-                notification.Read = false;
-                notification.ToID = 6;
-                notification.FromID = 7;
-                notification.FromName = "Donny Owen";
-                notification.ToName = "Harriett Morton";
-                notification.IsInvite = true;
-                notification.SentAt = DateTime.Now;
-                notification.Description = "join my team!";
-                notification.Title = "Team Invite";
-                Notifications.Add(notification);
-
-                Notification notification2 = new Notification();
-                notification2.AttachedProject = newProject.Id;
-                notification2.Read = false;
-                notification2.ToID = 5;
-                notification2.FromID = 7;
-                notification2.FromName = "Donny Owen";
-                notification2.ToName = "Dale Hayden";
-                notification2.IsInvite = true;
-                notification2.SentAt = DateTime.Now;
-                notification2.Description = "join my team!";
-                notification2.Title = "Team Invite";
-                Notifications.Add(notification2);
 
 
                 // Memeber of 2 classes 
@@ -403,58 +304,13 @@ namespace WorkTogether.Models
                 newUser8.UserName = newUser8.Email;
                 await _um.CreateAsync(newUser8, "pw");
 
-                StudentClass studentClass7 = new StudentClass();
-                studentClass7.Class = newClass;
-                studentClass7.Student = newUser8;
-                StudentClasses.Add(studentClass7);
 
                 StudentClass studentClass2_8 = new StudentClass();
                 studentClass2_8.Class = newClass2;
                 studentClass2_8.Student = newUser8;
                 StudentClasses.Add(studentClass2_8);
 
-                // Create Notifcations for User 8 u0000007@utah.edu
-
-                Notification notification1_newUser = new Notification();
-                notification1_newUser.Title = "Build Time Travel GUI";
-                notification1_newUser.Description = "Remember to build the time travel graphical user interface. " +
-                    "This is incredibly important towards the completion of milestone 1";
-                notification1_newUser.IsInvite = false;
-                notification1_newUser.AttachedProject = newProject3.Id;
-                notification1_newUser.FromID = newUser2.UserId;
-                notification1_newUser.FromName = newUser2.Name;
-                notification1_newUser.ToID = newUser.UserId;
-                notification1_newUser.ToName = newUser.Name;
-                notification1_newUser.SentAt = DateTime.Now;
-                notification1_newUser.Read = false;
-                Notifications.Add(notification1_newUser);
-
-                Notification notification2_newUser = new Notification();
-                notification2_newUser.Title = "Remember to Complete Team Formation";
-                notification2_newUser.Description = "Please complete team formation prior to the team deadling closing. " +
-                    "You will need a team for this project it is mandatory.";
-                notification2_newUser.IsInvite = false;
-                notification2_newUser.AttachedProject = newProject3.Id;
-                notification2_newUser.FromID = newUser2.UserId;
-                notification2_newUser.FromName = newUser2.Name;
-                notification2_newUser.ToID = newUser.UserId;
-                notification2_newUser.ToName = newUser.Name;
-                notification2_newUser.SentAt = DateTime.Now;
-                notification2_newUser.Read = false;
-                Notifications.Add(notification2_newUser);
-
-                Notification notification3_newUser = new Notification();
-                notification3_newUser.Title = "Show up to Class";
-                notification3_newUser.Description = "Show up in person to class this Monday. We have an important announcment.";
-                notification3_newUser.IsInvite = false;
-                notification3_newUser.AttachedProject = newProject3.Id;
-                notification3_newUser.FromID = newUser2.UserId;
-                notification3_newUser.FromName = newUser2.Name;
-                notification3_newUser.ToID = newUser.UserId;
-                notification3_newUser.ToName = newUser.Name;
-                notification3_newUser.SentAt = DateTime.Now;
-                notification3_newUser.Read = false;
-                Notifications.Add(notification3_newUser);
+ 
 
 
                 User newUser9 = new User();
@@ -470,10 +326,6 @@ namespace WorkTogether.Models
                 newUser9.UserName = newUser9.Email;
                 await _um.CreateAsync(newUser9, "pw");
 
-                StudentClass studentClass8 = new StudentClass();
-                studentClass8.Class = newClass;
-                studentClass8.Student = newUser9;
-                StudentClasses.Add(studentClass8);
 
                 StudentClass studentClass2_9 = new StudentClass();
                 studentClass2_9.Class = newClass2;
@@ -493,10 +345,7 @@ namespace WorkTogether.Models
                 newUser10.UserName = newUser10.Email;
                 await _um.CreateAsync(newUser10, "pw");
 
-                StudentClass studentClass9 = new StudentClass();
-                studentClass9.Class = newClass;
-                studentClass9.Student = newUser10;
-                StudentClasses.Add(studentClass9);
+ 
 
                 StudentClass studentClass2_10 = new StudentClass();
                 studentClass2_10.Class = newClass2;
@@ -516,10 +365,7 @@ namespace WorkTogether.Models
                 newUser11.UserName = newUser11.Email;
                 await _um.CreateAsync(newUser11, "pw");
 
-                StudentClass studentClass10 = new StudentClass();
-                studentClass10.Class = newClass;
-                studentClass10.Student = newUser11;
-                StudentClasses.Add(studentClass10);
+
 
                 StudentClass studentClass2_11 = new StudentClass();
                 studentClass2_11.Class = newClass2;
@@ -632,49 +478,28 @@ namespace WorkTogether.Models
                 newUser17.UserName = newUser17.Email;
                 await _um.CreateAsync(newUser17, "pw");
 
-                StudentClass studentClass11 = new StudentClass();
-                studentClass11.Class = newClass;
-                studentClass11.Student = newUser17;
-                StudentClasses.Add(studentClass11);
 
                 this.SaveChanges();
 
-                Team t = new Team();
-                t.Members = new List<User>{ newUser3, newUser4, newUser5, newUser6};
-                t.Project = newProject;
-                t.Complete = true;
-                t.Name = "Jims Coders";
-                t.CompleteMilestones = new List<Milestone> { m, m2 };
-                Teams.Add(t);
-
-                Team t4 = new Team();
-                t4.Members = new List<User> { newUser3, newUser4, newUser5, newUser6 };
-                t4.Project = newProject3;
-                t4.Complete = true;
-                t4.Name = "The Zuckerbergs";
-                t4.CompleteMilestones = new List<Milestone> { m4 };
-                Teams.Add(t4);
 
                 Team t2 = new Team();
-                t2.Members = new List<User> { newUser7, newUser8, newUser9, newUser10 };
+                t2.Members = new List<User> { newUser, newUser8, newUser9, newUser10 };
                 t2.Project = project1;
                 t2.Complete = true;
-                t2.Name = "Capstone Crew";
-                t2.CompleteMilestones = new List<Milestone> {m6,m7};
+                t2.Name = "John Coder's Capstone Crew";
+                t2.CompleteMilestones = new List<Milestone>();
                 Teams.Add(t2);
 
-                Team t3 = new Team();
-                t3.Members = new List<User> { newUser7, newUser8, newUser9, newUser10 };
-                t3.Project = newProject2;
-                t3.Complete = true;
-                t3.Name = "Facebook Dev Team";
-                t3.CompleteMilestones = new List<Milestone> { m10 };
-                Teams.Add(t3);
+                Chat c = new Chat();
+                c.Name = "John Coder's Capstone Crew Team Chat";
+                c.Users = t2.Members;
+                Chats.Add(c);
+                t2.TeamChat = c;
 
                 Questionnaire default_questionnaire = new Questionnaire();
-                default_questionnaire.Project = newProject3;
-                default_questionnaire.ProjectID = newProject3.Id;
-                newProject3.Questionnaire = default_questionnaire;
+                default_questionnaire.Project = newProject2;
+                default_questionnaire.ProjectID = newProject2.Id;
+                newProject2.Questionnaire = default_questionnaire;
                 Questionnaires.Add(default_questionnaire);
 
                 this.SaveChanges();
@@ -1232,7 +1057,54 @@ namespace WorkTogether.Models
                 this.SaveChanges();
             }
         }
+        private void CreateQuestionnaire(Project p)
+        {
+            Questionnaire default_questionnaire = new Questionnaire();
+            default_questionnaire.Project = p;
+            default_questionnaire.ProjectID = p.Id;
+            p.Questionnaire = default_questionnaire;
+            this.Questionnaires.Add(default_questionnaire);
 
+
+            Question q1 = new Question();
+            q1.Questionnaire = default_questionnaire;
+            q1.Prompt = "Add Available Times";
+            q1.Type = "Time";
+            this.Questions.Add(q1);
+
+
+            Question q2 = new Question();
+            q2.Questionnaire = default_questionnaire;
+            q2.Prompt = "Expected Project Quality";
+            q2.Type = "Select";
+            this.Questions.Add(q2);
+
+
+
+            Question q3 = new Question();
+            q3.Questionnaire = default_questionnaire;
+            q3.Prompt = "Relevant Skills";
+            q3.Type = "Tag";
+            this.Questions.Add(q3);
+
+
+
+            Question q4 = new Question();
+            q4.Questionnaire = default_questionnaire;
+            q4.Prompt = "Expected Hours Weekly";
+            q4.Type = "Number";
+            this.Questions.Add(q4);
+
+
+
+            Question q5 = new Question();
+            q5.Questionnaire = default_questionnaire;
+            q5.Prompt = "Additional Notes";
+            q5.Type = "Text";
+            this.Questions.Add(q5);
+
+            this.SaveChanges();
+        }
         //And this exists for the many to many relationship between Users and Chats
 
 
