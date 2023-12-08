@@ -97,7 +97,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   fontFamily: 'SourceSansPro'),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.done,
-                              onSaved: (hours) {},
+                              onFieldSubmitted: (hours) async {
+                                if (await HttpService().joinClassWithCode(
+                                    courseJoinTextController.text)) {
+                                  setState(() {
+                                    courseJoinTextController.text = "";
+                                  });
+                                }
+                              },
                               decoration: const InputDecoration(
                                   filled: true,
                                   fillColor: Color(0xFFFAFAFA),
@@ -121,7 +128,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                               onPressed: () async {
                                 if (await HttpService().joinClassWithCode(
                                     courseJoinTextController.text)) {
-                                  setState(() {});
+                                  setState(() {
+                                    courseJoinTextController.text = "";
+                                  });
                                 }
                               },
                               icon: const Icon(
@@ -141,10 +150,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: ourLightColor()),
                           onPressed: () async {
-                            await Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return AddDeleteClass();
-                            }));
+                            await Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (BuildContext context,
+                                    Animation<double> animation1,
+                                    Animation<double> animation2) {
+                                  return AddDeleteClass();
+                                },
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+
                             setState(() {});
                           },
                           child: const Text(

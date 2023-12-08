@@ -788,7 +788,8 @@ class _QuestionnairePageState extends ConsumerState<QuestionnairePage> {
                                                         answers)
                                                     .then(
                                                         (loggedUserAnswers) => {
-                                                              Navigator.push(
+                                                              Navigator
+                                                                  .pushReplacement(
                                                                 context,
                                                                 PageRouteBuilder(
                                                                   pageBuilder: (BuildContext context,
@@ -906,16 +907,18 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                   },
                 ),
               ),
+              const Spacer(),
               const Padding(
-                padding: EdgeInsets.fromLTRB(130.0, 16.0, 32.0, 4.0),
+                padding: EdgeInsets.fromLTRB(0.0, 0.0, 40.0, 0.0),
                 child: Text(
                   "Add Time",
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SourceSansPro'),
                 ),
               ),
+              const Spacer(),
             ],
           ),
           const Row(
@@ -1118,8 +1121,9 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
           // ),
           Row(
             children: [
+              const Spacer(),
               Padding(
-                padding: const EdgeInsets.fromLTRB(40.0, 16.0, 32.0, 4.0),
+                padding: const EdgeInsets.fromLTRB(40.0, 32.0, 32.0, 32.0),
                 child: ElevatedButton(
                   onPressed: () => {
                     ref
@@ -1141,6 +1145,7 @@ class _QuestionnairePopupState extends ConsumerState<QuestionnairePopup> {
                   ),
                 ),
               ),
+              const Spacer(),
             ],
           )
         ],
