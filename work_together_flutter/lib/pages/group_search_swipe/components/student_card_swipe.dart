@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:work_together_flutter/global_components/tag_medium.dart';
+import 'package:work_together_flutter/global_components/tag_small.dart';
 
 import '../../profile/group_search_profile_page.dart';
 
@@ -159,8 +159,8 @@ class StudentCardSwipable extends StatelessWidget {
           child: Padding(
               padding: const EdgeInsets.all(1),
               child: Container(
-                  height: 20,
-                  width: 20,
+                  height: 13,
+                  width: 13,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     shape: BoxShape.circle,
@@ -171,7 +171,7 @@ class StudentCardSwipable extends StatelessWidget {
                     child: Text(
                       availabilityList[i][j],
                       style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.w800),
+                          fontSize: 8, fontWeight: FontWeight.w800),
                     ),
                   ))),
         ));

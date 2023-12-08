@@ -75,7 +75,7 @@ class _GroupSearchSwipePageState extends ConsumerState<GroupSearchSwipePage> {
           child: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.all(75),
+                padding: const EdgeInsets.all(40),
                 child: SwipableStack(
                   controller: swipeController,
                   onSwipeCompleted: (index, direction) {
