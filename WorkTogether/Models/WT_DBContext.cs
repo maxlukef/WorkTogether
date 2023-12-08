@@ -109,8 +109,8 @@ namespace WorkTogether.Models
                 project1.Name = "Capstone";
                 project1.MinTeamSize = 4;
                 project1.MaxTeamSize = 5;
-                project1.Deadline = new DateTime(2023, 12, 1);
-                project1.TeamFormationDeadline = new DateTime(2023, 4, 18);
+                project1.Deadline = new DateTime(2023, 12, 10);
+                project1.TeamFormationDeadline = new DateTime(2023, 4, 9);
                 Projects.Add(project1);
                 this.SaveChanges();
 
@@ -141,31 +141,6 @@ namespace WorkTogether.Models
                 m9.Title = "Final Release";
                 m9.Project = project1;
                 Milestones.Add(m9);
-
-                // Project where deadline has passed and team formation deadline has passed (Project complete)
-                Project newProject2 = new Project();
-                newProject2.Deadline = new DateTime(2024, 4, 26);
-                newProject2.TeamFormationDeadline = new DateTime(2024, 1, 1);
-                newProject2.Name = "Create Facebook";
-                newProject2.Description = "Good luck";
-                newProject2.MaxTeamSize = 4;
-                newProject2.MinTeamSize = 4;
-                newProject2.ClassId = newClass2.Id;
-                Projects.Add(newProject2 );
-
-                Milestone m10 = new Milestone();
-                m10.Deadline = new DateTime(2024, 3, 20);
-                m10.Description = "Find initial investors for facebook";
-                m10.Title = "Gather Facebook Investors";
-                m10.Project = newProject2;
-                Milestones.Add(m10);
-
-                Milestone m11 = new Milestone();
-                m11.Deadline = new DateTime(2024, 4, 26);
-                m11.Description = "Good luck!";
-                m11.Title = "Release Facebook";
-                m11.Project = newProject2;
-                Milestones.Add(m11);
 
 
                 User newUser = new User();
